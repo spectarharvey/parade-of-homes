@@ -1,3 +1,19 @@
 .DS_Store
-# original Base44 React export (needs their backend; kept locally for reference, not deployed)
-parade-of-homes*.html
+
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+*.pem
+.env*.local
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

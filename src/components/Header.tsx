@@ -1,0 +1,58 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const PUBLIC_NAV: [string, string][] = [
+  ["/", "Home"],
+  ["/homes", "Homes"],
+  ["/neighborhoods", "Neighborhoods"],
+  ["/builders", "Builders"],
+  ["/map", "Map & Route"],
+  ["/contest", "Contest"],
+  ["/sponsors", "Sponsors"],
+  ["/faq", "FAQ"],
+];
+
+export default function Header() {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <header className="site">
+      <div className="wrap nav">
+        <Link className="brand" href="/" onClick={() => setOpen(false)}>
+          <span className="logo">P</span>
+          <span>
+            <b>Parade of Homes</b>
+            <small>Marion County · MCBIA</small>
+          </span>
+        </Link>
+        <button className="nav-toggle" onClick={() => setOpen((o) => !o)}>
+          ☰
+        </button>
+        <nav className={"nav-links" + (open ? " open" : "")} id="navlinks">
+          {PUBLIC_NAV.map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              className={pathname === href ? "active" : ""}
+              onClick={() => setOpen(false)}
+            >
+              {label}
+            </Link>
+          ))}
+          <Link
+            href="/register"
+            className="btn btn-gold btn-sm"
+            style={{ marginLeft: ".4rem" }}
+            onClick={() => setOpen(false)}
+          >
+            Register
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}

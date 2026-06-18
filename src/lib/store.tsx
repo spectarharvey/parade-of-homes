@@ -164,7 +164,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       } catch {
         /* ignore */
       }
-      await Promise.all([refetchPublic(), refetchAdmin(currentRole === "ADMIN")]);
+      // If the database isn't reachable yet, keep the seed fallback and don't crash.
+      try {
+        await Promise.all([
+          refetchPublic(),
+          refetchAdmin(currentRole === "ADMIN"),
+        ]);
+      } catch (e) {
+        console.warn("Could not load live data (is the database configured?):", e);
+      }
       setReady(true);
     })();
   }, [refetchPublic, refetchAdmin]);

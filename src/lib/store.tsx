@@ -17,8 +17,19 @@ import type {
   User,
 } from "./types";
 
-const KEY = "mcbia_poh_v1";
 const clone = (d: DB): DB => JSON.parse(JSON.stringify(d));
+
+async function api(path: string, init?: RequestInit) {
+  const res = await fetch(path, {
+    headers: { "Content-Type": "application/json" },
+    ...init,
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body?.error || `Request failed (${res.status})`);
+  }
+  return res.json();
+}
 
 interface ToastContextValue {
   toast: (msg: string) => void;
@@ -29,6 +40,7 @@ export const useToast = () => useContext(ToastCtx);
 interface StoreContextValue {
   db: DB;
   ready: boolean;
+  role: "ADMIN" | "BUILDER" | null;
   // selectors
   builder: (id: string) => DB["builders"][number] | undefined;
   nbhd: (id: string) => DB["neighborhoods"][number] | undefined;
@@ -49,8 +61,8 @@ interface StoreContextValue {
   removeRouteStop: (id: string) => void;
   clearRoute: () => void;
   rateHome: (id: string, val: number) => void;
-  addUser: (u: User) => void;
-  addSubmission: (s: Submission) => void;
+  addUser: (u: User) => Promise<void>;
+  addSubmission: (s: Submission) => Promise<void>;
   // admin mutations
   removeHome: (id: string) => void;
   toggleFeatureHome: (id: string) => void;
@@ -61,7 +73,7 @@ interface StoreContextValue {
   sendNotification: (n: NotificationItem) => void;
   saveSettings: (target: number, prize: string) => void;
   resetDB: () => void;
-  adminLogin: (pw: string) => boolean;
+  adminLogin: (email: string, password: string) => Promise<boolean>;
   adminLogout: () => void;
 }
 
@@ -74,11 +86,15 @@ export function useStore() {
 }
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
+  // Seed data is the initial paint; replaced by live API data on mount.
   const [db, setDb] = useState<DB>(() => clone(SEED));
+  const [visitorsCount, setVisitorsCount] = useState<number>(SEED.users.length);
   const [ready, setReady] = useState(false);
+  const [role, setRole] = useState<"ADMIN" | "BUILDER" | null>(null);
   const [visited, setVisited] = useState<string[]>([]);
   const [route, setRoute] = useState<string[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
+
+  const isAdmin = role === "ADMIN";
 
   // toast
   const [toastMsg, setToastMsg] = useState("");
@@ -91,55 +107,63 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toastTimer.current = setTimeout(() => setToastShow(false), 2600);
   }, []);
 
-  // hydrate from storage on mount
+  const refetchPublic = useCallback(async () => {
+    const s = await api("/api/state");
+    setDb((prev) => ({
+      ...prev,
+      contest: s.contest,
+      builders: s.builders,
+      neighborhoods: s.neighborhoods,
+      homes: s.homes,
+      sponsors: s.sponsors,
+      faqs: s.faqs,
+    }));
+    setVisitorsCount(s.visitorsCount ?? 0);
+  }, []);
+
+  const refetchAdmin = useCallback(async (asAdmin: boolean) => {
+    if (!asAdmin) {
+      setDb((prev) => ({ ...prev, users: [], submissions: [], notifications: [] }));
+      return;
+    }
+    try {
+      const a = await api("/api/admin/state");
+      setDb((prev) => ({
+        ...prev,
+        users: a.users,
+        submissions: a.submissions,
+        notifications: a.notifications,
+      }));
+    } catch {
+      /* not authorized */
+    }
+  }, []);
+
+  // initial hydrate
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      const parsed = raw ? (JSON.parse(raw) as DB) : null;
-      if (parsed && parsed.homes) setDb(parsed);
-    } catch {
-      /* ignore */
-    }
-    try {
-      setVisited(JSON.parse(sessionStorage.getItem("poh_visited") || "[]"));
-    } catch {
-      /* ignore */
-    }
-    try {
-      setRoute(JSON.parse(sessionStorage.getItem("poh_route") || "[]"));
-    } catch {
-      /* ignore */
-    }
-    setIsAdmin(sessionStorage.getItem("poh_admin") === "1");
-    setReady(true);
-  }, []);
-
-  // persist db
-  const persist = useCallback((next: DB) => {
-    setDb(next);
-    try {
-      localStorage.setItem(KEY, JSON.stringify(next));
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  // mutate helper: receives a draft clone, mutates it, persists
-  const mutate = useCallback(
-    (fn: (draft: DB) => void) => {
-      setDb((prev) => {
-        const draft = clone(prev);
-        fn(draft);
-        try {
-          localStorage.setItem(KEY, JSON.stringify(draft));
-        } catch {
-          /* ignore */
-        }
-        return draft;
-      });
-    },
-    []
-  );
+    (async () => {
+      try {
+        setVisited(JSON.parse(sessionStorage.getItem("poh_visited") || "[]"));
+      } catch {
+        /* ignore */
+      }
+      try {
+        setRoute(JSON.parse(sessionStorage.getItem("poh_route") || "[]"));
+      } catch {
+        /* ignore */
+      }
+      let currentRole: "ADMIN" | "BUILDER" | null = null;
+      try {
+        const me = await api("/api/auth/me");
+        currentRole = me.session?.role ?? null;
+        setRole(currentRole);
+      } catch {
+        /* ignore */
+      }
+      await Promise.all([refetchPublic(), refetchAdmin(currentRole === "ADMIN")]);
+      setReady(true);
+    })();
+  }, [refetchPublic, refetchAdmin]);
 
   const persistVisited = useCallback((next: string[]) => {
     setVisited(next);
@@ -176,23 +200,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     () => ({
       homes: db.homes.length,
       checkins: db.homes.reduce((s, h) => s + h.checkins, 0),
-      visitors: db.users.length,
+      visitors: visitorsCount,
       builders: db.builders.length,
     }),
-    [db]
+    [db, visitorsCount]
   );
 
-  // public mutations
+  // ---- public mutations ----
   const checkIn = useCallback(
     (id: string) => {
       if (visited.includes(id)) return;
       persistVisited([...visited, id]);
-      mutate((d) => {
-        const h = d.homes.find((x) => x.id === id);
-        if (h) h.checkins++;
-      });
+      api(`/api/homes/${id}/checkin`, { method: "POST" })
+        .then(() => refetchPublic())
+        .catch(() => {});
     },
-    [visited, persistVisited, mutate]
+    [visited, persistVisited, refetchPublic]
   );
 
   const toggleRoute = useCallback(
@@ -213,124 +236,177 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const rateHome = useCallback(
     (id: string, val: number) => {
-      mutate((d) => {
-        const h = d.homes.find((x) => x.id === id);
-        if (!h) return;
-        h.rating = +(((h.rating * h.ratings) + val) / (h.ratings + 1)).toFixed(2);
-        h.ratings++;
-      });
+      api(`/api/homes/${id}/rate`, {
+        method: "POST",
+        body: JSON.stringify({ val }),
+      })
+        .then(() => refetchPublic())
+        .catch(() => {});
     },
-    [mutate]
+    [refetchPublic]
   );
 
   const addUser = useCallback(
-    (u: User) => mutate((d) => void d.users.push(u)),
-    [mutate]
+    async (u: User) => {
+      await api("/api/register", {
+        method: "POST",
+        body: JSON.stringify({
+          first: u.first,
+          last: u.last,
+          email: u.email,
+          phone: u.phone,
+          zip: u.zip,
+          sms: u.sms,
+        }),
+      });
+      await refetchPublic();
+      await refetchAdmin(isAdmin);
+    },
+    [refetchPublic, refetchAdmin, isAdmin]
   );
 
   const addSubmission = useCallback(
-    (s: Submission) => mutate((d) => void d.submissions.unshift(s)),
-    [mutate]
+    async (s: Submission) => {
+      await api("/api/submissions", {
+        method: "POST",
+        body: JSON.stringify({
+          builder: s.builder,
+          home: s.home,
+          nb: s.nb,
+          style: s.style,
+          price: s.price,
+          beds: s.beds,
+          baths: s.baths,
+          sqft: s.sqft,
+          contact: s.contact,
+        }),
+      });
+      await refetchAdmin(isAdmin);
+    },
+    [refetchAdmin, isAdmin]
   );
 
-  // admin mutations
+  // ---- admin mutations ----
   const removeHome = useCallback(
-    (id: string) =>
-      mutate((d) => {
-        d.homes = d.homes.filter((h) => h.id !== id);
-      }),
-    [mutate]
+    (id: string) => {
+      api(`/api/admin/homes/${id}`, { method: "DELETE" })
+        .then(() => Promise.all([refetchPublic(), refetchAdmin(true)]))
+        .catch((e) => toast(e.message));
+    },
+    [refetchPublic, refetchAdmin, toast]
   );
 
   const toggleFeatureHome = useCallback(
-    (id: string) =>
-      mutate((d) => {
-        const h = d.homes.find((x) => x.id === id);
-        if (h) h.featured = !h.featured;
-      }),
-    [mutate]
+    (id: string) => {
+      api(`/api/admin/homes/${id}/feature`, { method: "POST" })
+        .then(() => refetchPublic())
+        .catch((e) => toast(e.message));
+    },
+    [refetchPublic, toast]
   );
 
   const setFeaturedBuilder = useCallback(
-    (id: string) =>
-      mutate((d) => {
-        d.builders.forEach((b) => (b.featured = false));
-        const b = d.builders.find((x) => x.id === id);
-        if (b) b.featured = true;
-      }),
-    [mutate]
+    (id: string) => {
+      api(`/api/admin/builders/${id}/feature`, { method: "POST" })
+        .then(() => refetchPublic())
+        .catch((e) => toast(e.message));
+    },
+    [refetchPublic, toast]
   );
 
   const saveBuilderAd = useCallback(
-    (id: string, ad: string) =>
-      mutate((d) => {
-        const b = d.builders.find((x) => x.id === id);
-        if (b) b.ad = ad;
-      }),
-    [mutate]
+    (id: string, ad: string) => {
+      api(`/api/admin/builders/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ ad }),
+      })
+        .then(() => refetchPublic())
+        .catch((e) => toast(e.message));
+    },
+    [refetchPublic, toast]
   );
 
   const approveSubmission = useCallback(
-    (id: string) =>
-      mutate((d) => {
-        const s = d.submissions.find((x) => x.id === id);
-        if (s) s.status = "approved";
-      }),
-    [mutate]
+    (id: string) => {
+      api(`/api/admin/submissions/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: "approved" }),
+      })
+        .then(() => refetchAdmin(true))
+        .catch((e) => toast(e.message));
+    },
+    [refetchAdmin, toast]
   );
 
   const rejectSubmission = useCallback(
-    (id: string) =>
-      mutate((d) => {
-        const s = d.submissions.find((x) => x.id === id);
-        if (s) s.status = "rejected";
-      }),
-    [mutate]
+    (id: string) => {
+      api(`/api/admin/submissions/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: "rejected" }),
+      })
+        .then(() => refetchAdmin(true))
+        .catch((e) => toast(e.message));
+    },
+    [refetchAdmin, toast]
   );
 
   const sendNotification = useCallback(
-    (n: NotificationItem) => mutate((d) => void d.notifications.unshift(n)),
-    [mutate]
+    (n: NotificationItem) => {
+      api("/api/admin/notifications", {
+        method: "POST",
+        body: JSON.stringify({ type: n.type, msg: n.msg, audience: n.audience }),
+      })
+        .then(() => refetchAdmin(true))
+        .catch((e) => toast(e.message));
+    },
+    [refetchAdmin, toast]
   );
 
   const saveSettings = useCallback(
-    (target: number, prize: string) =>
-      mutate((d) => {
-        d.contest.target = target;
-        d.contest.prize = prize;
-      }),
-    [mutate]
+    (target: number, prize: string) => {
+      api("/api/admin/settings", {
+        method: "PATCH",
+        body: JSON.stringify({ target, prize }),
+      })
+        .then(() => refetchPublic())
+        .catch((e) => toast(e.message));
+    },
+    [refetchPublic, toast]
   );
 
   const resetDB = useCallback(() => {
-    persist(clone(SEED));
-  }, [persist]);
+    api("/api/admin/reset", { method: "POST" })
+      .then(() => Promise.all([refetchPublic(), refetchAdmin(true)]))
+      .catch((e) => toast(e.message));
+  }, [refetchPublic, refetchAdmin, toast]);
 
-  const adminLogin = useCallback((pw: string) => {
-    if (pw === "parade2025") {
-      setIsAdmin(true);
+  const adminLogin = useCallback(
+    async (email: string, password: string) => {
       try {
-        sessionStorage.setItem("poh_admin", "1");
+        const r = await api("/api/auth/login", {
+          method: "POST",
+          body: JSON.stringify({ email, password }),
+        });
+        setRole(r.role);
+        await refetchAdmin(r.role === "ADMIN");
+        return true;
       } catch {
-        /* ignore */
+        return false;
       }
-      return true;
-    }
-    return false;
-  }, []);
+    },
+    [refetchAdmin]
+  );
 
   const adminLogout = useCallback(() => {
-    setIsAdmin(false);
-    try {
-      sessionStorage.setItem("poh_admin", "0");
-    } catch {
-      /* ignore */
-    }
+    api("/api/auth/logout", { method: "POST" }).catch(() => {});
+    setRole(null);
+    setDb((prev) => ({ ...prev, users: [], submissions: [], notifications: [] }));
   }, []);
 
   const value: StoreContextValue = {
     db,
     ready,
+    role,
     builder,
     nbhd,
     home,

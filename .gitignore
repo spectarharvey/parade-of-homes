@@ -12,7 +12,9 @@
 
 # misc
 *.pem
+.env
 .env*.local
+!.env.example
 
 # typescript
 *.tsbuildinfo

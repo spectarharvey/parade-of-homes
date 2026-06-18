@@ -1,0 +1,147 @@
+// Parade of Homes — data model (PostgreSQL / Neon)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  BUILDER
+}
+
+enum Tier {
+  platinum
+  gold
+  silver
+}
+
+enum SubStatus {
+  pending
+  approved
+  rejected
+}
+
+model Builder {
+  id       String  @id
+  name     String
+  initials String
+  color    String
+  featured Boolean @default(false)
+  phone    String
+  website  String
+  years    Int
+  blurb    String
+  ad       String
+  homes    Home[]
+  account  Account?
+}
+
+model Neighborhood {
+  id    String @id
+  name  String
+  city  String
+  color String
+  img   String
+  blurb String
+  low   Int
+  high  Int
+  homes Home[]
+}
+
+model Home {
+  id           String       @id
+  name         String
+  builderId    String
+  builder      Builder      @relation(fields: [builderId], references: [id], onDelete: Cascade)
+  nbId         String
+  neighborhood Neighborhood @relation(fields: [nbId], references: [id], onDelete: Cascade)
+  style        String
+  price        Int
+  beds         Int
+  baths        Float
+  sqft         Int
+  garage       Int
+  checkins     Int          @default(0)
+  rating       Float
+  ratings      Int
+  featured     Boolean      @default(false)
+  x            Float
+  y            Float
+  blurb        String
+  features     String[]
+  imgs         String[]
+}
+
+model Sponsor {
+  id    String @id
+  name  String
+  tier  Tier
+  color String
+  cat   String
+}
+
+model Faq {
+  id    String @id @default(cuid())
+  q     String
+  a     String
+  order Int    @default(0)
+}
+
+/// End-user (visitor) registrations. Serialized to the frontend `User` shape.
+model Registrant {
+  id       String  @id @default(cuid())
+  first    String
+  last     String
+  email    String
+  phone    String
+  zip      String
+  sms      Boolean @default(false)
+  checkins Int     @default(0)
+  date     String
+}
+
+model Submission {
+  id      String    @id @default(cuid())
+  builder String
+  home    String
+  nb      String
+  style   String
+  price   Int
+  beds    Int
+  baths   Float
+  sqft    Int
+  status  SubStatus @default(pending)
+  date    String
+  contact String
+}
+
+model Notification {
+  id       String @id @default(cuid())
+  type     String
+  msg      String
+  audience String
+  sent     String
+  count    Int
+}
+
+/// Single-row table holding contest configuration.
+model Contest {
+  id     Int    @id @default(1)
+  target Int
+  prize  String
+}
+
+/// Auth accounts for admin + builder portal (Phase 2).
+model Account {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  builderId    String?  @unique
+  builder      Builder? @relation(fields: [builderId], references: [id], onDelete: SetNull)
+  createdAt    DateTime @default(now())
+}

@@ -7,29 +7,35 @@ reference), it now has a real server: a Postgres database, server API routes, an
 cookie-based authentication with roles. Data is no longer browser-only — it persists in
 the database and is shared across all visitors and devices.
 
-## Quick start
+## Quick start (local, no signup)
+
+Uses an embedded Postgres — no Docker, no cloud account.
 
 ```bash
 npm install
 
-# 1. Configure environment
-cp .env.example .env
-#    then edit .env and set DATABASE_URL (Neon) + AUTH_SECRET
+# Terminal 1 — start the local database (first run downloads a Postgres binary).
+# Leave this running.
+npm run db:local
 
-# 2. Create the schema and load demo data
-npm run db:deploy     # apply migrations
-npm run db:seed       # load the Parade demo data + admin/builder accounts
+# Terminal 2 — first time only: create tables + load demo data
+npm run db:setup        # = migrate deploy + seed
 
-# 3. Run
-npm run dev           # http://localhost:3000
+# Terminal 2 — run the app
+npm run dev             # http://localhost:3000
 ```
 
-### Getting a database (Neon)
+`.env` already points `DATABASE_URL` at the local DB (`localhost:5433`). The local
+Postgres data lives in `./.pgdata` and persists between runs.
 
-1. Create a free project at <https://neon.tech>.
-2. Copy the **pooled** connection string into `DATABASE_URL` in `.env`.
-3. Generate `AUTH_SECRET` with `openssl rand -base64 32`.
-4. Run `npm run db:setup` (migrate + seed).
+## Production database (Neon)
+
+When you deploy, swap the local DB for a hosted one:
+
+1. Create a free project at <https://neon.tech>; copy the **pooled** connection string.
+2. Set `DATABASE_URL` (the Neon string) and `AUTH_SECRET` (`openssl rand -base64 32`)
+   as environment variables on your host (e.g. Vercel).
+3. Run `npm run db:setup` against it once (migrate + seed).
 
 **Default accounts (from seed):**
 - Admin — `admin@mcbia.org` / `parade2025`  → `/admin`

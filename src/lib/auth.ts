@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
@@ -56,9 +56,19 @@ export async function getSession(): Promise<SessionData | null> {
 export async function setSessionCookie(data: SessionData) {
   const token = await createSessionToken(data);
   const store = await cookies();
+  // Only mark the cookie `secure` when the request is actually over HTTPS.
+  // (A `secure` cookie sent over plain HTTP is silently dropped by the browser,
+  // which previously caused the session to vanish on the next request/refresh.)
+  let isHttps = false;
+  try {
+    const h = await headers();
+    isHttps = (h.get("x-forwarded-proto") || "").includes("https");
+  } catch {
+    /* headers() unavailable */
+  }
   store.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: isHttps,
     sameSite: "lax",
     path: "/",
     maxAge: MAX_AGE,

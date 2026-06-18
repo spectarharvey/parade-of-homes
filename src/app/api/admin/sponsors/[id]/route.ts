@@ -3,6 +3,6 @@ import { crud } from "@/lib/adminCrud";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const h = crud("homes");
-export const PATCH = h.update;
-export const DELETE = h.remove;
+const s = crud("sponsors");
+export const PATCH = s.update;
+export const DELETE = s.remove;

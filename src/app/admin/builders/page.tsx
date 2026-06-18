@@ -2,20 +2,63 @@
 
 import { useState } from "react";
 import { useStore, useToast } from "@/lib/store";
+import Modal from "@/components/Modal";
+import type { Builder } from "@/lib/types";
+
+type BuilderDraft = Partial<Record<keyof Builder, unknown>>;
+
+const emptyBuilder = (): BuilderDraft => ({
+  name: "",
+  initials: "",
+  color: "#2c3e50",
+  phone: "",
+  website: "",
+  years: "",
+  blurb: "",
+  ad: "",
+  featured: false,
+});
 
 export default function AdminBuildersPage() {
-  const { db, setFeaturedBuilder, saveBuilderAd } = useStore();
+  const { db, setFeaturedBuilder, saveEntity, deleteEntity } = useStore();
   const { toast } = useToast();
-  const [adText, setAdText] = useState<Record<string, string>>(() =>
-    Object.fromEntries(db.builders.map((b) => [b.id, b.ad]))
-  );
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<BuilderDraft>(emptyBuilder);
+
+  const openAdd = () => {
+    setDraft(emptyBuilder());
+    setOpen(true);
+  };
+
+  const openEdit = (b: Builder) => {
+    setDraft({ ...b });
+    setOpen(true);
+  };
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await saveEntity("builders", draft as Record<string, unknown>);
+      setOpen(false);
+      toast(draft.id ? "Builder updated" : "Builder added");
+    } catch (err) {
+      toast((err as Error).message || "Save failed");
+    }
+  };
 
   return (
     <>
-      <h1 style={{ fontSize: "1.7rem" }}>Builder Manager</h1>
-      <p className="muted" style={{ marginTop: "-.4rem" }}>
-        Set the featured builder and edit each builder&apos;s profile ad space.
-      </p>
+      <div className="admin-toolbar">
+        <div>
+          <h1 style={{ fontSize: "1.7rem" }}>Builder Manager</h1>
+          <p className="muted" style={{ marginTop: "-.4rem" }}>
+            Set the featured builder and edit each builder&apos;s profile.
+          </p>
+        </div>
+        <button className="btn btn-gold btn-sm" onClick={openAdd}>
+          Add Builder
+        </button>
+      </div>
       <div className="grid-2" style={{ marginTop: "1.2rem" }}>
         {db.builders.map((b) => (
           <div className="panel" key={b.id}>
@@ -72,31 +115,143 @@ export default function AdminBuildersPage() {
                   {db.homes.filter((h) => h.builder === b.id).length} homes ·{" "}
                   {b.phone}
                 </div>
-                <div className="fld" style={{ marginTop: ".6rem" }}>
-                  <label>Ad Space Text</label>
-                  <textarea
-                    rows={2}
-                    value={adText[b.id] ?? ""}
-                    onChange={(e) =>
-                      setAdText((prev) => ({ ...prev, [b.id]: e.target.value }))
-                    }
-                  />
+                {b.ad && (
+                  <div
+                    className="muted"
+                    style={{ fontSize: ".78rem", marginTop: ".4rem" }}
+                  >
+                    {b.ad}
+                  </div>
+                )}
+                <div className="pill-row" style={{ marginTop: ".6rem" }}>
+                  <button className="ico-btn" onClick={() => openEdit(b)}>
+                    Edit
+                  </button>
+                  <button
+                    className="ico-btn danger"
+                    onClick={async () => {
+                      if (window.confirm("Delete this builder?")) {
+                        try {
+                          await deleteEntity("builders", b.id);
+                          toast("Builder deleted");
+                        } catch (err) {
+                          toast((err as Error).message || "Delete failed");
+                        }
+                      }
+                    }}
+                  >
+                    Delete
+                  </button>
                 </div>
-                <button
-                  className="ico-btn"
-                  style={{ marginTop: ".5rem" }}
-                  onClick={() => {
-                    saveBuilderAd(b.id, adText[b.id] ?? "");
-                    toast("Ad text saved");
-                  }}
-                >
-                  Save Ad Text
-                </button>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {open && (
+        <Modal
+          title={draft.id ? "Edit Builder" : "Add Builder"}
+          onClose={() => setOpen(false)}
+        >
+          <form onSubmit={submit}>
+            <div className="form-grid">
+              <div className="fld">
+                <label>Name</label>
+                <input
+                  value={(draft.name as string) || ""}
+                  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="fld">
+                <label>Initials</label>
+                <input
+                  value={(draft.initials as string) || ""}
+                  onChange={(e) =>
+                    setDraft({ ...draft, initials: e.target.value })
+                  }
+                />
+              </div>
+              <div className="fld">
+                <label>Color</label>
+                <input
+                  type="color"
+                  value={(draft.color as string) || "#2c3e50"}
+                  onChange={(e) =>
+                    setDraft({ ...draft, color: e.target.value })
+                  }
+                />
+              </div>
+              <div className="fld">
+                <label>Phone</label>
+                <input
+                  value={(draft.phone as string) || ""}
+                  onChange={(e) =>
+                    setDraft({ ...draft, phone: e.target.value })
+                  }
+                />
+              </div>
+              <div className="fld">
+                <label>Website</label>
+                <input
+                  value={(draft.website as string) || ""}
+                  onChange={(e) =>
+                    setDraft({ ...draft, website: e.target.value })
+                  }
+                />
+              </div>
+              <div className="fld">
+                <label>Years</label>
+                <input
+                  type="number"
+                  value={(draft.years as string) ?? ""}
+                  onChange={(e) =>
+                    setDraft({ ...draft, years: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+            <div className="fld full">
+              <label>Blurb</label>
+              <textarea
+                rows={3}
+                value={(draft.blurb as string) || ""}
+                onChange={(e) => setDraft({ ...draft, blurb: e.target.value })}
+              />
+            </div>
+            <div className="fld full">
+              <label>Ad Space Text</label>
+              <textarea
+                rows={2}
+                value={(draft.ad as string) || ""}
+                onChange={(e) => setDraft({ ...draft, ad: e.target.value })}
+              />
+            </div>
+            <div className="fld">
+              <label
+                style={{
+                  display: "flex",
+                  gap: ".5rem",
+                  alignItems: "center",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={!!draft.featured}
+                  onChange={(e) =>
+                    setDraft({ ...draft, featured: e.target.checked })
+                  }
+                />
+                Featured
+              </label>
+            </div>
+            <button type="submit" className="btn btn-gold">
+              Save Builder
+            </button>
+          </form>
+        </Modal>
+      )}
     </>
   );
 }

@@ -28,14 +28,33 @@ npm run dev             # http://localhost:3000
 `.env` already points `DATABASE_URL` at the local DB (`localhost:5433`). The local
 Postgres data lives in `./.pgdata` and persists between runs.
 
-## Production database (Neon)
+## Deploying to Vercel (with Neon)
 
-When you deploy, swap the local DB for a hosted one:
+1. **Neon** — create a free project at <https://neon.tech>, copy the **pooled** connection string.
+2. **Vercel** — import the GitHub repo, then add these Environment Variables (Production + Preview):
+   - `DATABASE_URL` = your Neon pooled string
+   - `AUTH_SECRET` = output of `openssl rand -base64 32`
+   - `ADMIN_EMAIL`, `ADMIN_PASSWORD` (the admin login you want)
+   - `CLOUDINARY_URL` (for image uploads — see below)
+3. **One-time DB setup against Neon** (run locally with `.env`'s `DATABASE_URL` pointed at Neon,
+   or from any machine):
+   ```bash
+   npm run db:setup     # migrate deploy + seed (creates tables + the admin account)
+   ```
+   ⚠️ This is required — "admin can't log in on deploy" almost always means the Neon DB
+   has no tables/admin account yet. `db:seed` is what creates the admin account.
+4. Deploy. `prisma generate` runs automatically on install/build.
 
-1. Create a free project at <https://neon.tech>; copy the **pooled** connection string.
-2. Set `DATABASE_URL` (the Neon string) and `AUTH_SECRET` (`openssl rand -base64 32`)
-   as environment variables on your host (e.g. Vercel).
-3. Run `npm run db:setup` against it once (migrate + seed).
+> The session cookie is only marked `secure` when the request is actually HTTPS, so login
+> persists across refreshes on both `http://localhost` and `https://…vercel.app`.
+
+### Image uploads (Cloudinary)
+
+Admin add/edit forms upload images to Cloudinary. Create a free account at
+<https://cloudinary.com>, then set **`CLOUDINARY_URL`** (Dashboard → "API Environment
+variable", looks like `cloudinary://KEY:SECRET@CLOUD_NAME`) in `.env` and on Vercel.
+Without it, image upload returns a clear "not configured" message (the rest of the app
+still works; you can also paste an image URL directly).
 
 **Default accounts (from seed):**
 - Admin — `admin@mcbia.org` / `parade2025`  → `/admin`
@@ -105,7 +124,14 @@ tracker, end-user registration, home check-in & rating, builder home submissions
 FAQ, featured builder + ad space, full admin console with **real password auth** and a
 Postgres database; "Reset Demo Data" reseeds the DB.
 
+**Admin can now fully manage all data** (add / edit / delete) via `/admin`:
+- **Home Listings**, **Builders**, **Neighborhoods**, **Sponsors**, **FAQs** — each has
+  Add / Edit / Delete with a modal form.
+- **Image uploads** go to **Cloudinary** (homes & neighborhoods); you can also paste a URL.
+- **QR codes are real & scannable** — each home's check-in QR encodes
+  `…/home/<id>?checkin=1`; scanning it on a phone opens the page and auto-checks-in.
+
 **Next phases (not yet built):** builder self-service portal (login + manage own listings),
-real QR-code scanning for check-in, individual builder profile pages, neighborhood
-check-in/voting, real SMS (Twilio) and web-push/PWA install. Notification "send" currently
-records the message in the DB but does not yet dispatch SMS/push.
+in-app camera QR scanner, individual builder profile pages, neighborhood check-in/voting,
+real SMS (Twilio) and web-push/PWA install. Notification "send" currently records the
+message in the DB but does not yet dispatch SMS/push.

@@ -2022,3 +2022,11 @@ padding: 1.6rem;
   transform: translateY(-2px);
   border-color: var(--navy-soft) !important;
 }
+
+/* admin modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,28,48,.55);backdrop-filter:blur(2px);z-index:300;display:grid;place-items:start center;padding:1.4rem;overflow:auto}
+.modal-card{background:var(--paper);border-radius:var(--radius);box-shadow:var(--shadow-lg);width:560px;max-width:96vw;margin:auto}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.3rem;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--paper);z-index:1}
+.modal-head h3{margin:0;font-size:1.15rem}
+.modal-body{padding:1.3rem}
+.admin-toolbar{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin:1.2rem 0}

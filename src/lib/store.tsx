@@ -75,7 +75,18 @@ interface StoreContextValue {
   resetDB: () => void;
   adminLogin: (email: string, password: string) => Promise<boolean>;
   adminLogout: () => void;
+  // generic admin CRUD (homes | builders | neighborhoods | sponsors | faqs)
+  saveEntity: (kind: EntityKind, data: Record<string, unknown>) => Promise<void>;
+  deleteEntity: (kind: EntityKind, id: string) => Promise<void>;
+  uploadImage: (file: File) => Promise<string>;
 }
+
+export type EntityKind =
+  | "homes"
+  | "builders"
+  | "neighborhoods"
+  | "sponsors"
+  | "faqs";
 
 const StoreCtx = createContext<StoreContextValue | null>(null);
 
@@ -415,6 +426,46 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setDb((prev) => ({ ...prev, users: [], submissions: [], notifications: [] }));
   }, []);
 
+  const saveEntity = useCallback(
+    async (kind: EntityKind, data: Record<string, unknown>) => {
+      const id = data.id as string | undefined;
+      if (id) {
+        await api(`/api/admin/${kind}/${id}`, {
+          method: "PATCH",
+          body: JSON.stringify(data),
+        });
+      } else {
+        await api(`/api/admin/${kind}`, {
+          method: "POST",
+          body: JSON.stringify(data),
+        });
+      }
+      await refetchPublic();
+    },
+    [refetchPublic]
+  );
+
+  const deleteEntity = useCallback(
+    async (kind: EntityKind, id: string) => {
+      await api(`/api/admin/${kind}/${id}`, { method: "DELETE" });
+      await refetchPublic();
+    },
+    [refetchPublic]
+  );
+
+  const uploadImage = useCallback(async (file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    // NOTE: no Content-Type header — the browser sets the multipart boundary.
+    const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+    if (!res.ok) {
+      const b = await res.json().catch(() => ({}));
+      throw new Error(b?.error || "Upload failed");
+    }
+    const { url } = await res.json();
+    return url as string;
+  }, []);
+
   const value: StoreContextValue = {
     db,
     ready,
@@ -444,6 +495,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     resetDB,
     adminLogin,
     adminLogout,
+    saveEntity,
+    deleteEntity,
+    uploadImage,
   };
 
   return (

@@ -6,13 +6,16 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import logo from "../assets/parade-logo.webp";
 import { useStore } from "@/lib/store";
-import { 
-  LayoutDashboard, 
-  Home, 
-  Hammer, 
-  Users, 
-  Inbox, 
-  Bell, 
+import {
+  LayoutDashboard,
+  Home,
+  Hammer,
+  MapPinned,
+  Award,
+  HelpCircle,
+  Users,
+  Inbox,
+  Bell,
   Settings,
   Shield
 } from "lucide-react";
@@ -21,6 +24,9 @@ const ADMIN_NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/homes", label: "Home Listings", icon: Home },
   { href: "/admin/builders", label: "Builders", icon: Hammer },
+  { href: "/admin/neighborhoods", label: "Neighborhoods", icon: MapPinned },
+  { href: "/admin/sponsors", label: "Sponsors", icon: Award },
+  { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
   { href: "/admin/users", label: "Registered Users", icon: Users },
   { href: "/admin/submissions", label: "Submissions", icon: Inbox },
   { href: "/admin/notifications", label: "Notifications", icon: Bell },

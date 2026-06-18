@@ -20,7 +20,7 @@ export async function getPublicState() {
     neighborhoods,
     homes: homes.map(serializeHome),
     sponsors,
-    faqs: faqs.map((f) => ({ q: f.q, a: f.a })),
+    faqs: faqs.map((f) => ({ id: f.id, q: f.q, a: f.a, order: f.order })),
     visitorsCount,
   };
 }

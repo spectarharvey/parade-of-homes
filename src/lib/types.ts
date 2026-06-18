@@ -53,8 +53,10 @@ export interface Sponsor {
 }
 
 export interface Faq {
+  id?: string;
   q: string;
   a: string;
+  order?: number;
 }
 
 export interface User {

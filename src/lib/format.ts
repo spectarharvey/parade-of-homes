@@ -10,10 +10,16 @@ export const moneyK = (n: number) =>
 export const stars = (r: number) =>
   "★★★★★☆☆☆☆☆".slice(5 - Math.round(r), 10 - Math.round(r));
 
-export const imgUrl = (code: string, w = 900) =>
-  `https://images.unsplash.com/photo-${code}?auto=format&fit=crop&w=${w}&q=70`;
+// Accepts either a full URL (uploaded image / Cloudinary) or a bare Unsplash
+// photo code (the original seed format) and returns a usable image URL.
+export const imgUrl = (code: string, w = 900) => {
+  if (!code) return "";
+  if (/^https?:\/\//.test(code)) return code;
+  return `https://images.unsplash.com/photo-${code}?auto=format&fit=crop&w=${w}&q=70`;
+};
 
-export const homePhoto = (h: Home) => imgUrl(h.imgs[0]);
+export const homePhoto = (h: Home) =>
+  h.imgs && h.imgs.length ? imgUrl(h.imgs[0]) : "";
 
 /** Deterministic pseudo-QR (decorative, not scannable). Returns an SVG string. */
 export function qrSVG(seed: string) {

@@ -115,7 +115,7 @@ export default function RegisterPage() {
             in at each home with one tap.
           </p>
           <QRCode
-            seed="PARADE-APP-2026"
+            value={typeof window !== "undefined" ? window.location.origin : ""}
             style={{ margin: "1rem auto", width: 180, height: 180 }}
           />
           <p className="muted" style={{ fontSize: ".78rem" }}>

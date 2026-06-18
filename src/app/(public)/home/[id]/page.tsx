@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useStore, useToast } from "@/lib/store";
 import { money, stars, imgUrl } from "@/lib/format";
 import HomeCard from "@/components/HomeCard";
@@ -13,8 +14,20 @@ export default function HomeDetailPage() {
   const { db, home, builder, nbhd, visited, route, checkIn, toggleRoute, rateHome } =
     useStore();
   const { toast } = useToast();
+  const searchParams = useSearchParams();
 
   const h = home(id);
+
+  // Auto check-in when arriving via a scanned QR code (…/home/<id>?checkin=1)
+  useEffect(() => {
+    if (!h) return;
+    if (searchParams.get("checkin") && !visited.includes(h.id)) {
+      checkIn(h.id);
+      toast("✓ Checked in at " + h.name + "!");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, searchParams]);
+
   if (!h) return <NotFoundBlock />;
 
   const b = builder(h.builder);
@@ -126,7 +139,13 @@ export default function HomeDetailPage() {
         <aside>
           <div className="side-card">
             <div style={{ textAlign: "center" }}>
-              <QRCode seed={"CHECKIN-" + h.id} style={{ margin: "0 auto" }} />
+              <QRCode
+                value={
+                  (typeof window !== "undefined" ? window.location.origin : "") +
+                  `/home/${h.id}?checkin=1`
+                }
+                style={{ margin: "0 auto" }}
+              />
               <p style={{ fontSize: ".78rem", fontWeight: 700, margin: ".7rem 0 .2rem" }}>
                 Check-In Code
               </p>

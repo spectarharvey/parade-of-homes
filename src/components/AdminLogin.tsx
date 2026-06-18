@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useStore, useToast } from "@/lib/store";
+import Image from "next/image";
+import logo from "../assets/parade-logo.webp";
 
 export default function AdminLogin() {
   const { adminLogin } = useStore();
@@ -14,11 +16,13 @@ export default function AdminLogin() {
       <header className="site">
         <div className="wrap nav">
           <Link className="brand" href="/">
-            <span className="logo">P</span>
-            <span>
-              <b>Admin Console</b>
-              <small>Parade of Homes</small>
-            </span>
+            <Image
+              className="nav-logo"
+              src={logo}
+              alt="parade-logo"
+              style={{ height: "42px", width: "auto", objectFit: "contain" }}
+            />
+          
           </Link>
           <nav className="nav-links">
             <Link href="/">↗ Public Site</Link>

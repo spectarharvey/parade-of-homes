@@ -38,14 +38,18 @@ export default function HomePage() {
 
   const [activeIdx, setActiveIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(1200);
   const [scrollProgress, setScrollProgress] = useState(50);
   const trackRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const checkSize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      setWindowWidth(window.innerWidth);
+    };
+    checkSize();
+    window.addEventListener("resize", checkSize);
+    return () => window.removeEventListener("resize", checkSize);
   }, []);
 
   useEffect(() => {
@@ -67,7 +71,9 @@ export default function HomePage() {
 
   const [nbActiveIdx, setNbActiveIdx] = useState(0);
   const nbTotal = db.neighborhoods.length;
-  const nbMax = isMobile ? (nbTotal - 1) : Math.max(0, nbTotal - 4);
+  const cardsToShow = windowWidth <= 768 ? 1 : windowWidth <= 900 ? 2 : 4;
+  const slidePercent = windowWidth <= 768 ? 100 : windowWidth <= 900 ? 50 : 25;
+  const nbMax = Math.max(0, nbTotal - cardsToShow);
 
   const handleNbPrev = () => {
     setNbActiveIdx((prev) => Math.max(0, prev - 1));
@@ -203,7 +209,7 @@ export default function HomePage() {
           <div className="nb-slider-container">
             <div 
               className="nb-slider-track"
-              style={{ transform: `translateX(-${nbActiveIdx * (isMobile ? 100 : 25)}%)` }}
+              style={{ transform: `translateX(-${nbActiveIdx * slidePercent}%)` }}
             >
               {db.neighborhoods.map((n) => {
                 const count = db.homes.filter((h) => h.nb === n.id).length;

@@ -1,8 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useStore } from "@/lib/store";
 import type { Sponsor } from "@/lib/types";
+
+import brand1 from "../../../assets/brand1.webp";
+import brand2 from "../../../assets/brand2.png";
+import brand3 from "../../../assets/brand3.webp";
+import brand4 from "../../../assets/brand4.png";
+import brand5 from "../../../assets/brand5.jpg";
+import brand6 from "../../../assets/brand6.png";
+import brand7 from "../../../assets/brand7.jpg";
+
+const sponsorBrands = [brand1, brand2, brand3, brand4, brand5, brand6, brand7];
 
 const tiers: [Sponsor["tier"], string, string][] = [
   ["platinum", "Platinum Sponsors", "tier-platinum"],
@@ -29,28 +40,47 @@ export default function SponsorsPage() {
       {tiers.map(([t, label, cls]) => {
         const list = db.sponsors.filter((s) => s.tier === t);
         if (!list.length) return null;
-        const cols =
-          t === "platinum" ? "grid-2" : t === "gold" ? "grid-3" : "grid-4";
+        
+        const sizeSettings = {
+          platinum: { logoHeight: "80px", nameSize: "1rem", catSize: "0.78rem", minColWidth: "180px" },
+          gold: { logoHeight: "65px", nameSize: "0.9rem", catSize: "0.74rem", minColWidth: "150px" },
+          silver: { logoHeight: "50px", nameSize: "0.8rem", catSize: "0.7rem", minColWidth: "120px" },
+        }[t];
+
         return (
           <div key={t} className={`tier ${cls}`}>
             <div className="tier-head">
               <span className="ribbon">{label}</span>
             </div>
-            <div className={cols}>
-              {list.map((s) => (
-                <div key={s.id} className="sponsor-card">
-                  <div className="slogo" style={{ background: s.color }}>
-                    {s.name[0]}
-                  </div>
-                  <b style={{ fontSize: "1.05rem" }}>{s.name}</b>
-                  <div
-                    className="muted"
-                    style={{ fontSize: ".8rem", marginTop: ".2rem" }}
+            <div 
+              className="premium-sponsor-grid" 
+              style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${sizeSettings.minColWidth}, 1fr))` }}
+            >
+              {list.map((s, idx) => {
+                const brandImage = sponsorBrands[db.sponsors.indexOf(s) % sponsorBrands.length];
+                return (
+                  <div 
+                    key={s.id} 
+                    className="premium-sponsor-card" 
+                    style={{ animationDelay: `${idx * 0.08}s, ${idx * 0.35}s` }}
                   >
-                    {s.cat}
+                    <div style={{ height: sizeSettings.logoHeight, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "0.8rem", width: "100%" }}>
+                      <Image
+                        src={brandImage}
+                        alt={s.name}
+                        style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+                      />
+                    </div>
+                    <b style={{ fontSize: sizeSettings.nameSize, color: "var(--navy)", fontWeight: 600 }}>{s.name}</b>
+                    <div
+                      className="muted"
+                      style={{ fontSize: sizeSettings.catSize, marginTop: ".15rem" }}
+                    >
+                      {s.cat}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         );

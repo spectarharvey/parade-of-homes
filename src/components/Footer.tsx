@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import logo from "../assets/parade-logo.webp"
 
 export default function Footer() {
   return (
@@ -7,16 +9,13 @@ export default function Footer() {
         <div className="cols">
           <div>
             <div className="fbrand">
-              <span className="brand">
-                <span className="logo" style={{ width: 38, height: 38 }}>
-                  P
-                </span>
-              </span>
-              <b style={{ fontFamily: "Lora", fontSize: "1.1rem" }}>
-                Parade of Homes
-              </b>
+              <Image
+                src={logo}
+                alt="Parade of Homes"
+                className="nav-logo"
+              />
             </div>
-            <p style={{ fontSize: ".86rem", maxWidth: 320 }}>
+            <p style={{ fontSize: "1.2rem", maxWidth: 395 }}>
               Presented by the Marion County Building Industry Association.
               Explore the finest new homes, plan your tour, vote for your
               favorites, and enter to win.

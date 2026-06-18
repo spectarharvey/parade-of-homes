@@ -29,24 +29,16 @@ export default function NeighborhoodsPage() {
         return (
           <div
             key={n.id}
-            className="card"
-            style={{
-              display: "grid",
-              gridTemplateColumns: reverse ? "1fr 1.2fr" : "1.2fr 1fr",
-              overflow: "hidden",
-              marginBottom: "1.6rem",
-              boxShadow: "var(--shadow)",
-            }}
+            className={`card neighborhood-card${reverse ? " reverse" : ""}`}
           >
             <div
+              className="neighborhood-card-img"
               style={{
                 background: `url('${n.img}') center/cover`,
-                minHeight: 280,
-                ...(reverse ? { order: 2 } : {}),
               }}
             ></div>
             <div
-              style={{ padding: "2.2rem", ...(reverse ? { order: 1 } : {}) }}
+              className="neighborhood-card-content"
             >
               <span className="badge badge-gold">
                 <span

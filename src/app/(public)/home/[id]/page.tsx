@@ -48,7 +48,7 @@ export default function HomeDetailPage() {
           {isVisited && <span className="badge badge-green">✓ Checked In</span>}
           <h1 style={{ fontSize: "2.2rem", marginTop: ".6rem" }}>{h.name}</h1>
           <p className="muted" style={{ marginTop: "-.2rem" }}>
-            📍 {n?.name}, {n?.city} · Built by {b?.name}
+             {n?.name}, {n?.city} · Built by {b?.name}
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem", margin: ".6rem 0" }}>
             <div

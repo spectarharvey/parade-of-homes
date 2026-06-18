@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { homePhoto } from "@/lib/format";
 import HomeCard from "@/components/HomeCard";
+import { Megaphone, Phone, Globe, Award, Home } from "lucide-react";
 
 export default function BuildersPage() {
   const { db } = useStore();
@@ -27,7 +28,10 @@ export default function BuildersPage() {
           </span>
           <h3>{fb.name}</h3>
           <p>{fb.blurb}</p>
-          <div className="adbox">📣 {fb.ad}</div>
+          <div className="adbox" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Megaphone size={16} style={{ color: "var(--navy)", flexShrink: 0 }} />
+            <span>{fb.ad}</span>
+          </div>
           <div
             style={{
               display: "flex",
@@ -35,11 +39,18 @@ export default function BuildersPage() {
               color: "#c2cdd9",
               fontSize: ".85rem",
               marginBottom: "1rem",
+              flexWrap: "wrap"
             }}
           >
-            <span>📞 {fb.phone}</span>
-            <span>🌐 {fb.website}</span>
-            <span>🏆 {fb.years} yrs</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+              <Phone size={14} /> {fb.phone}
+            </span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+              <Globe size={14} /> {fb.website}
+            </span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+              <Award size={14} /> {fb.years} yrs
+            </span>
           </div>
         </div>
         <div
@@ -115,8 +126,14 @@ export default function BuildersPage() {
                 >
                   {b.blurb}
                 </p>
-                <div className="muted" style={{ fontSize: ".8rem" }}>
-                  📞 {b.phone} · 🌐 {b.website} · 🏠 {c} homes · {b.years} yrs
+                <div className="muted" style={{ fontSize: ".8rem", display: "flex", alignItems: "center", gap: "0.8rem", flexWrap: "wrap", marginTop: "0.4rem" }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}><Phone size={13} /> {b.phone}</span>
+                  <span>·</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}><Globe size={13} /> {b.website}</span>
+                  <span>·</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}><Home size={13} /> {c} homes</span>
+                  <span>·</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}><Award size={13} /> {b.years} yrs</span>
                 </div>
               </div>
             </div>

@@ -105,6 +105,17 @@ export const SEED: DB = {
       low: 285000,
       high: 475000,
     },
+    {
+      id: "n5",
+      name: "Amazon Park",
+      city: "Florida",
+      color: "#2f8ca8ff",
+      img: "https://images.unsplash.com/photo-1605146769289-440113cc3d00?auto=format&fit=crop&w=900&q=70",
+      blurb:
+        "A walkable most prestigious address porches, pocket parks, and a vibrant town center.",
+      low: 185000,
+      high: 175000,
+    },
   ],
   homes: [
     {

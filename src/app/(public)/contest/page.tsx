@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { money } from "@/lib/format";
+import { PartyPopper, Home, MapPin } from "lucide-react";
 
 export default function ContestPage() {
   const { db, home, nbhd, visited } = useStore();
@@ -37,10 +38,16 @@ export default function ContestPage() {
         >
           <div>
             <h3 style={{ fontSize: "1.4rem", margin: 0 }}>Your Progress</h3>
-            <p className="muted" style={{ margin: 0 }}>
-              {done} of {target} homes visited
-              {entered ? " · 🎉 You’re entered to win!" : ` · ${remaining} more to enter`}
-            </p>
+            <div className="muted" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.3rem", flexWrap: "wrap" }}>
+              <span>{done} of {target} homes visited</span>
+              {entered ? (
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", color: "var(--green)", fontWeight: 600 }}>
+                  · <PartyPopper size={14} /> You’re entered to win!
+                </span>
+              ) : (
+                <span>· {remaining} more to enter</span>
+              )}
+            </div>
           </div>
           {entered ? (
             <span
@@ -74,7 +81,9 @@ export default function ContestPage() {
               <div key={i} className={"stamp " + (v ? "done" : "")}>
                 {v ? (
                   <div>
-                    <div className="ck">🏡</div>
+                    <div className="ck" style={{ display: "grid", placeItems: "center", height: "30px", color: "var(--gold-dark)" }}>
+                      <Home size={20} />
+                    </div>
                     <div
                       style={{ fontSize: ".66rem", fontWeight: 700, padding: "0 4px" }}
                     >
@@ -93,7 +102,10 @@ export default function ContestPage() {
 
       <div className="grid-2">
         <div className="panel">
-          <h3>🏡 Homes You&apos;ve Visited</h3>
+          <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <Home size={18} style={{ color: "var(--navy)" }} />
+            <span>Homes You&apos;ve Visited</span>
+          </h3>
           {visited.length ? (
             visited.map((id) => {
               const h = home(id);
@@ -128,7 +140,10 @@ export default function ContestPage() {
           )}
         </div>
         <div className="panel">
-          <h3>📍 Still to Visit</h3>
+          <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <MapPin size={18} style={{ color: "var(--navy)" }} />
+            <span>Still to Visit</span>
+          </h3>
           {remainingHomes.length ? (
             remainingHomes.map((h) => (
               <Link

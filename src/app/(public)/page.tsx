@@ -1,15 +1,81 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 import { useStore } from "@/lib/store";
 import { moneyK } from "@/lib/format";
 import HomeCard from "@/components/HomeCard";
+
+import brand1 from "../../assets/brand1.webp";
+import brand2 from "../../assets/brand2.png";
+import brand3 from "../../assets/brand3.webp";
+import brand4 from "../../assets/brand4.png";
+import brand5 from "../../assets/brand5.jpg";
+import brand6 from "../../assets/brand6.png";
+import brand7 from "../../assets/brand7.jpg";
+
+const sponsorBrands = [
+  { id: "b1", img: brand1, alt: "Brand 1" },
+  { id: "b2", img: brand2, alt: "Brand 2" },
+  { id: "b3", img: brand3, alt: "Brand 3" },
+  { id: "b4", img: brand4, alt: "Brand 4" },
+  { id: "b5", img: brand5, alt: "Brand 5" },
+  { id: "b6", img: brand6, alt: "Brand 6" },
+  { id: "b7", img: brand7, alt: "Brand 7" },
+];
 
 export default function HomePage() {
   const { db, liveStats } = useStore();
   const s = liveStats();
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
-  const featured = db.homes.filter((h) => h.featured).slice(0, 3);
+  
+  // Prioritize featured homes, pad to exactly 6 using non-featured homes
+  const featured = [
+    ...db.homes.filter((h) => h.featured),
+    ...db.homes.filter((h) => !h.featured)
+  ].slice(0, 6);
+
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(50);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const interval = setInterval(() => {
+      setActiveIdx((prev) => (prev + 1) % 4); // Loops: 0, 1, 2, 3 (since 3 are shown on desktop, index goes 0 to 3)
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [isMobile]);
+
+  const handleScroll = () => {
+    if (!trackRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = trackRef.current;
+    if (scrollWidth - clientWidth <= 0) return;
+    setScrollProgress(((scrollLeft + clientWidth) / scrollWidth) * 100);
+  };
+
+  const barWidth = isMobile ? scrollProgress : ((activeIdx + 3) / featured.length) * 100;
+
+  const [nbActiveIdx, setNbActiveIdx] = useState(0);
+  const nbTotal = db.neighborhoods.length;
+  const nbMax = isMobile ? (nbTotal - 1) : Math.max(0, nbTotal - 4);
+
+  const handleNbPrev = () => {
+    setNbActiveIdx((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNbNext = () => {
+    setNbActiveIdx((prev) => Math.min(nbMax, prev + 1));
+  };
 
   return (
     <>
@@ -42,52 +108,54 @@ export default function HomePage() {
         <div className="wrap">
           <div className="grid">
             <div className="stat">
-              <div className="num">{s.homes}</div>
+              <div className="num"><AnimatedCounter value={s.homes} /></div>
               <div className="lbl">Showcase Homes</div>
             </div>
             <div className="stat">
-              <div className="num">{s.builders}</div>
+              <div className="num"><AnimatedCounter value={s.builders} /></div>
               <div className="lbl">Featured Builders</div>
             </div>
             <div className="stat">
-              <div className="num">{s.checkins.toLocaleString("en-US")}</div>
+              <div className="num"><AnimatedCounter value={s.checkins} /></div>
               <div className="lbl">Visitor Check-Ins</div>
             </div>
             <div className="stat">
-              <div className="num">{s.visitors.toLocaleString("en-US")}</div>
+              <div className="num"><AnimatedCounter value={s.visitors} /></div>
               <div className="lbl">Registered Guests</div>
             </div>
           </div>
         </div>
       </div>
 
-      <section className="block">
-        <div className="wrap">
-          <div className="sec-head">
-            <span className="eyebrow">Builder Spotlight</span>
-            <h2>Featured Builder</h2>
-          </div>
-          <div className="featured-builder">
-            <div className="left">
-              <div className="blogo">{fb.initials}</div>
-              <span className="badge badge-gold">★ Featured Builder</span>
-              <h3>{fb.name}</h3>
-              <p>{fb.blurb}</p>
-              <div className="adbox">📣 {fb.ad}</div>
-              <Link href="/builders" className="btn btn-gold btn-sm">
-                View Builder Profile
-              </Link>
+      {fb && (
+        <section className="block">
+          <div className="wrap">
+            <div className="sec-head">
+              <span className="eyebrow">Builder Spotlight</span>
+              <h2>Featured Builder</h2>
             </div>
-            <div className="right"></div>
+            <div className="featured-builder">
+              <div className="left">
+                <div className="blogo">{fb.initials}</div>
+                <span className="badge badge-gold">★ Featured Builder</span>
+                <h3>{fb.name}</h3>
+                <p>{fb.blurb}</p>
+                <div className="adbox">📣 {fb.ad}</div>
+                <Link href="/builders" className="btn btn-gold btn-sm">
+                  View Builder Profile
+                </Link>
+              </div>
+              <div className="right"></div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="block" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <div className="contest-cta">
             <div>
-              <span className="badge badge-navy">🏆 Win Big</span>
+              <span className="badge badge-navy">Win Big</span>
               <h2>Visit homes. Fill your card. Win the grand prize.</h2>
               <p>
                 Check in at {db.contest.target} showcase homes to be
@@ -110,49 +178,73 @@ export default function HomePage() {
               <span className="eyebrow">Explore by Area</span>
               <h2>Neighborhoods</h2>
             </div>
-            <Link href="/neighborhoods" className="btn btn-outline btn-sm">
-              All Neighborhoods →
-            </Link>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", flexWrap: "wrap" }}>
+              <button 
+                onClick={handleNbPrev} 
+                disabled={nbActiveIdx === 0}
+                className="btn btn-outline btn-sm"
+                style={{ padding: "0.4rem 0.8rem", borderRadius: "50%", minWidth: "40px", height: "40px", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+              >
+                ←
+              </button>
+              <button 
+                onClick={handleNbNext} 
+                disabled={nbActiveIdx >= nbMax}
+                className="btn btn-outline btn-sm"
+                style={{ padding: "0.4rem 0.8rem", borderRadius: "50%", minWidth: "40px", height: "40px", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
+              >
+                →
+              </button>
+              <Link href="/neighborhoods" className="btn btn-outline btn-sm">
+                All Neighborhoods →
+              </Link>
+            </div>
           </div>
-          <div className="grid-4">
-            {db.neighborhoods.map((n) => {
-              const count = db.homes.filter((h) => h.nb === n.id).length;
-              return (
-                <Link
-                  key={n.id}
-                  href={`/neighborhood/${n.id}`}
-                  className="nb-card"
-                >
-                  <span
-                    className="bg"
-                    style={{ backgroundImage: `url('${n.img}')` }}
-                  ></span>
-                  <span className="nb-body">
-                    <span
-                      className="badge"
-                      style={{
-                        background: "rgba(255,255,255,.18)",
-                        color: "#fff",
-                        backdropFilter: "blur(4px)",
-                      }}
+          <div className="nb-slider-container">
+            <div 
+              className="nb-slider-track"
+              style={{ transform: `translateX(-${nbActiveIdx * (isMobile ? 100 : 25)}%)` }}
+            >
+              {db.neighborhoods.map((n) => {
+                const count = db.homes.filter((h) => h.nb === n.id).length;
+                return (
+                  <div key={n.id} className="nb-slider-card-wrapper">
+                    <Link
+                      href={`/neighborhood/${n.id}`}
+                      className="nb-card"
                     >
                       <span
-                        className="dot"
-                        style={{ background: n.color }}
+                        className="bg"
+                        style={{ backgroundImage: `url('${n.img}')` }}
                       ></span>
-                      {n.city}
-                    </span>
-                    <h3>{n.name}</h3>
-                    <span className="nb-meta">
-                      <span>{count} homes</span>
-                      <span>
-                        {moneyK(n.low)}–{moneyK(n.high)}
+                      <span className="nb-body">
+                        <span
+                          className="badge"
+                          style={{
+                            background: "rgba(255,255,255,.18)",
+                            color: "#fff",
+                            backdropFilter: "blur(4px)",
+                          }}
+                        >
+                          <span
+                            className="dot"
+                            style={{ background: n.color }}
+                          ></span>
+                          {n.city}
+                        </span>
+                        <h3>{n.name}</h3>
+                        <span className="nb-meta">
+                          <span>{count} homes</span>
+                          <span>
+                            {moneyK(n.low)}–{moneyK(n.high)}
+                          </span>
+                        </span>
                       </span>
-                    </span>
-                  </span>
-                </Link>
-              );
-            })}
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -175,10 +267,23 @@ export default function HomePage() {
               View All Homes →
             </Link>
           </div>
-          <div className="grid-3">
-            {featured.map((h) => (
-              <HomeCard key={h.id} home={h} />
-            ))}
+          <div className="featured-slider-container">
+            <div
+              className="featured-slider-track"
+              ref={trackRef}
+              onScroll={handleScroll}
+              style={isMobile ? undefined : { transform: `translateX(-${activeIdx * 33.333333}%)` }}
+            >
+              {featured.map((h) => (
+                <div key={h.id} className="featured-slider-card-wrapper">
+                  <HomeCard home={h} />
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="range-line-container">
+            <div className="range-line-bar" style={{ width: `${barWidth}%` }}></div>
           </div>
         </div>
       </section>
@@ -188,40 +293,85 @@ export default function HomePage() {
           <p
             className="center muted"
             style={{
-              fontSize: ".74rem",
+              fontSize: ".85rem",
               textTransform: "uppercase",
-              letterSpacing: ".16em",
+              letterSpacing: ".18em",
               fontWeight: 700,
-              margin: "0 0 1rem",
+              margin: "0 0 1.5rem",
+              color: "var(--navy)",
             }}
           >
             Proudly Supported By Our Sponsors
           </p>
-          <div className="sponsor-logos">
-            {db.sponsors.slice(0, 7).map((sp) => (
-              <span key={sp.id} className="sponsor-chip">
-                <span
-                  style={{
-                    width: 22,
-                    height: 22,
-                    borderRadius: 6,
-                    background: sp.color,
-                    display: "inline-block",
-                  }}
-                ></span>
-                {sp.name}
-              </span>
+          
+          {/* Desktop Grid */}
+          <div className="sponsor-grid">
+            {sponsorBrands.map((brand) => (
+              <div key={brand.id} className="sponsor-logo-container">
+                <Image
+                  src={brand.img}
+                  alt={brand.alt}
+                  className="sponsor-logo-img"
+                  style={{ width: "auto", height: "100%", maxHeight: "50px" }}
+                />
+              </div>
             ))}
-            <Link
-              href="/sponsors"
-              className="sponsor-chip"
-              style={{ borderStyle: "dashed", color: "var(--gold-dark)" }}
-            >
-              + See all sponsors
+          </div>
+
+          {/* Mobile Marquee */}
+          <div className="marquee-container">
+            <div className="marquee-content">
+              {[...sponsorBrands, ...sponsorBrands].map((brand, idx) => (
+                <div key={`${brand.id}-${idx}`} className="sponsor-logo-container">
+                  <Image
+                    src={brand.img}
+                    alt={brand.alt}
+                    className="sponsor-logo-img"
+                    style={{ width: "auto", height: "100%", maxHeight: "50px" }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ marginTop: "2rem" }}>
+            <Link href="/sponsors" className="btn btn-navy btn-sm">
+              See all Sponsors
             </Link>
           </div>
         </div>
       </div>
     </>
   );
+}
+
+function AnimatedCounter({ value }: { value: number }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let start = 0;
+    const end = value;
+    if (start === end) {
+      setCount(end);
+      return;
+    }
+
+    const duration = 1500; // Total animation duration in ms
+    const increment = Math.max(1, Math.floor(end / 60)); // Stride size
+    const stepTime = Math.max(16, Math.floor(duration / (end / increment)));
+
+    const timer = setInterval(() => {
+      start += increment;
+      if (start >= end) {
+        setCount(end);
+        clearInterval(timer);
+      } else {
+        setCount(start);
+      }
+    }, stepTime);
+
+    return () => clearInterval(timer);
+  }, [value]);
+
+  return <>{count.toLocaleString("en-US")}</>;
 }

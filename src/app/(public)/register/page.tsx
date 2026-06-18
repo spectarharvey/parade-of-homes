@@ -108,7 +108,7 @@ export default function RegisterPage() {
           </div>
         </div>
         <div className="form-card center" style={{ position: "sticky", top: 90 }}>
-          <span className="badge badge-gold">📱 Save to Your Phone</span>
+          <span className="badge badge-gold">Save to Your Phone</span>
           <h3 style={{ marginTop: ".8rem" }}>Take the app with you</h3>
           <p className="muted" style={{ fontSize: ".86rem" }}>
             Scan this code to open the Parade of Homes app on your phone — check

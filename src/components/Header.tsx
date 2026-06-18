@@ -30,8 +30,8 @@ export default function Header() {
             alt="parade-logo"
           />
         </Link>
-        <button className="nav-toggle" onClick={() => setOpen((o) => !o)}>
-          ☰
+        <button className={"nav-toggle" + (open ? " open" : "")} onClick={() => setOpen((o) => !o)}>
+          {open ? "✕" : "☰"}
         </button>
         <nav className={"nav-links" + (open ? " open" : "")} id="navlinks">
           {PUBLIC_NAV.map(([href, label]) => (
@@ -50,7 +50,9 @@ export default function Header() {
             style={{ marginLeft: ".4rem" }}
             onClick={() => setOpen(false)}
           >
-            Register
+            <button className="header-btn">
+              Register
+            </button>
           </Link>
         </nav>
       </div>

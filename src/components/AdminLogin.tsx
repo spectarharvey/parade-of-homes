@@ -9,7 +9,7 @@ import logo from "../assets/parade-logo.webp";
 export default function AdminLogin() {
   const { adminLogin } = useStore();
   const { toast } = useToast();
-  const [err, setErr] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
   return (
     <>
@@ -42,12 +42,10 @@ export default function AdminLogin() {
               const form = e.currentTarget;
               const email = (form.elements.namedItem("email") as HTMLInputElement).value;
               const pw = (form.elements.namedItem("pw") as HTMLInputElement).value;
-              setErr(false);
-              if (await adminLogin(email, pw)) {
-                toast("Welcome back, admin");
-              } else {
-                setErr(true);
-              }
+              setErr(null);
+              const msg = await adminLogin(email, pw);
+              if (msg) setErr(msg);
+              else toast("Welcome back, admin");
             }}
           >
             <div className="fld" style={{ textAlign: "left", margin: "1rem 0 .8rem" }}>
@@ -66,7 +64,7 @@ export default function AdminLogin() {
                   margin: "0 0 .6rem",
                 }}
               >
-                Incorrect password. Try again.
+                {err}
               </p>
             )}
             <button className="btn btn-navy btn-block" type="submit">

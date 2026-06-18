@@ -73,7 +73,7 @@ interface StoreContextValue {
   sendNotification: (n: NotificationItem) => void;
   saveSettings: (target: number, prize: string) => void;
   resetDB: () => void;
-  adminLogin: (email: string, password: string) => Promise<boolean>;
+  adminLogin: (email: string, password: string) => Promise<string | null>;
   adminLogout: () => void;
   // generic admin CRUD (homes | builders | neighborhoods | sponsors | faqs)
   saveEntity: (kind: EntityKind, data: Record<string, unknown>) => Promise<void>;
@@ -412,9 +412,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         });
         setRole(r.role);
         await refetchAdmin(r.role === "ADMIN");
-        return true;
-      } catch {
-        return false;
+        return null;
+      } catch (e) {
+        return (e as Error).message || "Login failed";
       }
     },
     [refetchAdmin]

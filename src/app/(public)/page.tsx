@@ -16,7 +16,7 @@ export default function HomePage() {
       <section className="hero">
         <div className="wrap">
           <span className="hero-dates">
-            📅 Three weekends this Fall · Fri–Sun · 10am–5pm
+            Three weekends this Fall · Fri–Sun · 10am–5pm
           </span>
           <h1>
             Discover Marion County&apos;s

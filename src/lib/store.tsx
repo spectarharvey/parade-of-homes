@@ -108,17 +108,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const refetchPublic = useCallback(async () => {
-    const s = await api("/api/state");
-    setDb((prev) => ({
-      ...prev,
-      contest: s.contest,
-      builders: s.builders,
-      neighborhoods: s.neighborhoods,
-      homes: s.homes,
-      sponsors: s.sponsors,
-      faqs: s.faqs,
-    }));
-    setVisitorsCount(s.visitorsCount ?? 0);
+    try {
+      const s = await api("/api/state");
+      setDb((prev) => ({
+        ...prev,
+        contest: s.contest,
+        builders: s.builders,
+        neighborhoods: s.neighborhoods,
+        homes: s.homes,
+        sponsors: s.sponsors,
+        faqs: s.faqs,
+      }));
+      setVisitorsCount(s.visitorsCount ?? 0);
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   const refetchAdmin = useCallback(async (asAdmin: boolean) => {

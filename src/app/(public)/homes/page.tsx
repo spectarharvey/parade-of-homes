@@ -76,7 +76,7 @@ export default function HomesPage() {
       <div className="toolbar">
         <input
           type="search"
-          placeholder="🔍 Search homes, builders, styles…"
+          placeholder="Search homes, builders, styles…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />

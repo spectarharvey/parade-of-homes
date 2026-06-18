@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
+import Image from "next/image";
+import logo from "../assets/parade-logo.webp"
 const PUBLIC_NAV: [string, string][] = [
   ["/", "Home"],
   ["/homes", "Homes"],
@@ -23,11 +24,11 @@ export default function Header() {
     <header className="site">
       <div className="wrap nav">
         <Link className="brand" href="/" onClick={() => setOpen(false)}>
-          <span className="logo">P</span>
-          <span>
-            <b>Parade of Homes</b>
-            <small>Marion County · MCBIA</small>
-          </span>
+          <Image
+            className="nav-logo"
+            src={logo}
+            alt="parade-logo"
+          />
         </Link>
         <button className="nav-toggle" onClick={() => setOpen((o) => !o)}>
           ☰

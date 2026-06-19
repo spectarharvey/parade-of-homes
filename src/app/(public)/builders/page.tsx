@@ -20,6 +20,36 @@ export default function BuildersPage() {
         <span className="eyebrow">Meet the Makers</span>
         <h2>Featured Builders</h2>
       </div>
+
+      <div
+        className="card"
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "1rem",
+          padding: "1.2rem 1.5rem",
+          marginBottom: "2.4rem",
+          background: "var(--navy)",
+          color: "#fff",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: ".8rem" }}>
+          <Home size={22} />
+          <div>
+            <b style={{ fontSize: "1.05rem" }}>Are you a builder?</b>
+            <div style={{ fontSize: ".86rem", color: "#d8e2ec" }}>
+              Log in to post your homes and manage your profile — your listings
+              appear here under your name.
+            </div>
+          </div>
+        </div>
+        <Link href="/builder" className="btn btn-gold btn-sm">
+          Builder Login →
+        </Link>
+      </div>
+
       <div className="featured-builder" style={{ marginBottom: "2.4rem" }}>
         <div className="left">
           <div className="blogo">{fb.initials}</div>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { serializeHome } from "@/lib/serialize";
 import { json, requireRole } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
@@ -21,5 +22,24 @@ export async function GET() {
     orderBy: { date: "desc" },
   });
 
-  return json({ email: session.email, builder, submissions });
+  const [homes, neighborhoods] = await Promise.all([
+    session.builderId
+      ? prisma.home.findMany({
+          where: { builderId: session.builderId },
+          orderBy: { id: "asc" },
+        })
+      : Promise.resolve([]),
+    prisma.neighborhood.findMany({
+      orderBy: { id: "asc" },
+      select: { id: true, name: true, city: true },
+    }),
+  ]);
+
+  return json({
+    email: session.email,
+    builder,
+    submissions,
+    homes: homes.map(serializeHome),
+    neighborhoods,
+  });
 }

@@ -39,7 +39,28 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased
 }
+/* Global scrollbar */
+::-webkit-scrollbar {
+    width: 3.5px;
+}
 
+
+::-webkit-scrollbar-track {
+    background: #ffffff;
+}
+
+
+::-webkit-scrollbar-thumb {
+    background: #116799;
+    border-radius: 10px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a3c8e4;
+}
+
+/* Global scrollbar end*/
 h1,
 h2,
 h3,

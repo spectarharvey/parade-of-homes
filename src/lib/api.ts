@@ -21,3 +21,10 @@ export async function requireRole(
   if (session.role !== role) return error("Forbidden", 403);
   return session;
 }
+
+/** Returns the session for any logged-in user (admin or builder), else a 401. */
+export async function requireAuth(): Promise<SessionData | NextResponse> {
+  const session = await getSession();
+  if (!session) return error("Not authenticated", 401);
+  return session;
+}

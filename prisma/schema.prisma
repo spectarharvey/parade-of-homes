@@ -106,18 +106,21 @@ model Registrant {
 }
 
 model Submission {
-  id      String    @id @default(cuid())
-  builder String
-  home    String
-  nb      String
-  style   String
-  price   Int
-  beds    Int
-  baths   Float
-  sqft    Int
-  status  SubStatus @default(pending)
-  date    String
-  contact String
+  id        String    @id @default(cuid())
+  builder   String
+  home      String
+  nb        String
+  style     String
+  price     Int
+  beds      Int
+  baths     Float
+  sqft      Int
+  status    SubStatus @default(pending)
+  date      String
+  contact   String
+  blurb     String    @default("")
+  imgs      String[]  @default([])
+  builderId String?
 }
 
 model Notification {

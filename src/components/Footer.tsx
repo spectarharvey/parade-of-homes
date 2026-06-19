@@ -34,6 +34,7 @@ export default function Footer() {
             <Link href="/contest">Contest</Link>
             <Link href="/submit">Submit a Home</Link>
             <Link href="/sponsors">Become a Sponsor</Link>
+            <Link href="/builder">Builder Portal</Link>
             <Link href="/admin">Admin Login</Link>
           </div>
         </div>

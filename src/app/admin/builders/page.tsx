@@ -24,6 +24,28 @@ export default function AdminBuildersPage() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<BuilderDraft>(emptyBuilder);
+  const [loginFor, setLoginFor] = useState<Builder | null>(null);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPw, setLoginPw] = useState("");
+
+  const provisionLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!loginFor) return;
+    try {
+      const res = await fetch(`/api/admin/builders/${loginFor.id}/account`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: loginEmail, password: loginPw }),
+      });
+      if (!res.ok) throw new Error((await res.json()).error);
+      toast("Builder login saved");
+      setLoginFor(null);
+      setLoginEmail("");
+      setLoginPw("");
+    } catch (err) {
+      toast((err as Error).message || "Could not save login");
+    }
+  };
 
   const openAdd = () => {
     setDraft(emptyBuilder());
@@ -126,6 +148,16 @@ export default function AdminBuildersPage() {
                 <div className="pill-row" style={{ marginTop: ".6rem" }}>
                   <button className="ico-btn" onClick={() => openEdit(b)}>
                     Edit
+                  </button>
+                  <button
+                    className="ico-btn"
+                    onClick={() => {
+                      setLoginFor(b);
+                      setLoginEmail("");
+                      setLoginPw("");
+                    }}
+                  >
+                    Set Login
                   </button>
                   <button
                     className="ico-btn danger"
@@ -248,6 +280,43 @@ export default function AdminBuildersPage() {
             </div>
             <button type="submit" className="btn btn-gold">
               Save Builder
+            </button>
+          </form>
+        </Modal>
+      )}
+
+      {loginFor && (
+        <Modal
+          title={`Builder Login — ${loginFor.name}`}
+          onClose={() => setLoginFor(null)}
+        >
+          <p className="muted" style={{ fontSize: ".84rem", marginTop: 0 }}>
+            Create or update the login this builder uses at{" "}
+            <b>/builder</b>. Share these credentials with them.
+          </p>
+          <form onSubmit={provisionLogin}>
+            <div className="fld" style={{ marginBottom: ".7rem" }}>
+              <label>Login Email</label>
+              <input
+                type="email"
+                required
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder="builder@company.com"
+              />
+            </div>
+            <div className="fld" style={{ marginBottom: ".9rem" }}>
+              <label>Password (min 6 chars)</label>
+              <input
+                type="text"
+                required
+                value={loginPw}
+                onChange={(e) => setLoginPw(e.target.value)}
+                placeholder="set a password"
+              />
+            </div>
+            <button type="submit" className="btn btn-gold">
+              Save Login
             </button>
           </form>
         </Modal>

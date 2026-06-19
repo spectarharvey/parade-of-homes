@@ -131,7 +131,25 @@ Postgres database; "Reset Demo Data" reseeds the DB.
 - **QR codes are real & scannable** — each home's check-in QR encodes
   `…/home/<id>?checkin=1`; scanning it on a phone opens the page and auto-checks-in.
 
-**Next phases (not yet built):** builder self-service portal (login + manage own listings),
-in-app camera QR scanner, individual builder profile pages, neighborhood check-in/voting,
-real SMS (Twilio) and web-push/PWA install. Notification "send" currently records the
-message in the DB but does not yet dispatch SMS/push.
+**Builder self-service portal** (`/builder`): builders log in with their own `BUILDER`
+account and can submit home/neighborhood listings (with Cloudinary image uploads), track
+their submission status, and edit their own profile. Admins **review** submissions
+(approve/reject) and can provision a builder's login from **Admin → Builders → Set Login**.
+The seeded demo builder is `builder@heritagehomes.com` / `builder2025`.
+
+**Next phases (not yet built):** in-app camera QR scanner, individual public builder profile
+pages, neighborhood check-in/voting, real SMS (Twilio) and web-push/PWA install.
+Notification "send" currently records the message in the DB but does not yet dispatch.
+
+### Applying schema changes to an existing (already-seeded) database
+
+This project syncs the schema with `prisma db push` (no destructive migrations). When the
+schema changes, apply it to your Neon DB **without losing data**:
+
+```bash
+# with DATABASE_URL pointed at Neon:
+npx prisma db push      # or: npm run db:push  — adds new columns, keeps your data
+```
+
+⚠️ Do **not** run `db:seed` / `db:setup` against a database that already has real data —
+the seed wipes and reloads the demo content. Use `db:push` for schema-only updates.

@@ -482,7 +482,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const fd = new FormData();
     fd.append("file", file);
     // NOTE: no Content-Type header — the browser sets the multipart boundary.
-    const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
     if (!res.ok) {
       const b = await res.json().catch(() => ({}));
       throw new Error(b?.error || "Upload failed");

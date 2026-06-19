@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useStore, useToast } from "@/lib/store";
+import Image from "next/image";
+import logo from "../assets/parade-logo.webp";
 
 export default function BuilderLogin() {
   const { adminLogin, role } = useStore();
@@ -14,9 +16,12 @@ export default function BuilderLogin() {
       <header className="site">
         <div className="wrap nav">
           <Link className="brand" href="/">
-            <b style={{ fontSize: "1.1rem", color: "var(--navy)" }}>
-              Parade of Homes
-            </b>
+            <Image
+              className="nav-logo"
+              src={logo}
+              alt="parade-logo"
+              style={{ height: "42px", width: "auto", objectFit: "contain" }}
+            />
           </Link>
           <nav className="nav-links">
             <Link href="/">↗ Public Site</Link>
@@ -24,8 +29,7 @@ export default function BuilderLogin() {
         </div>
       </header>
       <div className="login-wrap">
-        <div className="login-card">
-          <div style={{ fontSize: "2.4rem" }}>🏗️</div>
+        <div className="login-card"> 
           <h2 style={{ fontSize: "1.6rem" }}>Builder Portal</h2>
           <p className="muted" style={{ fontSize: ".86rem" }}>
             Log in to submit and manage your home listings.

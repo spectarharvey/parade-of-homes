@@ -94,6 +94,7 @@ const builds: Record<string, { model: string; prefix: string; build: Build }> = 
       set(o, b, "tier", (v) => String(v), create, "silver");
       set(o, b, "color", String, create, "#6b7686");
       set(o, b, "cat", String, create, "");
+      set(o, b, "img", String, create, "");
       return o;
     },
   },

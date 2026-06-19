@@ -54,7 +54,7 @@
     h2,
     h3,
     h4 {
-      font-family: 'Lora', Georgia, serif;
+      font-family: 'Poppins', sans-serif;
       font-weight: 600;
       line-height: 1.2;
       margin: 0 0 .4em
@@ -71,14 +71,14 @@
     }
 
     button {
-      font-family: inherit;
+      font-family: 'Poppins', sans-serif;
       cursor: pointer
     }
 
     input,
     select,
     textarea {
-      font-family: inherit;
+      font-family: 'Poppins', sans-serif;
       font-size: .95rem
     }
 
@@ -97,7 +97,7 @@
     }
 
     .eyebrow {
-      font-family: 'Montserrat';
+      font-family: 'Poppins', sans-serif;
       font-weight: 700;
       letter-spacing: .18em;
       text-transform: uppercase;
@@ -106,7 +106,7 @@
     }
 
     .serif {
-      font-family: 'Lora', serif
+      font-family: 'Poppins', sans-serif;
     }
 
     /* buttons */
@@ -267,11 +267,11 @@
       color: var(--navy-deep);
       font-weight: 800;
       font-size: 1.1rem;
-      font-family: 'Lora'
+      font-family: 'Poppins', sans-serif;
     }
 
     .brand b {
-      font-family: 'Lora';
+      font-family: 'Poppins', sans-serif;
       font-weight: 600;
       font-size: 1.12rem;
       letter-spacing: .01em;
@@ -285,7 +285,7 @@
       letter-spacing: .22em;
       text-transform: uppercase;
       margin-top: 2px;
-      font-family: 'Montserrat';
+      font-family: 'Poppins', sans-serif;
       font-weight: 600
     }
 
@@ -488,7 +488,7 @@
     }
 
     .statsbar .num {
-      font-family: 'Lora';
+      font-family: 'Poppins', sans-serif;
       font-size: 2rem;
       color: var(--gold-light);
       font-weight: 600;
@@ -628,7 +628,7 @@
     }
 
     .home-card .price {
-      font-family: 'Lora';
+      font-family: 'Poppins', sans-serif;
       font-size: 1.35rem;
       color: var(--navy);
       font-weight: 600
@@ -692,7 +692,7 @@
       color: var(--navy-deep);
       font-weight: 800;
       font-size: 1.5rem;
-      font-family: 'Lora';
+      font-family: 'Poppins', sans-serif;
       margin-bottom: 1.1rem
     }
 
@@ -1014,7 +1014,7 @@
     }
 
     .spec-grid .sp .v {
-      font-family: 'Lora';
+      font-family: 'Poppins', sans-serif;
       font-size: 1.4rem;
       color: var(--navy);
       font-weight: 600
@@ -1366,7 +1366,7 @@
       margin: 0 auto .8rem;
       display: grid;
       place-items: center;
-      font-family: 'Lora';
+      font-family: 'Poppins', sans-serif;
       font-weight: 700;
       font-size: 1.6rem;
       color: #fff
@@ -1391,7 +1391,7 @@
 
     .admin-side .alogo {
       color: #fff;
-      font-family: 'Lora';
+      font-family: 'Poppins', sans-serif;
       font-weight: 600;
       font-size: 1.1rem;
       padding: .4rem .6rem 1.2rem;
@@ -1455,7 +1455,7 @@
     }
 
     .kpi .kv {
-      font-family: 'Lora';
+      font-family: 'Poppins', sans-serif;
       font-size: 2rem;
       color: var(--navy);
       font-weight: 600;
@@ -1792,7 +1792,7 @@
       }
       function footer() {
         return `<footer class="site"><div class="wrap"><div class="cols">
-    <div><div class="fbrand"><span class="brand"><span class="logo" style="width:38px;height:38px">P</span></span><b style="font-family:Lora;font-size:1.1rem">Parade of Homes</b></div>
+    <div><div class="fbrand"><span class="brand"><span class="logo" style="width:38px;height:38px">P</span></span><b style="font-family:'Poppins', sans-serif;font-size:1.1rem">Parade of Homes</b></div>
     <p style="font-size:.86rem;max-width:320px">Presented by the Marion County Building Industry Association. Explore the finest new homes, plan your tour, vote for your favorites, and enter to win.</p></div>
     <div><h4>Explore</h4><a href="#/homes">All Homes</a><a href="#/neighborhoods">Neighborhoods</a><a href="#/builders">Builders</a><a href="#/map">Map & Route</a></div>
     <div><h4>Get Involved</h4><a href="#/register">Register</a><a href="#/contest">Contest</a><a href="#/submit">Submit a Home</a><a href="#/sponsors">Become a Sponsor</a><a href="#/admin">Admin Login</a></div>
@@ -1953,7 +1953,7 @@
         <span class="badge badge-gold">${h.style}</span> ${h.featured ? '<span class="badge badge-navy">★ Featured</span>' : ''} ${visited ? '<span class="badge badge-green">✓ Checked In</span>' : ''}
         <h1 style="font-size:2.2rem;margin-top:.6rem">${h.name}</h1>
         <p class="muted" style="margin-top:-.2rem">📍 ${n.name}, ${n.city} · Built by ${b.name}</p>
-        <div style="display:flex;align-items:center;gap:1rem;margin:.6rem 0"><div class="price" style="font-family:Lora;font-size:1.9rem;color:var(--navy);font-weight:600">${money(h.price)}</div>
+        <div style="display:flex;align-items:center;gap:1rem;margin:.6rem 0"><div class="price" style="font-family:'Poppins', sans-serif;font-size:1.9rem;color:var(--navy);font-weight:600">${money(h.price)}</div>
           <div><span class="stars" style="font-size:1.1rem">${stars(h.rating)}</span> <span class="muted" style="font-size:.85rem">${h.rating} · ${h.ratings} votes</span></div></div>
         <div class="spec-grid">
           <div class="sp"><div class="v">${h.beds}</div><div class="k">Bedrooms</div></div>
@@ -1982,7 +1982,7 @@
           <hr class="soft">
           <h4 style="font-size:.95rem">Builder</h4>
           <div style="display:flex;gap:.7rem;align-items:center;margin:.5rem 0">
-            <span style="width:44px;height:44px;border-radius:10px;background:${b.color};color:#fff;display:grid;place-items:center;font-family:Lora;font-weight:700">${b.initials}</span>
+            <span style="width:44px;height:44px;border-radius:10px;background:${b.color};color:#fff;display:grid;place-items:center;font-family:'Poppins', sans-serif;font-weight:700">${b.initials}</span>
             <div><b style="font-size:.92rem">${b.name}</b><div class="muted" style="font-size:.78rem">${b.years} yrs · ${b.phone}</div></div>
           </div>
           <a href="#/builders" class="btn btn-navy btn-block btn-sm" style="margin-top:.4rem">View Builder</a>
@@ -2007,9 +2007,9 @@
         <h2 style="font-size:1.9rem;margin-top:.5rem">${n.name}</h2>
         <p class="muted">${n.blurb}</p>
         <div style="display:flex;gap:2rem;margin:1.2rem 0">
-          <div><div style="font-family:Lora;font-size:1.5rem;color:var(--navy)">${homes.length}</div><div class="muted" style="font-size:.74rem;text-transform:uppercase;letter-spacing:.08em">Homes</div></div>
-          <div><div style="font-family:Lora;font-size:1.5rem;color:var(--navy)">${moneyK(n.low)}–${moneyK(n.high)}</div><div class="muted" style="font-size:.74rem;text-transform:uppercase;letter-spacing:.08em">Price Range</div></div>
-          <div><div style="font-family:Lora;font-size:1.5rem;color:var(--navy)">${moneyK(avg)}</div><div class="muted" style="font-size:.74rem;text-transform:uppercase;letter-spacing:.08em">Avg Price</div></div>
+          <div><div style="font-family:'Poppins', sans-serif;font-size:1.5rem;color:var(--navy)">${homes.length}</div><div class="muted" style="font-size:.74rem;text-transform:uppercase;letter-spacing:.08em">Homes</div></div>
+          <div><div style="font-family:'Poppins', sans-serif;font-size:1.5rem;color:var(--navy)">${moneyK(n.low)}–${moneyK(n.high)}</div><div class="muted" style="font-size:.74rem;text-transform:uppercase;letter-spacing:.08em">Price Range</div></div>
+          <div><div style="font-family:'Poppins', sans-serif;font-size:1.5rem;color:var(--navy)">${moneyK(avg)}</div><div class="muted" style="font-size:.74rem;text-transform:uppercase;letter-spacing:.08em">Avg Price</div></div>
         </div>
         <a href="#/neighborhood/${n.id}" class="btn btn-navy btn-sm">View Homes in ${n.name} →</a>
       </div></div>`;
@@ -2028,8 +2028,8 @@
     <h1 style="color:#fff;font-size:2.6rem;margin-top:.5rem">${n.name}</h1>
     <p style="color:#dce5ee;max-width:620px">${n.blurb}</p>
     <div style="display:flex;gap:2.5rem;margin-top:1.2rem">
-      <div><div style="font-family:Lora;font-size:1.8rem;color:var(--gold-light)">${homes.length}</div><div style="font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:#bcc8d4">Homes</div></div>
-      <div><div style="font-family:Lora;font-size:1.8rem;color:var(--gold-light)">${moneyK(n.low)}–${moneyK(n.high)}</div><div style="font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:#bcc8d4">Price Range</div></div>
+      <div><div style="font-family:'Poppins', sans-serif;font-size:1.8rem;color:var(--gold-light)">${homes.length}</div><div style="font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:#bcc8d4">Homes</div></div>
+      <div><div style="font-family:'Poppins', sans-serif;font-size:1.8rem;color:var(--gold-light)">${moneyK(n.low)}–${moneyK(n.high)}</div><div style="font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:#bcc8d4">Price Range</div></div>
     </div></div></section>
     <div class="wrap" style="padding-top:2.4rem"><div class="row-head"><h2 style="font-size:1.6rem">Homes in ${n.name}</h2><a href="#/map" class="btn btn-outline btn-sm">View on Map →</a></div>
     <div class="grid-3">${homes.length ? homes.map(homeCardHTML).join('') : '<div class="empty">No homes listed yet in this neighborhood.</div>'}</div></div>`);
@@ -2041,7 +2041,7 @@
         const dir = DB.builders.map(b => {
           const c = DB.homes.filter(h => h.builder === b.id).length;
           return `<div class="card" style="padding:1.5rem;display:flex;gap:1rem;align-items:flex-start">
-      <span style="width:54px;height:54px;border-radius:12px;background:${b.color};color:#fff;display:grid;place-items:center;font-family:Lora;font-weight:700;font-size:1.3rem;flex-shrink:0">${b.initials}</span>
+      <span style="width:54px;height:54px;border-radius:12px;background:${b.color};color:#fff;display:grid;place-items:center;'Poppins', sans-serif;font-weight:700;font-size:1.3rem;flex-shrink:0">${b.initials}</span>
       <div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center;gap:.5rem"><b style="font-size:1.05rem">${b.name}</b>${b.featured ? '<span class="badge badge-gold">★ Featured</span>' : ''}</div>
         <p class="muted" style="font-size:.85rem;margin:.3rem 0">${b.blurb}</p>
         <div class="muted" style="font-size:.8rem">📞 ${b.phone} · 🌐 ${b.website} · 🏠 ${c} homes · ${b.years} yrs</div>
@@ -2073,13 +2073,13 @@
         setTimeout(bindMap, 0);
         return shell('#/map', `<div class="wrap"><div class="crumb"><a href="#/">Home</a> / Map & Route</div>
     <div class="row-head"><div><span class="eyebrow">Plan Your Visit</span><h2>Interactive Map</h2><p class="muted">Color-coded by neighborhood. Click a pin to preview a home, or build a numbered route.</p></div>
-      <button id="route-mode" class="btn btn-gold btn-sm">🧭 Plan My Route</button></div>
+      <button id="route-mode" class="btn btn-gold btn-sm"> Plan My Route</button></div>
     <div class="map-layout">
       <div class="map-side">
         <div id="side-default">
           <h4 style="font-size:.95rem">Neighborhoods</h4>${legend}
           <hr class="soft">
-          <p class="muted" style="font-size:.82rem">💡 Tip: turn on <b>Plan My Route</b>, then click pins in the order you want to visit. We'll number your stops.</p>
+          <p class="muted" style="font-size:.82rem"> Tip: turn on <b>Plan My Route</b>, then click pins in the order you want to visit. We'll number your stops.</p>
         </div>
         <div id="side-route" style="display:none">
           <div style="display:flex;justify-content:space-between;align-items:center"><h4 style="font-size:.95rem;margin:0">Your Route</h4><button id="clear-route" class="ico-btn">Clear</button></div>
@@ -2114,7 +2114,7 @@
         }
         btn.addEventListener('click', () => {
           routeMode = !routeMode;
-          btn.textContent = routeMode ? '✓ Route Mode On' : '🧭 Plan My Route';
+          btn.textContent = routeMode ? '✓ Route Mode On' : ' Plan My Route';
           btn.classList.toggle('btn-navy', routeMode); btn.classList.toggle('btn-gold', !routeMode);
           $('#side-default').style.display = routeMode ? 'none' : 'block';
           $('#side-route').style.display = routeMode ? 'block' : 'none';
@@ -2162,7 +2162,7 @@
         <div><h3 style="font-size:1.4rem;margin:0">Your Progress</h3><p class="muted" style="margin:0">${done} of ${target} homes visited${entered ? ' · 🎉 You’re entered to win!' : ` · ${remaining} more to enter`}</p></div>
         ${entered ? '<span class="badge badge-green" style="font-size:.8rem;padding:.5rem 1rem">✓ Entered to Win</span>' : '<span class="badge badge-amber" style="font-size:.8rem;padding:.5rem 1rem">In Progress</span>'}
       </div>
-      <div class="progress-ring" style="margin-bottom:1.6rem"><div class="pbar"><i style="width:${pct}%"></i></div><b style="font-family:Lora;font-size:1.2rem;color:var(--navy)">${pct}%</b></div>
+      <div class="progress-ring" style="margin-bottom:1.6rem"><div class="pbar"><i style="width:${pct}%"></i></div><b style="font-family:'Poppins', sans-serif;font-size:1.2rem;color:var(--navy)">${pct}%</b></div>
       <div class="stamp-grid">${stamps}</div>
     </div>
 
@@ -2370,7 +2370,7 @@
       function adminBuilders() {
         return requireAdmin(() => {
           const cards = DB.builders.map(b => `<div class="panel"><div style="display:flex;gap:1rem;align-items:flex-start">
-    <span style="width:50px;height:50px;border-radius:11px;background:${b.color};color:#fff;display:grid;place-items:center;font-family:Lora;font-weight:700;flex-shrink:0">${b.initials}</span>
+    <span style="width:50px;height:50px;border-radius:11px;background:${b.color};color:#fff;display:grid;place-items:center;font-family:'Poppins', sans-serif;font-weight:700;flex-shrink:0">${b.initials}</span>
     <div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center"><b>${b.name}</b>${b.featured ? '<span class="badge badge-gold">★ Featured</span>' : `<button class="ico-btn" data-setfeat="${b.id}">Set Featured</button>`}</div>
     <div class="muted" style="font-size:.8rem;margin:.2rem 0">${DB.homes.filter(h => h.builder === b.id).length} homes · ${b.phone}</div>
     <div class="fld" style="margin-top:.6rem"><label>Ad Space Text</label><textarea data-ad="${b.id}" rows="2">${b.ad}</textarea></div>

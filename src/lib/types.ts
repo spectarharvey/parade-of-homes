@@ -50,6 +50,7 @@ export interface Sponsor {
   tier: "platinum" | "gold" | "silver";
   color: string;
   cat: string;
+  img: string;
 }
 
 export interface Faq {

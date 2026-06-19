@@ -161,7 +161,7 @@ export default function HomePage() {
         <div className="wrap">
           <div className="contest-cta">
             <div>
-              <span className="badge badge-navy">Win Big</span>
+              <span className="badge badge-navy home-badge">Win Big</span>
               <h2>Visit homes. Fill your card. Win the grand prize.</h2>
               <p>
                 Check in at {db.contest.target} showcase homes to be
@@ -312,31 +312,57 @@ export default function HomePage() {
           
           {/* Desktop Grid */}
           <div className="sponsor-grid">
-            {sponsorBrands.map((brand) => (
-              <div key={brand.id} className="sponsor-logo-container">
-                <Image
-                  src={brand.img}
-                  alt={brand.alt}
-                  className="sponsor-logo-img"
-                  style={{ width: "auto", height: "100%", maxHeight: "50px" }}
-                />
-              </div>
-            ))}
+            {db.sponsors.slice(0, 7).map((sponsor) => {
+              const brandImage = sponsorBrands[db.sponsors.indexOf(sponsor) % sponsorBrands.length].img;
+              return (
+                <div key={sponsor.id} className="sponsor-logo-container">
+                  {sponsor.img ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={sponsor.img}
+                      alt={sponsor.name}
+                      className="sponsor-logo-img"
+                      style={{ width: "auto", height: "100%", maxHeight: "50px", objectFit: "contain" }}
+                    />
+                  ) : (
+                    <Image
+                      src={brandImage}
+                      alt={sponsor.name}
+                      className="sponsor-logo-img"
+                      style={{ width: "auto", height: "100%", maxHeight: "50px" }}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           {/* Mobile Marquee */}
           <div className="marquee-container">
             <div className="marquee-content">
-              {[...sponsorBrands, ...sponsorBrands].map((brand, idx) => (
-                <div key={`${brand.id}-${idx}`} className="sponsor-logo-container">
-                  <Image
-                    src={brand.img}
-                    alt={brand.alt}
-                    className="sponsor-logo-img"
-                    style={{ width: "auto", height: "100%", maxHeight: "50px" }}
-                  />
-                </div>
-              ))}
+              {[...db.sponsors.slice(0, 7), ...db.sponsors.slice(0, 7)].map((sponsor, idx) => {
+                const brandImage = sponsorBrands[db.sponsors.indexOf(sponsor) % sponsorBrands.length].img;
+                return (
+                  <div key={`${sponsor.id}-${idx}`} className="sponsor-logo-container">
+                    {sponsor.img ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={sponsor.img}
+                        alt={sponsor.name}
+                        className="sponsor-logo-img"
+                        style={{ width: "auto", height: "100%", maxHeight: "50px", objectFit: "contain" }}
+                      />
+                    ) : (
+                      <Image
+                        src={brandImage}
+                        alt={sponsor.name}
+                        className="sponsor-logo-img"
+                        style={{ width: "auto", height: "100%", maxHeight: "50px" }}
+                      />
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 

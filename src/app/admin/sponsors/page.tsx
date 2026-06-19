@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useStore, useToast } from "@/lib/store";
 import Modal from "@/components/Modal";
+import ImageUpload from "@/components/ImageUpload";
 
 type Tier = "platinum" | "gold" | "silver";
 
@@ -12,6 +13,7 @@ type Draft = {
   tier: Tier;
   color: string;
   cat: string;
+  img: string;
 };
 
 const empty: Draft = {
@@ -19,6 +21,7 @@ const empty: Draft = {
   tier: "platinum",
   color: "#1b2a4a",
   cat: "",
+  img: "",
 };
 
 const tierBadge: Record<Tier, string> = {
@@ -77,17 +80,34 @@ export default function AdminSponsorsPage() {
                       alignItems: "center",
                     }}
                   >
-                    <span
-                      style={{
-                        width: 22,
-                        height: 22,
-                        borderRadius: 5,
-                        background: s.color,
-                        display: "block",
-                        flexShrink: 0,
-                        border: "1px solid var(--line)",
-                      }}
-                    />
+                    {s.img ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={s.img}
+                        alt=""
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 4,
+                          objectFit: "contain",
+                          background: "#fff",
+                          border: "1px solid var(--line)",
+                          flexShrink: 0,
+                        }}
+                      />
+                    ) : (
+                      <span
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: 4,
+                          background: s.color,
+                          display: "block",
+                          flexShrink: 0,
+                          border: "1px solid var(--line)",
+                        }}
+                      />
+                    )}
                     <b style={{ fontSize: ".86rem" }}>{s.name}</b>
                   </div>
                 </td>
@@ -173,6 +193,13 @@ export default function AdminSponsorsPage() {
                 <input
                   value={draft.cat}
                   onChange={(e) => set("cat", e.target.value)}
+                />
+              </div>
+              <div className="fld full">
+                <ImageUpload
+                  label="Sponsor Logo"
+                  value={draft.img}
+                  onChange={(url) => set("img", url)}
                 />
               </div>
             </div>

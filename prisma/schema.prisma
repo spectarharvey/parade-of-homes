@@ -82,6 +82,7 @@ model Sponsor {
   tier  Tier
   color String
   cat   String
+  img   String @default("")
 }
 
 model Faq {

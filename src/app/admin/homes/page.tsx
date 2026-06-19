@@ -337,6 +337,7 @@ export default function AdminHomesPage() {
                   display: "flex",
                   gap: ".5rem",
                   alignItems: "center",
+                  fontSize:"14px"
                 }}
               >
                 <input
@@ -345,6 +346,7 @@ export default function AdminHomesPage() {
                   onChange={(e) =>
                     setDraft({ ...draft, featured: e.target.checked })
                   }
+                 
                 />
                 Featured
               </label>

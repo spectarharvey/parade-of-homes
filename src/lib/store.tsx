@@ -75,6 +75,8 @@ interface StoreContextValue {
   resetDB: () => void;
   adminLogin: (email: string, password: string) => Promise<string | null>;
   adminLogout: () => void;
+  guestUser: { first: string; last: string; email: string } | null;
+  logoutGuest: () => void;
   // generic admin CRUD (homes | builders | neighborhoods | sponsors | faqs)
   saveEntity: (kind: EntityKind, data: Record<string, unknown>) => Promise<void>;
   deleteEntity: (kind: EntityKind, id: string) => Promise<void>;
@@ -104,6 +106,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = useState<"ADMIN" | "BUILDER" | null>(null);
   const [visited, setVisited] = useState<string[]>([]);
   const [route, setRoute] = useState<string[]>([]);
+  const [guestUser, setGuestUser] = useState<{ first: string; last: string; email: string } | null>(null);
 
   const isAdmin = role === "ADMIN";
 
@@ -183,6 +186,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         ]);
       } catch (e) {
         console.warn("Could not load live data (is the database configured?):", e);
+      }
+      try {
+        const gu = localStorage.getItem("poh_guest");
+        if (gu) setGuestUser(JSON.parse(gu));
+      } catch {
+        /* ignore */
       }
       setReady(true);
     })();
@@ -282,11 +291,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           sms: u.sms,
         }),
       });
+      const guest = { first: u.first, last: u.last, email: u.email };
+      setGuestUser(guest);
+      try {
+        localStorage.setItem("poh_guest", JSON.stringify(guest));
+      } catch {
+        /* ignore */
+      }
       await refetchPublic();
       await refetchAdmin(isAdmin);
     },
     [refetchPublic, refetchAdmin, isAdmin]
   );
+
+  const logoutGuest = useCallback(() => {
+    setGuestUser(null);
+    try {
+      localStorage.removeItem("poh_guest");
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const addSubmission = useCallback(
     async (s: Submission) => {
@@ -495,6 +520,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     resetDB,
     adminLogin,
     adminLogout,
+    guestUser,
+    logoutGuest,
     saveEntity,
     deleteEntity,
     uploadImage,

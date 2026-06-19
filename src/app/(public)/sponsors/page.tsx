@@ -65,11 +65,20 @@ export default function SponsorsPage() {
                     style={{ animationDelay: `${idx * 0.08}s, ${idx * 0.35}s` }}
                   >
                     <div style={{ height: sizeSettings.logoHeight, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "0.8rem", width: "100%" }}>
-                      <Image
-                        src={brandImage}
-                        alt={s.name}
-                        style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
-                      />
+                      {s.img ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={s.img}
+                          alt={s.name}
+                          style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+                        />
+                      ) : (
+                        <Image
+                          src={brandImage}
+                          alt={s.name}
+                          style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+                        />
+                      )}
                     </div>
                     <b style={{ fontSize: sizeSettings.nameSize, color: "var(--navy)", fontWeight: 600 }}>{s.name}</b>
                     <div

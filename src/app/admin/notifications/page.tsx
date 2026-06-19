@@ -75,7 +75,7 @@ export default function AdminNotificationsPage() {
               />
             </div>
             <button className="btn btn-gold btn-block" type="submit">
-              🔔 Send Notification
+               Send Notification
             </button>
           </form>
         </div>

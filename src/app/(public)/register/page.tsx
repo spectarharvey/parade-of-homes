@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useStore, useToast } from "@/lib/store";
 import QRCode from "@/components/QRCode";
+import InstallButton from "@/components/InstallButton";
 
 export default function RegisterPage() {
   const { addUser } = useStore();
@@ -118,9 +119,10 @@ export default function RegisterPage() {
             value={typeof window !== "undefined" ? window.location.origin : ""}
             style={{ margin: "1rem auto", width: 180, height: 180 }}
           />
-          <p className="muted" style={{ fontSize: ".78rem" }}>
-            parade-home-go.app
+          <p className="muted" style={{ fontSize: ".78rem", marginBottom: "1rem" }}>
+            Scan to open, or install it as an app:
           </p>
+          <InstallButton />
           <hr className="soft" />
           <div style={{ textAlign: "left" }}>
             <div style={{ display: "flex", gap: ".6rem", marginBottom: ".6rem" }}>

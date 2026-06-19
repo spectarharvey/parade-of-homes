@@ -1,11 +1,26 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AppProvider } from "@/lib/store";
+import PWARegister from "@/components/PWARegister";
 
 export const metadata: Metadata = {
   title: "MCBIA Parade of Homes",
   description:
     "Discover Marion County's finest new homes — tour builder showcases, plan your route, vote for favorites, and enter to win.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Parade of Homes",
+  },
+  icons: {
+    icon: "/icon-192.png",
+    apple: "/apple-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#116799",
 };
 
 export default function RootLayout({
@@ -24,6 +39,7 @@ export default function RootLayout({
       </head>
       <body>
         <AppProvider>{children}</AppProvider>
+        <PWARegister />
       </body>
     </html>
   );

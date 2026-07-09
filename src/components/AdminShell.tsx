@@ -17,7 +17,8 @@ import {
   Inbox,
   Bell,
   Settings,
-  Shield
+  Shield,
+  ClipboardList
 } from "lucide-react";
 
 const ADMIN_NAV = [
@@ -26,6 +27,7 @@ const ADMIN_NAV = [
   { href: "/admin/builders", label: "Builders", icon: Hammer },
   { href: "/admin/neighborhoods", label: "Neighborhoods", icon: MapPinned },
   { href: "/admin/sponsors", label: "Sponsors", icon: Award },
+  { href: "/admin/entries", label: "Entries & Forms", icon: ClipboardList },
   { href: "/admin/faqs", label: "FAQs", icon: HelpCircle },
   { href: "/admin/users", label: "Registered Users", icon: Users },
   { href: "/admin/submissions", label: "Submissions", icon: Inbox },

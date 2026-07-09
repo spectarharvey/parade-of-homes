@@ -139,6 +139,92 @@ model Contest {
   prize  String
 }
 
+/// 2026 Parade Builder Model Home Entry Form submissions (public).
+/// Long-tail fields (features, sub-contractors, sale price, listing agent,
+/// finding instructions) are stored in `details`.
+model BuilderEntry {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  status         String   @default("NEW") // NEW | REVIEWED | APPROVED | ARCHIVED
+
+  // Main contact (MCBIA's internal point of contact)
+  contactName    String
+  contactPhone   String
+  contactEmail   String
+
+  // Builder (shown to the public)
+  builderName    String
+  builderContact String?
+  builderPhone   String
+  builderEmail   String
+  website        String
+  officeAddress  String?
+  license        String
+
+  // Model home
+  modelName      String
+  sqftLiving     String
+  sqftTotal      String
+  beds           String
+  baths          String
+  garage         String
+  subdivision    String?
+  modelAddress   String?
+  price          String
+  buildType      String
+  staged         String
+
+  // Entry / billing
+  entryLevel     String
+  paymentMethod  String
+  signature      String
+  billingName    String?
+  receiptEmail   String?
+  billingAddress String?
+
+  // Uploads (Cloudinary URLs)
+  frontElevation String?
+  logo           String?
+  floorPlan      String?
+
+  details Json?
+}
+
+/// 2026 Parade Sponsor Form submissions (public).
+model SponsorEntry {
+  id             String   @id @default(cuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  status         String   @default("NEW")
+
+  // Contact person for the ad
+  contactName    String
+  contactPhone   String
+  contactEmail   String
+
+  // Company (shown to the public)
+  companyName    String
+  companyPhone   String
+  companyEmail   String
+  website        String
+  companyAddress String?
+
+  // Level / billing
+  level          String
+  paymentMethod  String
+  signature      String
+  billingName    String?
+  billingEmail   String?
+  billingAddress String?
+
+  // Uploads (Cloudinary URLs)
+  logo String?
+  ad   String?
+
+  details Json?
+}
+
 /// Auth accounts for admin + builder portal (Phase 2).
 model Account {
   id           String   @id @default(cuid())

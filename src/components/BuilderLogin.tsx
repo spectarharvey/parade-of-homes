@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import logo from "../assets/parade-logo.webp";
 import Link from "next/link";
 import { useStore, useToast } from "@/lib/store";
 
@@ -14,9 +16,12 @@ export default function BuilderLogin() {
       <header className="site">
         <div className="wrap nav">
           <Link className="brand" href="/">
-            <b style={{ fontSize: "1.1rem", color: "var(--navy)" }}>
-              Parade of Homes
-            </b>
+            <Image
+              className="nav-logo"
+              src={logo}
+              alt="parade-logo"
+              style={{ height: "42px", width: "auto", objectFit: "contain" }}
+            />
           </Link>
           <nav className="nav-links">
             <Link href="/">↗ Public Site</Link>

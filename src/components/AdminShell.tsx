@@ -53,10 +53,7 @@ export default function AdminShell({
               alt="parade-logo"
               style={{ height: "42px", width: "auto", objectFit: "contain" }}
             />
-            <span>
-              <b>Admin Console</b>
-              <small>Parade of Homes · MCBIA</small>
-            </span>
+            
           </Link>
           <button className="nav-toggle" onClick={() => setOpen((o) => !o)}>
             ☰

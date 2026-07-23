@@ -5,6 +5,8 @@ import Image from "next/image";
 import logo from "../assets/parade-logo.webp";
 import Link from "next/link";
 import { useStore, useToast } from "@/lib/store";
+import Image from "next/image";
+import logo from "../assets/parade-logo.webp";
 
 export default function BuilderLogin() {
   const { adminLogin, role } = useStore();
@@ -29,8 +31,7 @@ export default function BuilderLogin() {
         </div>
       </header>
       <div className="login-wrap">
-        <div className="login-card">
-          <div style={{ fontSize: "2.4rem" }}>🏗️</div>
+        <div className="login-card"> 
           <h2 style={{ fontSize: "1.6rem" }}>Builder Portal</h2>
           <p className="muted" style={{ fontSize: ".86rem" }}>
             Log in to submit and manage your home listings.

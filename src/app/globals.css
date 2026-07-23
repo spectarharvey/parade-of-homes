@@ -94,7 +94,7 @@ textarea {
 }
 
 .wrap {
-  max-width: 1180px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 22px
 }
@@ -1079,6 +1079,91 @@ section.block {
     grid-template-columns: 1fr
   }
 }
+
+/* Entry form sections + Event Calendar tier cards */
+.form-section {
+  font-size: 1.02rem;
+  color: var(--navy);
+  margin: 1.6rem 0 .6rem;
+  padding-bottom: .35rem;
+  border-bottom: 2px solid var(--line);
+}
+
+.form-hint {
+  font-size: .8rem;
+  margin: -.2rem 0 .6rem;
+}
+
+.file-upload {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .6rem;
+  font-size: .82rem;
+}
+
+.file-upload input[type="file"] {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: .5rem .7rem;
+  background: var(--cream);
+  width: 100%;
+}
+
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.1rem;
+}
+
+.tier-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.3rem;
+}
+
+.tier-card h3 {
+  font-size: 1.02rem;
+  color: var(--navy);
+  margin: 0;
+}
+
+.tier-card .price {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin: .2rem 0 .4rem;
+}
+
+.tier-bullets {
+  list-style: none;
+  padding: 0;
+  margin: .8rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.tier-bullets li {
+  position: relative;
+  padding-left: 1.2rem;
+  font-size: .82rem;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.tier-bullets li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--green);
+  font-weight: 700;
+}
+
 
 /* breadcrumb */
 .crumb {

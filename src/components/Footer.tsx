@@ -27,13 +27,14 @@ export default function Footer() {
             <Link href="/neighborhoods">Neighborhoods</Link>
             <Link href="/builders">Builders</Link>
             <Link href="/map">Map &amp; Route</Link>
+            <Link href="/event-calendar">Event Calendar</Link>
           </div>
           <div>
             <h4>Get Involved</h4>
             <Link href="/register">Register</Link>
             <Link href="/contest">Contest</Link>
-            <Link href="/submit">Submit a Home</Link>
-            <Link href="/sponsors">Become a Sponsor</Link>
+            <Link href="/builder-entry">Builder Entry Form</Link>
+            <Link href="/sponsor-entry">Sponsor Form</Link>
             <Link href="/builder">Builder Portal</Link>
             <Link href="/admin">Admin Login</Link>
           </div>

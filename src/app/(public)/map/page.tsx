@@ -11,6 +11,8 @@ export default function MapPage() {
   const { toast } = useToast();
   const [routeMode, setRouteMode] = useState(false);
   const [popupId, setPopupId] = useState<string | null>(null);
+  const [tripStarted, setTripStarted] = useState(false);
+  const [tripIdx, setTripIdx] = useState(0);
 
   // Map panning state
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -31,7 +33,7 @@ export default function MapPage() {
     if (!isPanning) return;
     const dist = Math.hypot(e.clientX - startClient.x, e.clientY - startClient.y);
     setDraggedDistance(dist);
-    
+
     // Only drag / pan the map if mouse has moved more than 5 pixels (drag threshold)
     if (dist > 5) {
       if (e.currentTarget.setPointerCapture) {
@@ -52,6 +54,19 @@ export default function MapPage() {
       } catch (err) {}
     }
   };
+
+  const startTrip = () => {
+    if (!route.length) {
+      toast("Add at least one stop to your route first");
+      return;
+    }
+    setRouteMode(true);
+    setTripIdx(0);
+    setTripStarted(true);
+    toast("🧭 Trip started — follow your stops!");
+  };
+
+  const currentStop = tripStarted ? home(route[tripIdx]) : null;
 
   return (
     <div className="wrap">
@@ -124,6 +139,7 @@ export default function MapPage() {
                   className="ico-btn"
                   onClick={() => {
                     clearRoute();
+                    setTripStarted(false);
                     toast("Route cleared");
                   }}
                 >
@@ -131,7 +147,8 @@ export default function MapPage() {
                 </button>
               </div>
               <p className="muted" style={{ fontSize: ".8rem" }}>
-                Click pins on the map to add numbered stops.
+                Click pins on the map to add numbered stops. Hover a pin to see
+                which home it is.
               </p>
               <div>
                 {!route.length ? (
@@ -145,8 +162,17 @@ export default function MapPage() {
                   route.map((id, i) => {
                     const h = home(id);
                     if (!h) return null;
+                    const active = tripStarted && i === tripIdx;
                     return (
-                      <div key={id} className="route-stop">
+                      <div
+                        key={id}
+                        className="route-stop"
+                        style={
+                          active
+                            ? { borderColor: "var(--gold)", background: "rgba(116,167,202,.12)", boxShadow: "0 0 0 2px var(--gold)" }
+                            : undefined
+                        }
+                      >
                         <span className="route-num">{i + 1}</span>
                         <div style={{ flex: 1 }}>
                           <b style={{ fontSize: ".85rem" }}>{h.name}</b>
@@ -156,7 +182,11 @@ export default function MapPage() {
                         </div>
                         <button
                           className="ico-btn danger"
-                          onClick={() => removeRouteStop(id)}
+                          onClick={() => {
+                            removeRouteStop(id);
+                            if (tripIdx >= route.length - 1)
+                              setTripIdx((x) => Math.max(0, x - 1));
+                          }}
                         >
                           ✕
                         </button>
@@ -165,6 +195,27 @@ export default function MapPage() {
                   })
                 )}
               </div>
+              {!!route.length && !tripStarted && (
+                <button
+                  className="btn btn-gold btn-block"
+                  style={{ marginTop: ".8rem" }}
+                  onClick={startTrip}
+                >
+                  ▶ Start Trip ({route.length} stop{route.length > 1 ? "s" : ""})
+                </button>
+              )}
+              {!!route.length && tripStarted && (
+                <button
+                  className="btn btn-outline btn-sm btn-block"
+                  style={{ marginTop: ".8rem" }}
+                  onClick={() => {
+                    setTripStarted(false);
+                    toast("Trip ended");
+                  }}
+                >
+                  ■ End Trip
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -211,11 +262,13 @@ export default function MapPage() {
               const n = nbhd(h.nb);
               const idx = route.indexOf(h.id);
               const numbered = routeMode && idx >= 0;
+              const isCurrent = tripStarted && idx === tripIdx;
               return (
                 <div
                   key={h.id}
                   className="pin"
                   style={{ left: `${h.x}%`, top: `${h.y}%` }}
+                  title={`${h.name} — ${n?.name ?? ""}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     if (draggedDistance > 5) return;
@@ -230,11 +283,16 @@ export default function MapPage() {
                     className="dot"
                     style={{
                       background: n?.color,
-                      outline: numbered ? "3px solid var(--gold)" : "none",
+                      outline: numbered
+                        ? isCurrent
+                          ? "4px solid var(--gold)"
+                          : "3px solid var(--gold-light)"
+                        : "none",
                     }}
                   >
                     <span>{numbered ? idx + 1 : h.beds}</span>
                   </div>
+                  <span className="pin-tip">{h.name}</span>
                 </div>
               );
             })}
@@ -275,6 +333,47 @@ export default function MapPage() {
           </div>
         </div>
       </div>
+
+      {/* Sticky trip bar — prominent on mobile */}
+      {tripStarted && currentStop && (
+        <div className="trip-bar">
+          <div className="trip-bar-info">
+            <span className="trip-bar-step">
+              Stop {tripIdx + 1} of {route.length}
+            </span>
+            <b>{currentStop.name}</b>
+            <span className="muted" style={{ fontSize: ".76rem" }}>
+              {nbhd(currentStop.nb)?.name}
+            </span>
+          </div>
+          <div className="trip-bar-actions">
+            <Link href={`/home/${currentStop.id}`} className="btn btn-outline btn-sm">
+              Details
+            </Link>
+            {tripIdx < route.length - 1 ? (
+              <button
+                className="btn btn-gold btn-sm"
+                onClick={() => {
+                  setTripIdx((i) => i + 1);
+                  toast("➡ Next stop");
+                }}
+              >
+                Next Stop →
+              </button>
+            ) : (
+              <button
+                className="btn btn-navy btn-sm"
+                onClick={() => {
+                  setTripStarted(false);
+                  toast("🏁 You finished your parade route!");
+                }}
+              >
+                Finish ✓
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

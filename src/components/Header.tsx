@@ -8,7 +8,6 @@ import logo from "../assets/parade-logo.webp";
 import { useStore } from "@/lib/store";
 
 const PUBLIC_NAV: [string, string][] = [
-  ["/", "Home"],
   ["/homes", "Homes"],
   ["/neighborhoods", "Neighborhoods"],
   ["/builders", "Builders"],

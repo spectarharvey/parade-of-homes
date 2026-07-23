@@ -5,8 +5,6 @@ import Image from "next/image";
 import logo from "../assets/parade-logo.webp";
 import Link from "next/link";
 import { useStore, useToast } from "@/lib/store";
-import Image from "next/image";
-import logo from "../assets/parade-logo.webp";
 
 export default function BuilderLogin() {
   const { adminLogin, role } = useStore();

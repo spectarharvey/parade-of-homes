@@ -98,7 +98,7 @@ export default function SponsorEntryPage() {
           </p>
           <div style={{ display: "flex", gap: ".6rem", justifyContent: "center", flexWrap: "wrap", marginTop: "1rem" }}>
             <Link href="/" className="btn btn-navy">Back to Home</Link>
-            <Link href="/event-calendar" className="btn btn-outline">Event Calendar</Link>
+            <Link href="/event" className="btn btn-outline">Event Calendar</Link>
           </div>
         </div>
       </div>
@@ -108,7 +108,7 @@ export default function SponsorEntryPage() {
   return (
     <div className="wrap" style={{ maxWidth: 880 }}>
       <div className="crumb">
-        <Link href="/">Home</Link> / <Link href="/event-calendar">Event Calendar</Link> / Sponsor Form
+        <Link href="/">Home</Link> / <Link href="/event">Event Calendar</Link> / Sponsor Form
       </div>
       <div className="sec-head">
         <span className="eyebrow">2026 Parade Sponsor Form</span>

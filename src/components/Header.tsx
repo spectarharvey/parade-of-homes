@@ -11,7 +11,7 @@ const PUBLIC_NAV: [string, string][] = [
   ["/homes", "Homes"],
   ["/neighborhoods", "Neighborhoods"],
   ["/builders", "Builders"],
-  ["/event-calendar", "Event Calendar"],
+  ["/event", "Event Calendar"],
   ["/map", "Map & Route"],
   ["/contest", "Contest"],
   ["/sponsors", "Sponsors"],

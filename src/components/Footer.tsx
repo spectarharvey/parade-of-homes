@@ -27,7 +27,7 @@ export default function Footer() {
             <Link href="/neighborhoods">Neighborhoods</Link>
             <Link href="/builders">Builders</Link>
             <Link href="/map">Map &amp; Route</Link>
-            <Link href="/event-calendar">Event Calendar</Link>
+            <Link href="/event">Event Calendar</Link>
           </div>
           <div>
             <h4>Get Involved</h4>

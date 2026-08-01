@@ -54,22 +54,22 @@ export default function AdminSettingsPage() {
         <hr className="soft" />
         <h3 style={{ fontSize: "1rem" }}>Danger Zone</h3>
         <p className="muted" style={{ fontSize: ".84rem" }}>
-          Restore all demo data to its original state.
+          Restore the 2026 starter catalog and clear event activity data.
         </p>
         <button
           className="btn btn-outline btn-sm"
           onClick={() => {
             if (
               window.confirm(
-                "Reset ALL data back to the original demo seed? This clears edits, submissions, and registrations."
+                "Reset ALL data back to the 2026 starter catalog? This clears edits, submissions, and registrations."
               )
             ) {
               resetDB();
-              toast("Data reset to defaults");
+              toast("Data reset to 2026 starter catalog");
             }
           }}
         >
-          ↺ Reset Demo Data
+          ↺ Reset 2026 Starter Data
         </button>
       </div>
     </>

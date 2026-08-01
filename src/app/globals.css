@@ -531,7 +531,7 @@ footer.site .bottom {
   content: "";
   position: absolute;
   inset: 0;
-  background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=70') center/cover;
+  background: url('/parade-entries/2026/secure-built-rutherford-home.jpg') center/cover;
   opacity: .22;
   mix-blend-mode: luminosity
 }
@@ -810,6 +810,24 @@ section.block {
   margin-bottom: 1.1rem
 }
 
+.featured-builder .blogo.has-image {
+  width: 112px;
+  background: #fff;
+  padding: .55rem
+}
+
+.featured-builder .blogo img,
+.builder-mini-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain
+}
+
+.builder-mini-logo:has(img) {
+  background: #fff !important;
+  border: 1px solid var(--line)
+}
+
 .featured-builder h3 {
   color: #fff;
   font-size: 1.7rem
@@ -833,8 +851,28 @@ section.block {
 }
 
 .featured-builder .right {
-  background: url('https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=900&q=70') center/cover;
+  background: linear-gradient(135deg, rgba(17, 103, 153, .95), rgba(10, 28, 48, .98));
   min-height: 340px
+}
+
+.featured-builder .right.pending-builder-assets {
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  text-align: center
+}
+
+.featured-builder .right.pending-builder-assets div {
+  display: grid;
+  gap: .8rem;
+  justify-items: center;
+  max-width: 280px
+}
+
+.featured-builder .right.pending-builder-assets b {
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1.2
 }
 
 /* contest CTA */

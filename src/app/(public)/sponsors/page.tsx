@@ -1,19 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useStore } from "@/lib/store";
 import type { Sponsor } from "@/lib/types";
-
-import brand1 from "../../../assets/brand1.webp";
-import brand2 from "../../../assets/brand2.png";
-import brand3 from "../../../assets/brand3.webp";
-import brand4 from "../../../assets/brand4.png";
-import brand5 from "../../../assets/brand5.jpg";
-import brand6 from "../../../assets/brand6.png";
-import brand7 from "../../../assets/brand7.jpg";
-
-const sponsorBrands = [brand1, brand2, brand3, brand4, brand5, brand6, brand7];
 
 const tiers: [Sponsor["tier"], string, string][] = [
   ["platinum", "Platinum Sponsors", "tier-platinum"],
@@ -33,10 +22,14 @@ export default function SponsorsPage() {
         <span className="eyebrow">Thank You</span>
         <h2>Our Sponsors</h2>
         <p>
-          The Parade of Homes is made possible by the generous support of these
-          local businesses.
+          The 2026 sponsor list will be added as sponsorships are confirmed.
         </p>
       </div>
+      {!db.sponsors.length ? (
+        <div className="panel" style={{ textAlign: "center", color: "var(--muted)", marginBottom: "1.4rem" }}>
+          Sponsor logos and ads are coming soon.
+        </div>
+      ) : null}
       {tiers.map(([t, label, cls]) => {
         const list = db.sponsors.filter((s) => s.tier === t);
         if (!list.length) return null;
@@ -56,9 +49,7 @@ export default function SponsorsPage() {
               className="premium-sponsor-grid" 
               style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${sizeSettings.minColWidth}, 1fr))` }}
             >
-              {list.map((s, idx) => {
-                const brandImage = sponsorBrands[db.sponsors.indexOf(s) % sponsorBrands.length];
-                return (
+              {list.map((s, idx) => (
                   <div 
                     key={s.id} 
                     className="premium-sponsor-card" 
@@ -72,13 +63,7 @@ export default function SponsorsPage() {
                           alt={s.name}
                           style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
                         />
-                      ) : (
-                        <Image
-                          src={brandImage}
-                          alt={s.name}
-                          style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
-                        />
-                      )}
+                      ) : <b style={{ color: "var(--navy)", textAlign: "center" }}>{s.name}</b>}
                     </div>
                     <b style={{ fontSize: sizeSettings.nameSize, color: "var(--navy)", fontWeight: 600 }}>{s.name}</b>
                     <div
@@ -88,8 +73,7 @@ export default function SponsorsPage() {
                       {s.cat}
                     </div>
                   </div>
-                );
-              })}
+                ))}
             </div>
           </div>
         );
@@ -103,7 +87,7 @@ export default function SponsorsPage() {
           </p>
         </div>
         <div>
-          <Link href="/submit" className="btn btn-navy">
+          <Link href="/sponsor-entry" className="btn btn-navy">
             Become a Sponsor
           </Link>
         </div>

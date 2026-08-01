@@ -1,5 +1,8 @@
 import { prisma } from "./prisma";
 import { serializeHome } from "./serialize";
+import { SEED } from "./seed";
+
+const IMPORTED_2026_HOME_IDS = new Set(SEED.homes.map((h) => h.id));
 
 /** The public catalog the frontend needs to render every public page. */
 export async function getPublicState() {
@@ -14,11 +17,28 @@ export async function getPublicState() {
       prisma.registrant.count(),
     ]);
 
+  const serializedHomes = homes.map(serializeHome);
+  const databaseHasImportedEntries = serializedHomes.some((h) =>
+    IMPORTED_2026_HOME_IDS.has(h.id),
+  );
+
+  if (!databaseHasImportedEntries) {
+    return {
+      contest: SEED.contest,
+      builders: SEED.builders,
+      neighborhoods: SEED.neighborhoods,
+      homes: SEED.homes,
+      sponsors: SEED.sponsors,
+      faqs: SEED.faqs.map((f, order) => ({ ...f, order })),
+      visitorsCount,
+    };
+  }
+
   return {
-    contest: contest ?? { target: 8, prize: "" },
+    contest: contest ?? SEED.contest,
     builders,
     neighborhoods,
-    homes: homes.map(serializeHome),
+    homes: serializedHomes,
     sponsors,
     faqs: faqs.map((f) => ({ id: f.id, q: f.q, a: f.a, order: f.order })),
     visitorsCount,

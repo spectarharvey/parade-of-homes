@@ -82,6 +82,11 @@ const SPONSOR_TIERS: Tier[] = [
   },
 ];
 
+const FEATURED_BUILDER = {
+  name: "Brije Homes",
+  website: "https://www.brije.com/",
+};
+
 export default function EventCalendarPage() {
   return (
     <div className="wrap" style={{ maxWidth: 1080 }}>
@@ -120,8 +125,9 @@ export default function EventCalendarPage() {
       >
         {[
           ["Parade Weekends", "Nov 6–8 & 13–15, 2026"],
-          ["Entry Deadline", "August 7"],
-          ["Logo / Ad Due", "April 15"],
+          ["Entry Deadline", "August 7, 2026"],
+          ["Featured Builder", FEATURED_BUILDER.name],
+          ["Assets Status", "Brije assets pending"],
           ["Location", "Marion County, FL"],
         ].map(([l, v]) => (
           <div key={l}>
@@ -131,6 +137,30 @@ export default function EventCalendarPage() {
             <div style={{ fontWeight: 700, color: "var(--navy)", marginTop: ".2rem" }}>{v}</div>
           </div>
         ))}
+      </div>
+
+      <div
+        className="panel"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: "1rem",
+          alignItems: "center",
+          flexWrap: "wrap",
+          marginTop: "1rem",
+        }}
+      >
+        <div>
+          <span className="badge badge-gold">2026 Featured Builder</span>
+          <h3 style={{ fontSize: "1.25rem", marginTop: ".5rem" }}>{FEATURED_BUILDER.name}</h3>
+          <p className="muted" style={{ margin: ".2rem 0 0" }}>
+            Brije Homes is the Featured Builder for this year. Their home and
+            logo assets will be added once received.
+          </p>
+        </div>
+        <a href={FEATURED_BUILDER.website} target="_blank" rel="noreferrer" className="btn btn-outline">
+          Visit Brije Homes →
+        </a>
       </div>
 
       {/* Builder entries */}

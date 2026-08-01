@@ -16,8 +16,7 @@ export default function NeighborhoodsPage() {
         <span className="eyebrow">Explore by Area</span>
         <h2>Our Neighborhoods</h2>
         <p>
-          Each community has its own character — from resort golf living to
-          walkable village charm.
+          Browse the current 2026 Parade subdivisions and model-home locations.
         </p>
       </div>
       {db.neighborhoods.map((n, i) => {

@@ -17,18 +17,22 @@ import {
 export default function AdminDashboardPage() {
   const { db, builder, nbhd, liveStats } = useStore();
   const s = liveStats();
-  const top = db.homes.slice().sort((a, b) => b.rating - a.rating)[0];
+  const top =
+    db.homes.some((h) => h.ratings > 0)
+      ? db.homes.slice().sort((a, b) => b.rating - a.rating)[0]
+      : db.homes.find((h) => h.featured) || db.homes[0];
   const pending = db.submissions.filter((x) => x.status === "pending").length;
   const optin = db.users.filter((u) => u.sms).length;
   const entered = db.users.filter((u) => u.checkins >= db.contest.target).length;
+  const optinPct = s.visitors ? Math.round((optin / s.visitors) * 100) : 0;
 
   const kpis: [React.ComponentType<{ size?: number }>, string, string, string | number, string, string, string][] = [
-    [Home, "#0f2742", "rgba(15,39,66,.1)", s.homes, "Live Listings", "+2 this week", "var(--green)"],
-    [MapPin, "#2f7d5b", "rgba(47,125,91,.12)", s.checkins.toLocaleString("en-US"), "Total Check-Ins", "+184 today", "var(--green)"],
-    [Users, "#2d6cb5", "rgba(45,108,181,.12)", s.visitors.toLocaleString("en-US"), "Registered Users", "+12 today", "var(--green)"],
+    [Home, "#0f2742", "rgba(15,39,66,.1)", s.homes, "Live Listings", "2026 starter catalog", "var(--muted)"],
+    [MapPin, "#2f7d5b", "rgba(47,125,91,.12)", s.checkins.toLocaleString("en-US"), "Total Check-Ins", "Awaiting visitors", "var(--muted)"],
+    [Users, "#2d6cb5", "rgba(45,108,181,.12)", s.visitors.toLocaleString("en-US"), "Registered Users", "Live count", "var(--muted)"],
     [Inbox, "#d99a2b", "rgba(217,154,43,.14)", pending, "Pending Submissions", pending ? "Needs review" : "All clear", pending ? "var(--amber)" : "var(--green)"],
     [Trophy, "#c9a24b", "rgba(201,162,75,.14)", entered, "Contest Entrants", "of " + s.visitors + " users", "var(--muted)"],
-    [Megaphone, "#c0492f", "rgba(192,73,47,.12)", optin, "SMS Opt-Ins", Math.round((optin / s.visitors) * 100) + "% of users", "var(--muted)"],
+    [Megaphone, "#c0492f", "rgba(192,73,47,.12)", optin, "SMS Opt-Ins", optinPct + "% of users", "var(--muted)"],
   ];
 
   return (
@@ -55,8 +59,9 @@ export default function AdminDashboardPage() {
         <div className="panel">
           <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Star size={18} style={{ color: "var(--navy)" }} />
-            <span>Top-Rated Home</span>
+            <span>{top?.ratings ? "Top-Rated Home" : "Featured Listing"}</span>
           </h3>
+          {top ? (
           <div style={{ display: "flex", gap: "1rem", marginTop: ".8rem" }}>
             <img
               src={homePhoto(top)}
@@ -69,16 +74,25 @@ export default function AdminDashboardPage() {
                 {builder(top.builder)?.name} · {nbhd(top.nb)?.name}
               </div>
               <div style={{ margin: ".4rem 0" }}>
-                <span className="stars" style={{ fontSize: "1.1rem" }}>
-                  {stars(top.rating)}
-                </span>{" "}
-                <b>{top.rating}</b> <span className="muted">({top.ratings} votes)</span>
+                {top.ratings > 0 ? (
+                  <>
+                    <span className="stars" style={{ fontSize: "1.1rem" }}>
+                      {stars(top.rating)}
+                    </span>{" "}
+                    <b>{top.rating}</b> <span className="muted">({top.ratings} votes)</span>
+                  </>
+                ) : (
+                  <span className="badge badge-blue">New 2026 entry</span>
+                )}
               </div>
               <div className="muted" style={{ fontSize: ".82rem", display: "flex", alignItems: "center", gap: "0.3rem", marginTop: "0.4rem" }}>
                 <MapPin size={14} /> <span>{top.checkins} check-ins</span>
               </div>
             </div>
           </div>
+          ) : (
+            <div className="empty">No homes have been added yet.</div>
+          )}
           <hr className="soft" />
           <Link href="/admin/homes" className="btn btn-outline btn-sm">
             Manage Listings →
@@ -89,7 +103,7 @@ export default function AdminDashboardPage() {
             <Bell size={18} style={{ color: "var(--navy)" }} />
             <span>Recent Notifications</span>
           </h3>
-          {db.notifications.slice(0, 3).map((n) => (
+          {db.notifications.length ? db.notifications.slice(0, 3).map((n) => (
             <div
               key={n.id}
               style={{ padding: ".7rem 0", borderBottom: "1px solid var(--line)" }}
@@ -105,7 +119,11 @@ export default function AdminDashboardPage() {
                 Sent to {n.count} users · {n.audience}
               </span>
             </div>
-          ))}
+          )) : (
+            <div className="empty" style={{ padding: "1.4rem" }}>
+              No notifications have been sent yet.
+            </div>
+          )}
           <Link
             href="/admin/notifications"
             className="btn btn-outline btn-sm"

@@ -15,6 +15,8 @@ export const stars = (r: number) =>
 export const imgUrl = (code: string, w = 900) => {
   if (!code) return "";
   if (/^https?:\/\//.test(code)) return code;
+  if (code.startsWith("/") || code.startsWith("data:") || code.startsWith("blob:"))
+    return code;
   return `https://images.unsplash.com/photo-${code}?auto=format&fit=crop&w=${w}&q=70`;
 };
 

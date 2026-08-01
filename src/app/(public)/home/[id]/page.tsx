@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useStore, useToast } from "@/lib/store";
 import { money, stars, imgUrl } from "@/lib/format";
+import { builderLogo } from "@/lib/builderAssets";
 import HomeCard from "@/components/HomeCard";
 import QRCode from "@/components/QRCode";
 import NotFoundBlock from "@/components/NotFoundBlock";
@@ -32,6 +33,7 @@ export default function HomeDetailPage() {
 
   const b = builder(h.builder);
   const n = nbhd(h.nb);
+  const logo = builderLogo(b);
   const isVisited = visited.includes(h.id);
   const inRoute = route.includes(h.id);
   const related = db.homes
@@ -45,13 +47,21 @@ export default function HomeDetailPage() {
       </div>
 
       <div className="gallery">
-        {h.imgs.map((c, i) => (
-          <div
-            key={i}
-            className={i === 0 ? "g0" : ""}
-            style={{ backgroundImage: `url('${imgUrl(c, i === 0 ? 1200 : 600)}')` }}
-          ></div>
-        ))}
+        {h.imgs.map((c, i) => {
+          const isDocumentAsset = /logo|floor-plan/.test(c);
+          return (
+            <div
+              key={i}
+              className={i === 0 ? "g0" : ""}
+              style={{
+                backgroundImage: `url('${imgUrl(c, i === 0 ? 1200 : 600)}')`,
+                backgroundSize: isDocumentAsset ? "contain" : "cover",
+                backgroundRepeat: "no-repeat",
+                backgroundColor: isDocumentAsset ? "#fff" : undefined,
+              }}
+            ></div>
+          );
+        })}
       </div>
 
       <div className="detail-layout" style={{ marginTop: "1.6rem" }}>
@@ -63,7 +73,7 @@ export default function HomeDetailPage() {
           <p className="muted" style={{ marginTop: "-.2rem" }}>
              {n?.name}, {n?.city} · Built by {b?.name}
           </p>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem", margin: ".6rem 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem", margin: ".6rem 0", flexWrap: "wrap" }}>
             <div
               className="price"
               style={{
@@ -75,14 +85,18 @@ export default function HomeDetailPage() {
             >
               {money(h.price)}
             </div>
-            <div>
-              <span className="stars" style={{ fontSize: "1.1rem" }}>
-                {stars(h.rating)}
-              </span>{" "}
-              <span className="muted" style={{ fontSize: ".85rem" }}>
-                {h.rating} · {h.ratings} votes
-              </span>
-            </div>
+            {h.ratings > 0 ? (
+              <div>
+                <span className="stars" style={{ fontSize: "1.1rem" }}>
+                  {stars(h.rating)}
+                </span>{" "}
+                <span className="muted" style={{ fontSize: ".85rem" }}>
+                  {h.rating} · {h.ratings} votes
+                </span>
+              </div>
+            ) : (
+              <span className="badge badge-blue">New 2026 Entry</span>
+            )}
           </div>
           <div className="spec-grid">
             <div className="sp">
@@ -179,6 +193,7 @@ export default function HomeDetailPage() {
             <h4 style={{ fontSize: ".95rem" }}>Builder</h4>
             <div style={{ display: "flex", gap: ".7rem", alignItems: "center", margin: ".5rem 0" }}>
               <span
+                className="builder-mini-logo"
                 style={{
                   width: 44,
                   height: 44,
@@ -191,12 +206,17 @@ export default function HomeDetailPage() {
                   fontWeight: 700,
                 }}
               >
-                {b?.initials}
+                {logo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={logo} alt={b?.name ?? "Builder logo"} />
+                ) : (
+                  b?.initials
+                )}
               </span>
               <div>
                 <b style={{ fontSize: ".92rem" }}>{b?.name}</b>
                 <div className="muted" style={{ fontSize: ".78rem" }}>
-                  {b?.years} yrs · {b?.phone}
+                  {b?.years ? `${b.years} yrs · ` : ""}{b?.phone}
                 </div>
               </div>
             </div>

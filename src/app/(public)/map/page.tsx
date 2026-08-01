@@ -317,9 +317,15 @@ export default function MapPage() {
                       <div className="muted" style={{ fontSize: ".76rem" }}>
                         {nbhd(h.nb)?.name} · {money(h.price)}
                       </div>
-                      <div style={{ fontSize: ".76rem", margin: ".3rem 0" }}>
-                        <span className="stars">{stars(h.rating)}</span> {h.rating}
-                      </div>
+                      {h.ratings > 0 ? (
+                        <div style={{ fontSize: ".76rem", margin: ".3rem 0" }}>
+                          <span className="stars">{stars(h.rating)}</span> {h.rating}
+                        </div>
+                      ) : (
+                        <div className="muted" style={{ fontSize: ".76rem", margin: ".3rem 0" }}>
+                          New 2026 entry
+                        </div>
+                      )}
                       <Link
                         href={`/home/${h.id}`}
                         className="btn btn-navy btn-sm btn-block"

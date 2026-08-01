@@ -174,7 +174,7 @@ export default function BuilderPortalPage() {
               <div style={{ position: "relative" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={homePhoto(h as never) || "/placeholder.png"}
+                  src={homePhoto(h as never) || "/parade-entries/2026/secure-built-rutherford-home.jpg"}
                   alt={h.name}
                   style={{ width: "100%", height: 150, objectFit: "cover", background: "var(--cream)" }}
                 />
@@ -272,7 +272,7 @@ export default function BuilderPortalPage() {
                   required
                   value={(draft.name as string) || ""}
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                  placeholder="The Magnolia Estate"
+                  placeholder="Rutherford Farmhouse"
                 />
               </div>
               <div className="fld">
@@ -336,7 +336,7 @@ export default function BuilderPortalPage() {
                 <label>Features (comma separated)</label>
                 <textarea rows={2} value={(draft.features as string) || ""}
                   onChange={(e) => setDraft({ ...draft, features: e.target.value })}
-                  placeholder="Heated pool, smart home, 3-car garage…" />
+                  placeholder="Quartz countertops, walk-in pantry, covered lanai…" />
               </div>
             </div>
             <p className="muted" style={{ fontSize: ".78rem", margin: "1rem 0 .4rem", fontWeight: 700 }}>

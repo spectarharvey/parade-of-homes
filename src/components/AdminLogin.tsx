@@ -72,7 +72,7 @@ export default function AdminLogin() {
             </button>
           </form>
           <p className="muted" style={{ fontSize: ".72rem", marginTop: "1rem" }}>
-            Demo: <b>admin@mcbia.org</b> / <b>parade2025</b>
+            Seed login: <b>admin@mcbia.org</b> / <b>parade2026</b>
           </p>
         </div>
       </div>

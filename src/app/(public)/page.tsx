@@ -1,40 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@/lib/store";
-import { moneyK } from "@/lib/format";
+import { homePhoto, moneyK } from "@/lib/format";
+import { builderLogo } from "@/lib/builderAssets";
 import HomeCard from "@/components/HomeCard";
-
-import brand1 from "../../assets/brand1.webp";
-import brand2 from "../../assets/brand2.png";
-import brand3 from "../../assets/brand3.webp";
-import brand4 from "../../assets/brand4.png";
-import brand5 from "../../assets/brand5.jpg";
-import brand6 from "../../assets/brand6.png";
-import brand7 from "../../assets/brand7.jpg";
-
-const sponsorBrands = [
-  { id: "b1", img: brand1, alt: "Brand 1" },
-  { id: "b2", img: brand2, alt: "Brand 2" },
-  { id: "b3", img: brand3, alt: "Brand 3" },
-  { id: "b4", img: brand4, alt: "Brand 4" },
-  { id: "b5", img: brand5, alt: "Brand 5" },
-  { id: "b6", img: brand6, alt: "Brand 6" },
-  { id: "b7", img: brand7, alt: "Brand 7" },
-];
 
 export default function HomePage() {
   const { db, liveStats } = useStore();
   const s = liveStats();
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
+  const fbHomes = fb ? db.homes.filter((h) => h.builder === fb.id) : [];
+  const fbLogo = builderLogo(fb);
+  const fbHero = fbHomes[0] ? homePhoto(fbHomes[0]) : "";
   
   // Prioritize featured homes, pad to exactly 6 using non-featured homes
   const featured = [
     ...db.homes.filter((h) => h.featured),
     ...db.homes.filter((h) => !h.featured)
   ].slice(0, 6);
+  const desktopVisibleCards = 3;
+  const maxFeaturedIndex = Math.max(0, featured.length - desktopVisibleCards);
 
   const [activeIdx, setActiveIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -54,11 +41,15 @@ export default function HomePage() {
 
   useEffect(() => {
     if (isMobile) return;
+    if (maxFeaturedIndex === 0) {
+      setActiveIdx(0);
+      return;
+    }
     const interval = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % 4); // Loops: 0, 1, 2, 3 (since 3 are shown on desktop, index goes 0 to 3)
+      setActiveIdx((prev) => (prev >= maxFeaturedIndex ? 0 : prev + 1));
     }, 2000);
     return () => clearInterval(interval);
-  }, [isMobile]);
+  }, [isMobile, maxFeaturedIndex]);
 
   const handleScroll = () => {
     if (!trackRef.current) return;
@@ -67,7 +58,15 @@ export default function HomePage() {
     setScrollProgress(((scrollLeft + clientWidth) / scrollWidth) * 100);
   };
 
-  const barWidth = isMobile ? scrollProgress : ((activeIdx + 3) / featured.length) * 100;
+  const desktopProgress = featured.length
+    ? Math.min(
+        100,
+        ((Math.min(activeIdx, maxFeaturedIndex) + Math.min(desktopVisibleCards, featured.length)) /
+          featured.length) *
+          100,
+      )
+    : 0;
+  const barWidth = isMobile ? scrollProgress : desktopProgress;
 
   const [nbActiveIdx, setNbActiveIdx] = useState(0);
   const nbTotal = db.neighborhoods.length;
@@ -88,7 +87,7 @@ export default function HomePage() {
       <section className="hero">
         <div className="wrap">
           <span className="hero-dates">
-            Three weekends this Fall · Fri–Sun · 10am–5pm
+            Nov 6-8 &amp; 13-15, 2026 · Fri-Sun
           </span>
           <h1>
             Discover Marion County&apos;s
@@ -97,7 +96,7 @@ export default function HomePage() {
           </h1>
           <p className="lede">
             Tour award-winning builder showcases, plan your perfect route, vote
-            for your favorites, and enter to win the grand prize.
+            for your favorites, and enter the visitor giveaway.
           </p>
           <div className="cta-row">
             <Link href="/homes" className="btn btn-gold">
@@ -119,7 +118,7 @@ export default function HomePage() {
             </div>
             <div className="stat">
               <div className="num"><AnimatedCounter value={s.builders} /></div>
-              <div className="lbl">Featured Builders</div>
+              <div className="lbl">Builders</div>
             </div>
             <div className="stat">
               <div className="num"><AnimatedCounter value={s.checkins} /></div>
@@ -142,16 +141,37 @@ export default function HomePage() {
             </div>
             <div className="featured-builder">
               <div className="left">
-                <div className="blogo">{fb.initials}</div>
+                <div className={"blogo" + (fbLogo ? " has-image" : "")}>
+                  {fbLogo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={fbLogo} alt={`${fb.name} logo`} />
+                  ) : (
+                    fb.initials
+                  )}
+                </div>
                 <span className="badge badge-gold">★ Featured Builder</span>
                 <h3>{fb.name}</h3>
                 <p>{fb.blurb}</p>
-                <div className="adbox">📣 {fb.ad}</div>
+                <div className="adbox">{fb.ad}</div>
                 <Link href="/builders" className="btn btn-gold btn-sm">
                   View Builder Profile
                 </Link>
               </div>
-              <div className="right"></div>
+              <div
+                className={"right" + (!fbHero ? " pending-builder-assets" : "")}
+                style={{
+                  background: fbHero
+                    ? `url('${fbHero}') center/cover`
+                    : "linear-gradient(135deg, rgba(17, 103, 153, .95), rgba(10, 28, 48, .98))",
+                }}
+              >
+                {!fbHero ? (
+                  <div>
+                    <span className="badge badge-gold">Assets pending</span>
+                    <b>{fb.name} showcase details coming soon</b>
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
         </section>
@@ -162,7 +182,7 @@ export default function HomePage() {
           <div className="contest-cta">
             <div>
               <span className="badge badge-navy home-badge">Win Big</span>
-              <h2>Visit homes. Fill your card. Win the grand prize.</h2>
+              <h2>Visit homes. Fill your card. Enter the giveaway.</h2>
               <p>
                 Check in at {db.contest.target} showcase homes to be
                 automatically entered. {db.contest.prize}
@@ -278,7 +298,7 @@ export default function HomePage() {
               className="featured-slider-track"
               ref={trackRef}
               onScroll={handleScroll}
-              style={isMobile ? undefined : { transform: `translateX(-${activeIdx * 33.333333}%)` }}
+              style={isMobile ? undefined : { transform: `translateX(-${Math.min(activeIdx, maxFeaturedIndex) * 33.333333}%)` }}
             >
               {featured.map((h) => (
                 <div key={h.id} className="featured-slider-card-wrapper">
@@ -294,6 +314,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {db.sponsors.length ? (
       <div className="sponsor-bar">
         <div className="wrap">
           <p
@@ -312,9 +333,7 @@ export default function HomePage() {
           
           {/* Desktop Grid */}
           <div className="sponsor-grid">
-            {db.sponsors.slice(0, 7).map((sponsor) => {
-              const brandImage = sponsorBrands[db.sponsors.indexOf(sponsor) % sponsorBrands.length].img;
-              return (
+            {db.sponsors.slice(0, 7).map((sponsor) => (
                 <div key={sponsor.id} className="sponsor-logo-container">
                   {sponsor.img ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -324,25 +343,15 @@ export default function HomePage() {
                       className="sponsor-logo-img"
                       style={{ width: "auto", height: "100%", maxHeight: "50px", objectFit: "contain" }}
                     />
-                  ) : (
-                    <Image
-                      src={brandImage}
-                      alt={sponsor.name}
-                      className="sponsor-logo-img"
-                      style={{ width: "auto", height: "100%", maxHeight: "50px" }}
-                    />
-                  )}
+                  ) : <b>{sponsor.name}</b>}
                 </div>
-              );
-            })}
+              ))}
           </div>
 
           {/* Mobile Marquee */}
           <div className="marquee-container">
             <div className="marquee-content">
-              {[...db.sponsors.slice(0, 7), ...db.sponsors.slice(0, 7)].map((sponsor, idx) => {
-                const brandImage = sponsorBrands[db.sponsors.indexOf(sponsor) % sponsorBrands.length].img;
-                return (
+              {[...db.sponsors.slice(0, 7), ...db.sponsors.slice(0, 7)].map((sponsor, idx) => (
                   <div key={`${sponsor.id}-${idx}`} className="sponsor-logo-container">
                     {sponsor.img ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -352,17 +361,9 @@ export default function HomePage() {
                         className="sponsor-logo-img"
                         style={{ width: "auto", height: "100%", maxHeight: "50px", objectFit: "contain" }}
                       />
-                    ) : (
-                      <Image
-                        src={brandImage}
-                        alt={sponsor.name}
-                        className="sponsor-logo-img"
-                        style={{ width: "auto", height: "100%", maxHeight: "50px" }}
-                      />
-                    )}
+                    ) : <b>{sponsor.name}</b>}
                   </div>
-                );
-              })}
+                ))}
             </div>
           </div>
 
@@ -373,6 +374,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      ) : null}
     </>
   );
 }

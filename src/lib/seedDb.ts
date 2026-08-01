@@ -1,14 +1,16 @@
 import bcrypt from "bcryptjs";
 import type { PrismaClient } from "@prisma/client";
-import { SEED } from "./seed";
+import { BUILDER_ENTRIES, SEED } from "./seed";
 
 /**
- * Resets the database to the original demo data. Used by both the
- * `prisma db seed` script and the admin "Reset Demo Data" endpoint.
+ * Resets the database to the 2026 starter catalog. Used by both the
+ * `prisma db seed` script and the admin reset endpoint.
  */
 export async function seedDatabase(prisma: PrismaClient) {
   // Clear in FK-safe order.
   await prisma.account.deleteMany();
+  await prisma.builderEntry.deleteMany();
+  await prisma.sponsorEntry.deleteMany();
   await prisma.home.deleteMany();
   await prisma.submission.deleteMany();
   await prisma.notification.deleteMany();
@@ -51,13 +53,14 @@ export async function seedDatabase(prisma: PrismaClient) {
   await prisma.registrant.createMany({ data: SEED.users });
   await prisma.submission.createMany({ data: SEED.submissions });
   await prisma.notification.createMany({ data: SEED.notifications });
+  await prisma.builderEntry.createMany({ data: BUILDER_ENTRIES });
   await prisma.contest.create({ data: { id: 1, ...SEED.contest } });
 
   // Auth accounts.
   const adminEmail = process.env.ADMIN_EMAIL || "admin@mcbia.org";
-  const adminPassword = process.env.ADMIN_PASSWORD || "parade2025";
-  const builderEmail = process.env.BUILDER_EMAIL || "builder@heritagehomes.com";
-  const builderPassword = process.env.BUILDER_PASSWORD || "builder2025";
+  const adminPassword = process.env.ADMIN_PASSWORD || "parade2026";
+  const builderEmail = process.env.BUILDER_EMAIL || "builder@brije.com";
+  const builderPassword = process.env.BUILDER_PASSWORD || "builder2026";
 
   await prisma.account.create({
     data: {
@@ -71,7 +74,7 @@ export async function seedDatabase(prisma: PrismaClient) {
       email: builderEmail.toLowerCase(),
       passwordHash: await bcrypt.hash(builderPassword, 10),
       role: "BUILDER",
-      builderId: "b1",
+      builderId: "b_brije",
     },
   });
 }

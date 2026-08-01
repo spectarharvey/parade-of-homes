@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 seedDatabase(prisma)
   .then(() => {
-    console.log("✓ Database seeded with Parade of Homes demo data.");
+    console.log("✓ Database seeded with 2026 Parade of Homes starter data.");
   })
   .catch((e) => {
     console.error("Seed failed:", e);

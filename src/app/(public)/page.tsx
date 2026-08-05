@@ -160,7 +160,7 @@ export default function HomePage() {
           <div className="contest-cta">
             <div>
               <span className="badge badge-navy home-badge">Win Big</span>
-              <h2>Visit homes. Fill your card. Enter the giveaway.</h2>
+              <h2>Tour the homes. Enter to win. Pack your bags!</h2>
               <p>
                 Check in at {db.contest.target} showcase homes to be
                 automatically entered. {db.contest.prize}

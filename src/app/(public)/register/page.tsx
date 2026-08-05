@@ -47,6 +47,44 @@ export default function RegisterPage() {
     setDevCode(undefined);
   };
 
+  const completeVerify = async (theToken: string, theCode: string) => {
+    setBusy(true);
+    setErr("");
+    try {
+      if (tab === "register") await verifyRegistration(theToken, theCode);
+      else await verifyLogin(theToken, theCode);
+      setMode("done");
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "That code didn't work. Please try again.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  // Move to the code step. When no email provider is configured the server
+  // returns the code (`devCode`) — log it to the console, auto-fill it, and
+  // auto-verify so the flow can be tested end-to-end. This path disappears the
+  // moment RESEND_API_KEY is set (then no devCode is returned and a real email
+  // is sent instead).
+  const afterCodeSent = (theToken: string, devCode: string | undefined, email: string) => {
+    setToken(theToken);
+    setDevCode(devCode);
+    setMode("verify");
+    if (devCode) {
+      // eslint-disable-next-line no-console
+      console.log(
+        `%c🔑 Parade of Homes ${tab === "login" ? "login" : "verification"} code: ${devCode}`,
+        "font-size:14px;font-weight:700;color:#116799"
+      );
+      setCode(devCode);
+      toast("🔑 Dev mode — code from console, auto-verifying…");
+      setTimeout(() => completeVerify(theToken, devCode), 900);
+    } else {
+      setCode("");
+      toast("📧 We emailed a code to " + email);
+    }
+  };
+
   const submitRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = e.currentTarget as unknown as Record<string, { value: string; checked: boolean }>;
@@ -66,11 +104,7 @@ export default function RegisterPage() {
     try {
       const { token, devCode } = await startRegistration(u);
       setRegData(u);
-      setToken(token);
-      setDevCode(devCode);
-      setCode("");
-      setMode("verify");
-      toast("📧 We emailed a verification code to " + u.email);
+      afterCodeSent(token, devCode, u.email);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Something went wrong. Please try again.");
     } finally {
@@ -87,11 +121,7 @@ export default function RegisterPage() {
     try {
       const { token, devCode } = await startLogin(email);
       setLoginEmail(email);
-      setToken(token);
-      setDevCode(devCode);
-      setCode("");
-      setMode("verify");
-      toast("📧 We emailed a login code to " + email);
+      afterCodeSent(token, devCode, email);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "We couldn't send a login code.");
     } finally {
@@ -102,17 +132,7 @@ export default function RegisterPage() {
   const submitCode = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!token) return;
-    setBusy(true);
-    setErr("");
-    try {
-      if (tab === "register") await verifyRegistration(token, code);
-      else await verifyLogin(token, code);
-      setMode("done");
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : "That code didn't work. Please try again.");
-    } finally {
-      setBusy(false);
-    }
+    await completeVerify(token, code);
   };
 
   const resend = async () => {
@@ -125,11 +145,7 @@ export default function RegisterPage() {
           : tab === "login" && loginEmail
           ? await startLogin(loginEmail)
           : null;
-      if (res) {
-        setToken(res.token);
-        setDevCode(res.devCode);
-        toast("📧 New code sent to " + pendingEmail);
-      }
+      if (res) afterCodeSent(res.token, res.devCode, pendingEmail ?? "");
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Could not resend the code.");
     } finally {

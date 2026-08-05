@@ -14,17 +14,12 @@ export async function sendVerificationEmail(
   const from = process.env.EMAIL_FROM || "Parade of Homes <onboarding@resend.dev>";
 
   if (!key) {
-    console.log(`[dev] Parade of Homes verification code for ${to}: ${code}`);
-    // In production a missing provider must fail loudly — otherwise the guest is
-    // stranded on the code screen with no code and no email.
-    if (process.env.NODE_ENV === "production") {
-      console.error(
-        "RESEND_API_KEY is not set — cannot email verification codes in production."
-      );
-      throw new Error(
-        "Email delivery isn't set up yet. Please try again shortly or contact the event team."
-      );
-    }
+    // No provider configured yet: fall back to a dev/testing flow — the code is
+    // logged and returned so it can be shown/auto-filled on the client. This is
+    // INSECURE for a live giveaway and auto-disables once RESEND_API_KEY is set.
+    console.warn(
+      `[email] RESEND_API_KEY not set — verification code for ${to} is ${code} (dev fallback, not emailed).`
+    );
     return { delivered: false, devCode: code };
   }
 

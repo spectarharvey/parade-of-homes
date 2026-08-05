@@ -27,7 +27,7 @@ export default function Footer() {
             <Link href="/neighborhoods">Neighborhoods</Link>
             <Link href="/builders">Builders</Link>
             <Link href="/map">Map &amp; Route</Link>
-            <Link href="/event">Event Calendar</Link>
+            <Link href="/event">Parade Schedule</Link>
           </div>
           <div>
             <h4>Get Involved</h4>
@@ -41,6 +41,25 @@ export default function Footer() {
         </div>
         <div className="bottom">
           <span>© 2026 MCBIA Parade of Homes. All rights reserved.</span>
+          <span>
+            Crafted with care by{" "}
+            <a
+              href="https://dillonmediagroup.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline",
+                color: "var(--gold-light)",
+                fontSize: "inherit",
+                fontWeight: 600,
+                padding: 0,
+                textDecoration: "underline",
+              }}
+            >
+              Dillon Media Group
+            </a>
+            .
+          </span>
           <span>Built for the community of Marion County, Florida.</span>
         </div>
       </div>

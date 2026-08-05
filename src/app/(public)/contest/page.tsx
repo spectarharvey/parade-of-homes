@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useStore } from "@/lib/store";
-import { money } from "@/lib/format";
+import { money, stars } from "@/lib/format";
 import { PartyPopper, Home, MapPin } from "lucide-react";
 
 export default function ContestPage() {
-  const { db, home, nbhd, visited } = useStore();
+  const { db, home, nbhd, visited, myRatings } = useStore();
   const target = db.contest.target;
   const done = visited.length;
   const remaining = Math.max(0, target - done);
@@ -20,7 +20,7 @@ export default function ContestPage() {
         <Link href="/">Home</Link> / Contest
       </div>
       <div className="sec-head">
-        <span className="eyebrow">Visit · Stamp · Win</span>
+        <span className="eyebrow">Visit · Vote · Win</span>
         <h2>Contest Tracker</h2>
         <p>{db.contest.prize}</p>
       </div>
@@ -125,6 +125,18 @@ export default function ContestPage() {
                     <div className="muted" style={{ fontSize: ".76rem" }}>
                       {nbhd(h.nb)?.name}
                     </div>
+                    {myRatings[id] ? (
+                      <div style={{ fontSize: ".82rem", marginTop: ".15rem" }}>
+                        <span className="stars">{stars(myRatings[id])}</span>{" "}
+                        <span className="muted" style={{ fontSize: ".72rem" }}>
+                          Your vote
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="muted" style={{ fontSize: ".72rem", marginTop: ".15rem" }}>
+                        ☆ Tap to rate this home
+                      </div>
+                    )}
                   </div>
                   <span className="muted" style={{ fontSize: ".78rem" }}>
                     {money(h.price)}
@@ -173,6 +185,20 @@ export default function ContestPage() {
           </Link>
         </div>
       </div>
+
+      <p
+        className="muted"
+        style={{
+          fontSize: ".72rem",
+          lineHeight: 1.5,
+          marginTop: "2rem",
+          opacity: 0.75,
+        }}
+      >
+        Giveaway terms: Based on availability. Excludes holidays and special
+        events. Blackout dates may apply. Certificate cannot be extended and has
+        no cash value. Valid through May 15, 2027.
+      </p>
     </div>
   );
 }

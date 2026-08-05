@@ -18,12 +18,14 @@ import {
   Bell,
   Settings,
   Shield,
-  ClipboardList
+  ClipboardList,
+  QrCode
 } from "lucide-react";
 
 const ADMIN_NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/homes", label: "Home Listings", icon: Home },
+  { href: "/admin/qr-codes", label: "Check-In QR Codes", icon: QrCode },
   { href: "/admin/builders", label: "Builders", icon: Hammer },
   { href: "/admin/neighborhoods", label: "Neighborhoods", icon: MapPinned },
   { href: "/admin/sponsors", label: "Sponsors", icon: Award },

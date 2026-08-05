@@ -11,7 +11,7 @@ const PUBLIC_NAV: [string, string][] = [
   ["/homes", "Homes"],
   ["/neighborhoods", "Neighborhoods"],
   ["/builders", "Builders"],
-  ["/event", "Event Calendar"],
+  ["/event", "Parade Schedule"],
   ["/map", "Map & Route"],
   ["/contest", "Contest"],
   ["/sponsors", "Sponsors"],
@@ -120,16 +120,25 @@ export default function Header() {
               )}
             </div>
           ) : (
-            <Link
-              href="/register"
-              className="btn btn-gold btn-sm"
-              style={{ marginLeft: ".4rem" }}
-              onClick={() => setOpen(false)}
-            >
-              <button className="header-btn">
-                Register
-              </button>
-            </Link>
+            <>
+              <Link
+                href="/register?tab=login"
+                className={pathname === "/register" ? "active" : ""}
+                onClick={() => setOpen(false)}
+              >
+                Log In
+              </Link>
+              <Link
+                href="/register"
+                className="btn btn-gold btn-sm"
+                style={{ marginLeft: ".4rem" }}
+                onClick={() => setOpen(false)}
+              >
+                <button className="header-btn">
+                  Register
+                </button>
+              </Link>
+            </>
           )}
         </nav>
       </div>

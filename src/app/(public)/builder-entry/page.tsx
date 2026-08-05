@@ -151,7 +151,7 @@ export default function BuilderEntryPage() {
           </p>
           <div style={{ display: "flex", gap: ".6rem", justifyContent: "center", flexWrap: "wrap", marginTop: "1rem" }}>
             <Link href="/" className="btn btn-navy">Back to Home</Link>
-            <Link href="/event" className="btn btn-outline">Event Calendar</Link>
+            <Link href="/event" className="btn btn-outline">Parade Schedule</Link>
           </div>
         </div>
       </div>
@@ -161,7 +161,7 @@ export default function BuilderEntryPage() {
   return (
     <div className="wrap" style={{ maxWidth: 880 }}>
       <div className="crumb">
-        <Link href="/">Home</Link> / <Link href="/event">Event Calendar</Link> / Builder Entry Form
+        <Link href="/">Home</Link> / <Link href="/event">Parade Schedule</Link> / Builder Entry Form
       </div>
       <div className="sec-head">
         <span className="eyebrow">2026 Parade Model Entry</span>

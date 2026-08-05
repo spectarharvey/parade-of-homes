@@ -1,18 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useStore, useToast } from "@/lib/store";
 import { money, stars, homePhoto } from "@/lib/format";
+import type { Home } from "@/lib/types";
 
 export default function MapPage() {
-  const { db, home, nbhd, route, toggleRoute, removeRouteStop, clearRoute } =
-    useStore();
+  const {
+    db,
+    home,
+    nbhd,
+    route,
+    toggleRoute,
+    removeRouteStop,
+    clearRoute,
+    tripActive,
+    tripIndex,
+    setTripActive,
+    setTripIndex,
+  } = useStore();
   const { toast } = useToast();
   const [routeMode, setRouteMode] = useState(false);
   const [popupId, setPopupId] = useState<string | null>(null);
-  const [tripStarted, setTripStarted] = useState(false);
-  const [tripIdx, setTripIdx] = useState(0);
+  const [hoverId, setHoverId] = useState<string | null>(null);
+
+  // A persisted, in-progress trip implies Route Mode — restore it when the page
+  // remounts after navigating away.
+  useEffect(() => {
+    if (tripActive) setRouteMode(true);
+  }, [tripActive]);
 
   // Map panning state
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -61,12 +78,67 @@ export default function MapPage() {
       return;
     }
     setRouteMode(true);
-    setTripIdx(0);
-    setTripStarted(true);
+    setTripIndex(0);
+    setTripActive(true);
     toast("🧭 Trip started — follow your stops!");
   };
 
-  const currentStop = tripStarted ? home(route[tripIdx]) : null;
+  const currentStop = tripActive ? home(route[tripIndex]) : null;
+
+  // In Route Mode the preview follows the hovered pin; otherwise it's click-driven.
+  const shownPopupId = routeMode ? hoverId : popupId;
+
+  // Hover-intent: a small delay before hiding lets the pointer travel from the
+  // pin into the popup to click "Add to Route".
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelHide = () => {
+    if (hideTimer.current) {
+      clearTimeout(hideTimer.current);
+      hideTimer.current = null;
+    }
+  };
+  const showPreview = (id: string) => {
+    cancelHide();
+    setHoverId(id);
+  };
+  const hidePreviewSoon = () => {
+    cancelHide();
+    hideTimer.current = setTimeout(() => setHoverId(null), 160);
+  };
+
+  // The model's street address (stored as a "Model location: …" feature),
+  // falling back to the neighborhood for homes without one.
+  const homeAddress = (h: Home) => {
+    const loc = h.features?.find((f) => /^model location:/i.test(f));
+    if (loc) return loc.replace(/^model location:\s*/i, "").trim();
+    const n = nbhd(h.nb);
+    return n ? `${n.name}, ${n.city}, FL` : h.name;
+  };
+
+  // Google Maps directions deep link (no API key required). Omitting the origin
+  // lets Google Maps use the visitor's current location.
+  const directionsUrl = (destination: string, waypoints: string[] = []) => {
+    const params = new URLSearchParams({
+      api: "1",
+      destination,
+      travelmode: "driving",
+    });
+    if (waypoints.length) params.set("waypoints", waypoints.join("|"));
+    return `https://www.google.com/maps/dir/?${params.toString()}`;
+  };
+
+  const openDirections = (url: string) =>
+    window.open(url, "_blank", "noopener,noreferrer");
+
+  // Full route: current location → each stop in order.
+  const openRouteDirections = () => {
+    const addrs = route
+      .map((id) => home(id))
+      .filter((h): h is Home => Boolean(h))
+      .map((h) => homeAddress(h));
+    if (!addrs.length) return;
+    openDirections(directionsUrl(addrs[addrs.length - 1], addrs.slice(0, -1)));
+  };
 
   return (
     <div className="wrap">
@@ -87,6 +159,7 @@ export default function MapPage() {
           onClick={() => {
             setRouteMode((m) => !m);
             setPopupId(null);
+            setHoverId(null);
           }}
         >
           {routeMode ? "✓ Route Mode On" : "Plan My Route"}
@@ -139,7 +212,7 @@ export default function MapPage() {
                   className="ico-btn"
                   onClick={() => {
                     clearRoute();
-                    setTripStarted(false);
+                    setTripActive(false);
                     toast("Route cleared");
                   }}
                 >
@@ -147,8 +220,8 @@ export default function MapPage() {
                 </button>
               </div>
               <p className="muted" style={{ fontSize: ".8rem" }}>
-                Click pins on the map to add numbered stops. Hover a pin to see
-                which home it is.
+                Click pins on the map to add numbered stops. Hover a pin to
+                preview the home.
               </p>
               <div>
                 {!route.length ? (
@@ -162,7 +235,7 @@ export default function MapPage() {
                   route.map((id, i) => {
                     const h = home(id);
                     if (!h) return null;
-                    const active = tripStarted && i === tripIdx;
+                    const active = tripActive && i === tripIndex;
                     return (
                       <div
                         key={id}
@@ -184,8 +257,8 @@ export default function MapPage() {
                           className="ico-btn danger"
                           onClick={() => {
                             removeRouteStop(id);
-                            if (tripIdx >= route.length - 1)
-                              setTripIdx((x) => Math.max(0, x - 1));
+                            if (tripIndex >= route.length - 1)
+                              setTripIndex(Math.max(0, tripIndex - 1));
                           }}
                         >
                           ✕
@@ -195,7 +268,7 @@ export default function MapPage() {
                   })
                 )}
               </div>
-              {!!route.length && !tripStarted && (
+              {!!route.length && !tripActive && (
                 <button
                   className="btn btn-gold btn-block"
                   style={{ marginTop: ".8rem" }}
@@ -204,17 +277,26 @@ export default function MapPage() {
                   ▶ Start Trip ({route.length} stop{route.length > 1 ? "s" : ""})
                 </button>
               )}
-              {!!route.length && tripStarted && (
-                <button
-                  className="btn btn-outline btn-sm btn-block"
-                  style={{ marginTop: ".8rem" }}
-                  onClick={() => {
-                    setTripStarted(false);
-                    toast("Trip ended");
-                  }}
-                >
-                  ■ End Trip
-                </button>
+              {!!route.length && tripActive && (
+                <>
+                  <button
+                    className="btn btn-navy btn-block"
+                    style={{ marginTop: ".8rem" }}
+                    onClick={openRouteDirections}
+                  >
+                    🧭 Get Directions (Google Maps)
+                  </button>
+                  <button
+                    className="btn btn-outline btn-sm btn-block"
+                    style={{ marginTop: ".6rem" }}
+                    onClick={() => {
+                      setTripActive(false);
+                      toast("Trip ended");
+                    }}
+                  >
+                    ■ End Trip
+                  </button>
+                </>
               )}
             </div>
           )}
@@ -262,13 +344,19 @@ export default function MapPage() {
               const n = nbhd(h.nb);
               const idx = route.indexOf(h.id);
               const numbered = routeMode && idx >= 0;
-              const isCurrent = tripStarted && idx === tripIdx;
+              const isCurrent = tripActive && idx === tripIndex;
               return (
                 <div
                   key={h.id}
                   className="pin"
                   style={{ left: `${h.x}%`, top: `${h.y}%` }}
                   title={`${h.name} — ${n?.name ?? ""}`}
+                  onMouseEnter={() => {
+                    if (routeMode) showPreview(h.id);
+                  }}
+                  onMouseLeave={() => {
+                    if (routeMode) hidePreviewSoon();
+                  }}
                   onClick={(e) => {
                     e.stopPropagation();
                     if (draggedDistance > 5) return;
@@ -296,9 +384,9 @@ export default function MapPage() {
                 </div>
               );
             })}
-            {popupId &&
+            {shownPopupId &&
               (() => {
-                const h = home(popupId);
+                const h = home(shownPopupId);
                 if (!h) return null;
                 return (
                   <div
@@ -309,6 +397,12 @@ export default function MapPage() {
                       transform: h.y < 30 ? "translate(-50%, 15px)" : "translate(-50%,-100%)",
                     }}
                     onClick={(e) => e.stopPropagation()}
+                    onMouseEnter={() => {
+                      if (routeMode) cancelHide();
+                    }}
+                    onMouseLeave={() => {
+                      if (routeMode) hidePreviewSoon();
+                    }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={homePhoto(h)} alt="" />
@@ -317,21 +411,33 @@ export default function MapPage() {
                       <div className="muted" style={{ fontSize: ".76rem" }}>
                         {nbhd(h.nb)?.name} · {money(h.price)}
                       </div>
-                      {h.ratings > 0 ? (
+                      {h.ratings > 0 && (
                         <div style={{ fontSize: ".76rem", margin: ".3rem 0" }}>
                           <span className="stars">{stars(h.rating)}</span> {h.rating}
                         </div>
-                      ) : (
-                        <div className="muted" style={{ fontSize: ".76rem", margin: ".3rem 0" }}>
-                          New 2026 entry
-                        </div>
                       )}
-                      <Link
-                        href={`/home/${h.id}`}
-                        className="btn btn-navy btn-sm btn-block"
-                      >
-                        View Home →
-                      </Link>
+                      {(() => {
+                        const inRoute = route.includes(h.id);
+                        return (
+                          <button
+                            className={
+                              "btn btn-sm btn-block " +
+                              (inRoute ? "btn-outline" : "btn-navy")
+                            }
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleRoute(h.id);
+                              toast(
+                                inRoute
+                                  ? "Removed from route"
+                                  : "Added to your route"
+                              );
+                            }}
+                          >
+                            {inRoute ? "✓ In Route" : "Add to Route"}
+                          </button>
+                        );
+                      })()}
                     </div>
                   </div>
                 );
@@ -341,11 +447,11 @@ export default function MapPage() {
       </div>
 
       {/* Sticky trip bar — prominent on mobile */}
-      {tripStarted && currentStop && (
+      {tripActive && currentStop && (
         <div className="trip-bar">
           <div className="trip-bar-info">
             <span className="trip-bar-step">
-              Stop {tripIdx + 1} of {route.length}
+              Stop {tripIndex + 1} of {route.length}
             </span>
             <b>{currentStop.name}</b>
             <span className="muted" style={{ fontSize: ".76rem" }}>
@@ -356,11 +462,17 @@ export default function MapPage() {
             <Link href={`/home/${currentStop.id}`} className="btn btn-outline btn-sm">
               Details
             </Link>
-            {tripIdx < route.length - 1 ? (
+            <button
+              className="btn btn-navy btn-sm"
+              onClick={() => openDirections(directionsUrl(homeAddress(currentStop)))}
+            >
+              🧭 Directions
+            </button>
+            {tripIndex < route.length - 1 ? (
               <button
                 className="btn btn-gold btn-sm"
                 onClick={() => {
-                  setTripIdx((i) => i + 1);
+                  setTripIndex(tripIndex + 1);
                   toast("➡ Next stop");
                 }}
               >
@@ -370,7 +482,7 @@ export default function MapPage() {
               <button
                 className="btn btn-navy btn-sm"
                 onClick={() => {
-                  setTripStarted(false);
+                  setTripActive(false);
                   toast("🏁 You finished your parade route!");
                 }}
               >

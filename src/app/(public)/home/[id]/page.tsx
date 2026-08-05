@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useStore, useToast } from "@/lib/store";
 import { money, stars, imgUrl } from "@/lib/format";
 import { builderLogo } from "@/lib/builderAssets";
 import HomeCard from "@/components/HomeCard";
-import QRCode from "@/components/QRCode";
+import QRScanner from "@/components/QRScanner";
 import NotFoundBlock from "@/components/NotFoundBlock";
 
 export default function HomeDetailPage() {
@@ -16,8 +16,29 @@ export default function HomeDetailPage() {
     useStore();
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const [scanning, setScanning] = useState(false);
 
   const h = home(id);
+
+  // Decode a scanned check-in QR (…/home/<id>?checkin=1) and record the visit.
+  const handleScan = (text: string) => {
+    setScanning(false);
+    const match = text.match(/\/home\/([^/?#\s]+)/);
+    const scannedId = match ? decodeURIComponent(match[1]) : null;
+    const target = scannedId && home(scannedId) ? scannedId : null;
+    if (!target) {
+      toast("That doesn't look like a Parade check-in code.");
+      return;
+    }
+    if (visited.includes(target)) {
+      toast("You're already checked in here.");
+      return;
+    }
+    checkIn(target);
+    toast("✓ Checked in at " + (home(target)?.name ?? "this home") + "!");
+    if (target !== id) router.push(`/home/${target}`);
+  };
 
   // Auto check-in when arriving via a scanned QR code (…/home/<id>?checkin=1)
   useEffect(() => {
@@ -34,6 +55,11 @@ export default function HomeDetailPage() {
   const b = builder(h.builder);
   const n = nbhd(h.nb);
   const logo = builderLogo(b);
+  const builderSite = b?.website
+    ? /^https?:\/\//.test(b.website)
+      ? b.website
+      : `https://${b.website}`
+    : null;
   const isVisited = visited.includes(h.id);
   const inRoute = route.includes(h.id);
   const related = db.homes
@@ -42,6 +68,9 @@ export default function HomeDetailPage() {
 
   return (
     <div className="wrap">
+      {scanning && (
+        <QRScanner onScan={handleScan} onClose={() => setScanning(false)} />
+      )}
       <div className="crumb">
         <Link href="/">Home</Link> / <Link href="/homes">Homes</Link> / {h.name}
       </div>
@@ -85,7 +114,7 @@ export default function HomeDetailPage() {
             >
               {money(h.price)}
             </div>
-            {h.ratings > 0 ? (
+            {h.ratings > 0 && (
               <div>
                 <span className="stars" style={{ fontSize: "1.1rem" }}>
                   {stars(h.rating)}
@@ -94,8 +123,6 @@ export default function HomeDetailPage() {
                   {h.rating} · {h.ratings} votes
                 </span>
               </div>
-            ) : (
-              <span className="badge badge-blue">New 2026 Entry</span>
             )}
           </div>
           <div className="spec-grid">
@@ -153,31 +180,24 @@ export default function HomeDetailPage() {
         <aside>
           <div className="side-card">
             <div style={{ textAlign: "center" }}>
-              <QRCode
-                value={
-                  (typeof window !== "undefined" ? window.location.origin : "") +
-                  `/home/${h.id}?checkin=1`
-                }
-                style={{ margin: "0 auto" }}
-              />
-              <p style={{ fontSize: ".78rem", fontWeight: 700, margin: ".7rem 0 .2rem" }}>
-                Check-In Code
+              <p style={{ fontSize: ".78rem", fontWeight: 700, margin: "0 0 .2rem" }}>
+                Check In
               </p>
               <p className="muted" style={{ fontSize: ".74rem", margin: "0 0 1rem" }}>
-                Scan at the door or tap below to record your visit.
+                Scan the QR code posted inside the home to record your visit.
               </p>
               <button
                 className={"btn " + (isVisited ? "btn-outline" : "btn-gold") + " btn-block"}
                 disabled={isVisited}
                 onClick={() => {
-                  if (!isVisited) {
-                    checkIn(h.id);
-                    toast("✓ Checked in at " + h.name + "!");
-                  }
+                  if (!isVisited) setScanning(true);
                 }}
               >
-                {isVisited ? "✓ Already Checked In" : "📍 Check In Here"}
+                {isVisited ? "✓ Already Checked In" : "📷 Check In Here"}
               </button>
+              <p className="muted" style={{ fontSize: ".72rem", margin: ".7rem 0 0" }}>
+                You must be registered with the Parade of Homes app to vote.
+              </p>
               <button
                 className="btn btn-outline btn-block"
                 style={{ marginTop: ".6rem" }}
@@ -220,13 +240,25 @@ export default function HomeDetailPage() {
                 </div>
               </div>
             </div>
-            <Link
-              href="/builders"
-              className="btn btn-navy btn-block btn-sm"
-              style={{ marginTop: ".4rem" }}
-            >
-              View Builder
-            </Link>
+            {builderSite ? (
+              <a
+                href={builderSite}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-navy btn-block btn-sm"
+                style={{ marginTop: ".4rem" }}
+              >
+                Visit Website ↗
+              </a>
+            ) : (
+              <Link
+                href="/builders"
+                className="btn btn-navy btn-block btn-sm"
+                style={{ marginTop: ".4rem" }}
+              >
+                View Builder
+              </Link>
+            )}
           </div>
         </aside>
       </div>

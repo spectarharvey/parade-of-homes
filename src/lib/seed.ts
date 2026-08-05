@@ -276,7 +276,7 @@ export const SEED: DB = {
     },
     {
       q: "Who is the featured builder for 2026?",
-      a: "Brije Homes is the 2026 Featured Builder. Their featured assets are pending and will be added when available.",
+      a: "[Brije Homes](https://www.brije.com/) is the 2026 Featured Builder. Also named the 2025 Marion County Builder of the Year and recognized with multiple 2025 Parade of Homes awards, Brije Homes creates custom homes with quality craftsmanship and a personalized building experience, helping families across Central Florida build with confidence.",
     },
   ],
   users: [],

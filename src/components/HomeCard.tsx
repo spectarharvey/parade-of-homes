@@ -23,16 +23,12 @@ export default function HomeCard({ home }: { home: Home }) {
         <div className="by">
           by {b?.name} · {n?.name}
         </div>
-        {home.ratings > 0 ? (
+        {home.ratings > 0 && (
           <div style={{ marginTop: ".4rem", fontSize: ".8rem" }}>
             <span className="stars">{stars(home.rating)}</span>{" "}
             <span className="muted">
               {home.rating} ({home.ratings})
             </span>
-          </div>
-        ) : (
-          <div className="muted" style={{ marginTop: ".4rem", fontSize: ".8rem" }}>
-            New 2026 entry
           </div>
         )}
         <div className="specs">

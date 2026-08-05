@@ -265,7 +265,7 @@ export default function HomePage() {
           <div className="row-head">
             <div>
               <span className="eyebrow">Don&apos;t Miss These</span>
-              <h2>Featured Listings</h2>
+              <h2>Showstopping Homes</h2>
             </div>
             <Link href="/homes" className="btn btn-outline btn-sm">
               View All Homes →

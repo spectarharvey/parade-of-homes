@@ -5,6 +5,34 @@ import { useState } from "react";
 import { useStore } from "@/lib/store";
 import { Search } from "lucide-react";
 
+// Renders an answer string, turning [label](href) markdown links into anchors.
+// External links (http/https) open in a new tab.
+function renderAnswer(text: string) {
+  const parts: React.ReactNode[] = [];
+  const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let lastIndex = 0;
+  let key = 0;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    const [, label, href] = match;
+    const external = /^https?:\/\//.test(href);
+    parts.push(
+      <a
+        key={key++}
+        href={href}
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        style={{ color: "var(--navy)", fontWeight: 600 }}
+      >
+        {label}
+      </a>
+    );
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts;
+}
+
 export default function FAQPage() {
   const { db } = useStore();
   const [searchQuery, setSearchQuery] = useState("");
@@ -191,7 +219,7 @@ export default function FAQPage() {
                       paddingTop: "0.8rem",
                     }}
                   >
-                    {f.a}
+                    {renderAnswer(f.a)}
                   </div>
                 </div>
               </div>
@@ -225,11 +253,11 @@ export default function FAQPage() {
             Our event team is ready to help you coordinate your tours, check-in errors, or builder registrations.
           </p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="mailto:events@mcbia.org" className="btn btn-gold" style={{ border: "none", color: "var(--navy-deep)", padding: "0.75rem 1.5rem" }}>
+            <a href="mailto:admin@mcbia.org" className="btn btn-gold" style={{ border: "none", color: "var(--navy-deep)", padding: "0.75rem 1.5rem" }}>
               Email Support
             </a>
-            <a href="tel:3525550100" className="btn btn-outline" style={{ borderColor: "rgba(255,255,255,0.4)", color: "#ffffff", padding: "0.75rem 1.5rem", background: "rgba(255,255,255,0.05)" }}>
-              Call (352) 555-0100
+            <a href="tel:3526944133" className="btn btn-outline" style={{ borderColor: "rgba(255,255,255,0.4)", color: "#ffffff", padding: "0.75rem 1.5rem", background: "rgba(255,255,255,0.05)" }}>
+              Call (352) 694-4133
             </a>
           </div>
         </div>

@@ -8,8 +8,7 @@ import { builderLogo } from "@/lib/builderAssets";
 import HomeCard from "@/components/HomeCard";
 
 export default function HomePage() {
-  const { db, liveStats } = useStore();
-  const s = liveStats();
+  const { db } = useStore();
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
   const fbHomes = fb ? db.homes.filter((h) => h.builder === fb.id) : [];
   const fbLogo = builderLogo(fb);
@@ -109,28 +108,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <div className="statsbar">
-        <div className="wrap">
-          <div className="grid">
-            <div className="stat">
-              <div className="num"><AnimatedCounter value={s.homes} /></div>
-              <div className="lbl">Showcase Homes</div>
-            </div>
-            <div className="stat">
-              <div className="num"><AnimatedCounter value={s.builders} /></div>
-              <div className="lbl">Builders</div>
-            </div>
-            <div className="stat">
-              <div className="num"><AnimatedCounter value={s.checkins} /></div>
-              <div className="lbl">Visitor Check-Ins</div>
-            </div>
-            <div className="stat">
-              <div className="num"><AnimatedCounter value={s.visitors} /></div>
-              <div className="lbl">Registered Guests</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CountdownTimer />
 
       {fb && (
         <section className="block">
@@ -379,33 +357,56 @@ export default function HomePage() {
   );
 }
 
-function AnimatedCounter({ value }: { value: number }) {
-  const [count, setCount] = useState(0);
+// Opening day of the 2026 Parade of Homes (Fri, Nov 6, 2026 — anchored to US Eastern).
+const PARADE_START = new Date("2026-11-06T00:00:00-05:00").getTime();
+
+function CountdownTimer() {
+  const calc = () => {
+    const diff = PARADE_START - Date.now();
+    if (diff <= 0) return { d: 0, h: 0, m: 0, s: 0, done: true };
+    const secs = Math.floor(diff / 1000);
+    return {
+      d: Math.floor(secs / 86400),
+      h: Math.floor((secs % 86400) / 3600),
+      m: Math.floor((secs % 3600) / 60),
+      s: secs % 60,
+      done: false,
+    };
+  };
+
+  const [t, setT] = useState({ d: 0, h: 0, m: 0, s: 0, done: false });
+  // Compute on the client only to avoid an SSR/hydration mismatch on the seconds.
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    let start = 0;
-    const end = value;
-    if (start === end) {
-      setCount(end);
-      return;
-    }
-
-    const duration = 1500; // Total animation duration in ms
-    const increment = Math.max(1, Math.floor(end / 60)); // Stride size
-    const stepTime = Math.max(16, Math.floor(duration / (end / increment)));
-
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= end) {
-        setCount(end);
-        clearInterval(timer);
-      } else {
-        setCount(start);
-      }
-    }, stepTime);
-
+    setMounted(true);
+    setT(calc());
+    const timer = setInterval(() => setT(calc()), 1000);
     return () => clearInterval(timer);
-  }, [value]);
+  }, []);
 
-  return <>{count.toLocaleString("en-US")}</>;
+  const cells = [
+    { n: t.d, l: "Days" },
+    { n: t.h, l: "Hours" },
+    { n: t.m, l: "Minutes" },
+    { n: t.s, l: "Seconds" },
+  ];
+
+  return (
+    <div className="statsbar countdown">
+      <div className="wrap">
+        <div className="cd-title">
+          {t.done ? "The 2026 Parade of Homes is here" : "Countdown to the 2026 Parade of Homes · Nov 6"}
+        </div>
+        <div className="grid">
+          {cells.map((c) => (
+            <div className="stat" key={c.l}>
+              <div className="num">{mounted ? String(c.n).padStart(2, "0") : "––"}</div>
+              <div className="lbl">{c.l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }

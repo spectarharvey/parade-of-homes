@@ -531,7 +531,7 @@ footer.site .bottom {
   content: "";
   position: absolute;
   inset: 0;
-  background: url('/parade-entries/2026/secure-built-rutherford-home.jpg') center/cover;
+  background: url('/parade-entries/2026/brije-home.png') center/cover;
   opacity: .22;
   mix-blend-mode: luminosity
 }
@@ -585,6 +585,16 @@ footer.site .bottom {
 .statsbar {
   background: var(--navy-deep);
   border-top: 1px solid rgba(201, 162, 75, .2)
+}
+
+.statsbar .cd-title {
+  text-align: center;
+  color: var(--gold-light);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  font-weight: 600;
+  font-size: .95rem;
+  padding: 1.3rem 1rem .1rem
 }
 
 .statsbar .grid {

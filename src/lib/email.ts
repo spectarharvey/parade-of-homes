@@ -15,10 +15,17 @@ export async function sendVerificationEmail(
 
   if (!key) {
     console.log(`[dev] Parade of Homes verification code for ${to}: ${code}`);
-    return {
-      delivered: false,
-      devCode: process.env.NODE_ENV !== "production" ? code : undefined,
-    };
+    // In production a missing provider must fail loudly — otherwise the guest is
+    // stranded on the code screen with no code and no email.
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        "RESEND_API_KEY is not set — cannot email verification codes in production."
+      );
+      throw new Error(
+        "Email delivery isn't set up yet. Please try again shortly or contact the event team."
+      );
+    }
+    return { delivered: false, devCode: code };
   }
 
   const html = `

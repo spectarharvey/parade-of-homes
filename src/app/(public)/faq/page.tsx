@@ -253,7 +253,13 @@ export default function FAQPage() {
             Our event team is ready to help you coordinate your tours, check-in errors, or builder registrations.
           </p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="mailto:admin@mcbia.org" className="btn btn-gold" style={{ border: "none", color: "var(--navy-deep)", padding: "0.75rem 1.5rem" }}>
+            <a
+              href="https://mail.google.com/mail/?view=cm&fs=1&to=admin@mcbia.org&su=Parade%20of%20Homes%20Support"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-gold"
+              style={{ border: "none", color: "var(--navy-deep)", padding: "0.75rem 1.5rem" }}
+            >
               Email Support
             </a>
             <a href="tel:3526944133" className="btn btn-outline" style={{ borderColor: "rgba(255,255,255,0.4)", color: "#ffffff", padding: "0.75rem 1.5rem", background: "rgba(255,255,255,0.05)" }}>

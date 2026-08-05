@@ -99,6 +99,11 @@ textarea {
   padding: 0 22px
 }
 
+/* Navbar spans a touch wider than page content */
+.wrap.nav {
+  max-width: 1380px;
+}
+
 .muted {
   color: var(--muted)
 }

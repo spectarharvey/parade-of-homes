@@ -154,7 +154,7 @@ export default function HomePage() {
                 breakfast for two at Atlantic Grille. Sponsored by Umpleby
                 Travels.
               </p>
-              <p style={{ marginTop: ".6rem" }}>
+              <p className="contest-registration-note">
                 You must be registered and logged in to participate in the
                 contest.
               </p>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
 import { money, stars, homePhoto } from "@/lib/format";
 import type { Home } from "@/lib/types";
@@ -9,29 +10,33 @@ export default function HomeCard({ home }: { home: Home }) {
   const { builder, nbhd } = useStore();
   const b = builder(home.builder);
   const n = nbhd(home.nb);
+  const photo = homePhoto(home);
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [photo]);
 
   return (
     <Link href={`/home/${home.id}`} className="card card-hover home-card">
       <div className="photo">
-        {homePhoto(home) ? (
+        {photo && !imageFailed ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img loading="lazy" src={homePhoto(home)} alt={home.name} />
+          <img
+            loading="lazy"
+            src={photo}
+            alt={home.name}
+            onError={() => setImageFailed(true)}
+          />
         ) : (
           <div
+            className="photo-fallback"
             style={{
-              width: "100%",
-              height: "100%",
-              display: "grid",
-              placeItems: "center",
-              textAlign: "center",
-              padding: "1rem",
-              color: "#fff",
-              fontFamily: "'Lora', serif",
-              fontWeight: 600,
               background: `linear-gradient(135deg, ${n?.color || "var(--navy)"}, var(--navy-deep))`,
             }}
           >
-            {home.name}
+            <span>Home photo coming soon</span>
+            <b>{home.name}</b>
           </div>
         )}
         <span className="tag">{home.style}</span>

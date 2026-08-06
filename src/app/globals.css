@@ -39,6 +39,10 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased
 }
+
+main {
+  padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
 /* Global scrollbar */
 ::-webkit-scrollbar {
     width: 3.5px;
@@ -726,6 +730,30 @@ section.block {
 
 }
 
+.home-card .photo-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-content: center;
+  gap: .3rem;
+  padding: 1rem;
+  color: #fff;
+  text-align: center;
+}
+
+.home-card .photo-fallback span {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .82;
+}
+
+.home-card .photo-fallback b {
+  font-size: 1.15rem;
+  line-height: 1.25;
+}
+
 .home-card .photo .tag {
   position: absolute;
   top: .7rem;
@@ -913,6 +941,20 @@ section.block {
   color: var(--navy-deep);
   font-weight: 500;
   font-size: 20px;
+}
+
+.contest-cta .contest-registration-note {
+  display: inline-block;
+  margin-top: .85rem;
+  margin-bottom: 0;
+  padding: .55rem .85rem;
+  border-left: 4px solid var(--navy-deep);
+  border-radius: 0 .45rem .45rem 0;
+  background: rgba(255, 255, 255, .22);
+  color: var(--navy-deep);
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1.35;
 }
 
 @media(max-width:760px) {

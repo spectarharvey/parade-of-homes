@@ -842,22 +842,14 @@ section.block {
 }
 
 .featured-builder .blogo {
-  width: 64px;
+  width: 112px;
   height: 64px;
   border-radius: 14px;
-  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  background: #fff;
   display: grid;
   place-items: center;
-  color: var(--navy-deep);
-  font-weight: 800;
-  font-size: 1.5rem;
+  padding: .55rem;
   margin-bottom: 1.1rem
-}
-
-.featured-builder .blogo.has-image {
-  width: 112px;
-  background: #fff;
-  padding: .55rem
 }
 
 .featured-builder .blogo img,
@@ -870,6 +862,12 @@ section.block {
 .builder-mini-logo:has(img) {
   background: #fff !important;
   border: 1px solid var(--line)
+}
+
+.sponsor-featured-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .featured-builder h3 {

@@ -4,14 +4,13 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@/lib/store";
 import { homePhoto } from "@/lib/format";
-import { builderLogo } from "@/lib/builderAssets";
+import BuilderLogo from "@/components/BuilderLogo";
 import HomeCard from "@/components/HomeCard";
 
 export default function HomePage() {
   const { db } = useStore();
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
   const fbHomes = fb ? db.homes.filter((h) => h.builder === fb.id) : [];
-  const fbLogo = builderLogo(fb);
   const fbHero = fbHomes[0] ? homePhoto(fbHomes[0]) : "";
   
   // Prioritize featured homes, pad to exactly 6 using non-featured homes
@@ -105,14 +104,7 @@ export default function HomePage() {
             </div>
             <div className="featured-builder">
               <div className="left">
-                <div className={"blogo" + (fbLogo ? " has-image" : "")}>
-                  {fbLogo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={fbLogo} alt={`${fb.name} logo`} />
-                  ) : (
-                    fb.initials
-                  )}
-                </div>
+                <BuilderLogo builder={fb} className="blogo" />
                 <span className="badge badge-gold">★ Featured Builder</span>
                 <h3>{fb.name}</h3>
                 <p>{fb.blurb}</p>

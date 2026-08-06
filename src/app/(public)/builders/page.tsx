@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { homePhoto } from "@/lib/format";
-import { builderLogo } from "@/lib/builderAssets";
+import BuilderLogo from "@/components/BuilderLogo";
 import { Megaphone, Phone, Globe, Award, Home } from "lucide-react";
 
 const siteUrl = (w: string) => (/^https?:\/\//.test(w) ? w : `https://${w}`);
@@ -15,7 +15,6 @@ export default function BuildersPage() {
   const router = useRouter();
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
   const fbHomes = db.homes.filter((h) => h.builder === fb.id).slice(0, 3);
-  const fbLogo = builderLogo(fb);
   const fbHero = fbHomes[0] ? homePhoto(fbHomes[0]) : "";
 
   return (
@@ -30,14 +29,7 @@ export default function BuildersPage() {
 
       <div className="featured-builder" style={{ marginBottom: "2.4rem" }}>
         <div className="left">
-          <div className={"blogo" + (fbLogo ? " has-image" : "")}>
-            {fbLogo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={fbLogo} alt={`${fb.name} logo`} />
-            ) : (
-              fb.initials
-            )}
-          </div>
+          <BuilderLogo builder={fb} className="blogo" />
           <span className="badge badge-gold">
             ★ Featured Builder of the Parade
           </span>
@@ -97,7 +89,6 @@ export default function BuildersPage() {
       <div className="grid-2">
         {db.builders.map((b) => {
           const c = db.homes.filter((h) => h.builder === b.id).length;
-          const logo = builderLogo(b);
           return (
             <div
               key={b.id}
@@ -116,7 +107,8 @@ export default function BuildersPage() {
                 cursor: "pointer",
               }}
             >
-              <span
+              <BuilderLogo
+                builder={b}
                 className="builder-mini-logo"
                 style={{
                   width: 54,
@@ -131,14 +123,7 @@ export default function BuildersPage() {
                   fontSize: "1.3rem",
                   flexShrink: 0,
                 }}
-              >
-                {logo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={logo} alt={`${b.name} logo`} />
-                ) : (
-                  b.initials
-                )}
-              </span>
+              />
               <div style={{ flex: 1 }}>
                 <div
                   style={{

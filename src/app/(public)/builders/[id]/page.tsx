@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { homePhoto } from "@/lib/format";
-import { builderLogo } from "@/lib/builderAssets";
+import BuilderLogo from "@/components/BuilderLogo";
 import HomeCard from "@/components/HomeCard";
 import NotFoundBlock from "@/components/NotFoundBlock";
 import { Phone, Globe, Award } from "lucide-react";
@@ -20,7 +20,6 @@ export default function BuilderProfilePage() {
   if (!b) return <NotFoundBlock />;
 
   const homes = db.homes.filter((h) => h.builder === b.id);
-  const logo = builderLogo(b);
   const hero = homes[0] ? homePhoto(homes[0]) : "";
 
   return (
@@ -32,14 +31,7 @@ export default function BuilderProfilePage() {
 
       <div className="featured-builder" style={{ margin: "1rem 0 2.4rem" }}>
         <div className="left">
-          <div className={"blogo" + (logo ? " has-image" : "")}>
-            {logo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={logo} alt={`${b.name} logo`} />
-            ) : (
-              b.initials
-            )}
-          </div>
+          <BuilderLogo builder={b} className="blogo" />
           {b.featured ? (
             <span className="badge badge-gold">★ Featured Builder of the Parade</span>
           ) : null}

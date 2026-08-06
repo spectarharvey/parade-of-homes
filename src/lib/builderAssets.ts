@@ -16,3 +16,28 @@ export function builderLogo(builder?: Pick<Builder, "name"> | null) {
   if (!builder?.name) return "";
   return BUILDER_LOGOS[builder.name.toLowerCase()] ?? "";
 }
+
+/**
+ * Prefer a supplied local logo, then the favicon hosted by the builder's own
+ * website. The rendering component removes itself if every candidate fails.
+ */
+export function builderLogoSources(
+  builder?: Pick<Builder, "name" | "website"> | null,
+) {
+  const localLogo = builderLogo(builder);
+  let siteLogo = "";
+
+  try {
+    const website = builder?.website?.trim();
+    if (website) {
+      const url = new URL(
+        /^https?:\/\//.test(website) ? website : `https://${website}`,
+      );
+      siteLogo = `${url.origin}/favicon.ico`;
+    }
+  } catch {
+    // An invalid or missing website simply has no logo fallback.
+  }
+
+  return [...new Set([localLogo, siteLogo].filter(Boolean))];
+}

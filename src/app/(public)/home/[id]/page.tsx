@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useStore, useToast } from "@/lib/store";
 import { money, stars, imgUrl } from "@/lib/format";
-import { builderLogo } from "@/lib/builderAssets";
+import BuilderLogo from "@/components/BuilderLogo";
 import HomeCard from "@/components/HomeCard";
 import QRScanner from "@/components/QRScanner";
 import NotFoundBlock from "@/components/NotFoundBlock";
@@ -54,7 +54,6 @@ export default function HomeDetailPage() {
 
   const b = builder(h.builder);
   const n = nbhd(h.nb);
-  const logo = builderLogo(b);
   const builderSite = b?.website
     ? /^https?:\/\//.test(b.website)
       ? b.website
@@ -230,7 +229,8 @@ export default function HomeDetailPage() {
             <hr className="soft" />
             <h4 style={{ fontSize: ".95rem" }}>Builder</h4>
             <div style={{ display: "flex", gap: ".7rem", alignItems: "center", margin: ".5rem 0" }}>
-              <span
+              <BuilderLogo
+                builder={b}
                 className="builder-mini-logo"
                 style={{
                   width: 44,
@@ -243,14 +243,7 @@ export default function HomeDetailPage() {
                   fontFamily: "Lora",
                   fontWeight: 700,
                 }}
-              >
-                {logo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={logo} alt={b?.name ?? "Builder logo"} />
-                ) : (
-                  b?.initials
-                )}
-              </span>
+              />
               <div>
                 <b style={{ fontSize: ".92rem" }}>{b?.name}</b>
                 <div className="muted" style={{ fontSize: ".78rem" }}>

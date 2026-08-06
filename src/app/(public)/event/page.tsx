@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import BuilderLogo from "@/components/BuilderLogo";
 
 const FEATURED_BUILDER = {
   name: "Brije Homes",
@@ -60,12 +61,28 @@ export default function EventCalendarPage() {
           marginTop: "1rem",
         }}
       >
-        <div>
-          <span className="badge badge-gold">2026 Featured Builder</span>
-          <h3 style={{ fontSize: "1.25rem", marginTop: ".5rem" }}>{FEATURED_BUILDER.name}</h3>
-          <p className="muted" style={{ margin: ".2rem 0 0" }}>
-            Brije Homes is the Featured Builder for this year&apos;s Parade.
-          </p>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <BuilderLogo
+            builder={FEATURED_BUILDER}
+            className="builder-mini-logo"
+            style={{
+              width: 68,
+              height: 68,
+              borderRadius: 12,
+              background: "#fff",
+              display: "grid",
+              placeItems: "center",
+              padding: ".45rem",
+              flexShrink: 0,
+            }}
+          />
+          <div>
+            <span className="badge badge-gold">2026 Featured Builder</span>
+            <h3 style={{ fontSize: "1.25rem", marginTop: ".5rem" }}>{FEATURED_BUILDER.name}</h3>
+            <p className="muted" style={{ margin: ".2rem 0 0" }}>
+              Brije Homes is the Featured Builder for this year&apos;s Parade.
+            </p>
+          </div>
         </div>
         <a href={FEATURED_BUILDER.website} target="_blank" rel="noreferrer" className="btn btn-outline">
           Visit Brije Homes →

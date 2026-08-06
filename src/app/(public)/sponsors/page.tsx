@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useStore } from "@/lib/store";
-import { builderLogo } from "@/lib/builderAssets";
+import BuilderLogo from "@/components/BuilderLogo";
 import type { Sponsor } from "@/lib/types";
 
 const tiers: [Sponsor["tier"], string, string][] = [
@@ -14,7 +14,6 @@ const tiers: [Sponsor["tier"], string, string][] = [
 export default function SponsorsPage() {
   const { db } = useStore();
   const fb = db.builders.find((b) => b.featured);
-  const fbLogo = fb ? builderLogo(fb) : "";
 
   return (
     <div className="wrap">
@@ -41,7 +40,9 @@ export default function SponsorsPage() {
             borderLeft: "4px solid var(--gold)",
           }}
         >
-          <div
+          <BuilderLogo
+            builder={fb}
+            className="sponsor-featured-logo"
             style={{
               width: 130,
               minWidth: 130,
@@ -53,18 +54,7 @@ export default function SponsorsPage() {
               border: "1px solid var(--line)",
               padding: ".6rem",
             }}
-          >
-            {fbLogo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={fbLogo}
-                alt={`${fb.name} logo`}
-                style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
-              />
-            ) : (
-              <b style={{ color: "var(--navy)" }}>{fb.initials}</b>
-            )}
-          </div>
+          />
           <div style={{ flex: 1, minWidth: 260 }}>
             <span className="badge badge-gold">★ 2026 Featured Builder</span>
             <p style={{ margin: ".6rem 0 .9rem", fontSize: ".98rem", lineHeight: 1.55 }}>

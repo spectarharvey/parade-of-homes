@@ -6,13 +6,16 @@ import { money, stars } from "@/lib/format";
 import { PartyPopper, Home, MapPin } from "lucide-react";
 
 export default function ContestPage() {
-  const { db, home, nbhd, visited, myRatings } = useStore();
+  const { db, home, nbhd, visited, myRatings, route } = useStore();
   const target = db.contest.target;
   const done = visited.length;
   const remaining = Math.max(0, target - done);
   const pct = Math.min(100, Math.round((done / target) * 100));
   const entered = done >= target;
-  const remainingHomes = db.homes.filter((h) => !visited.includes(h.id)).slice(0, 4);
+  // Mirror the route the user built in Map & Route — planned stops not yet checked in.
+  const remainingHomes = route
+    .filter((id) => !visited.includes(id) && home(id))
+    .map((id) => home(id)!);
 
   return (
     <div className="wrap">
@@ -22,7 +25,65 @@ export default function ContestPage() {
       <div className="sec-head">
         <span className="eyebrow">Visit · Vote · Win</span>
         <h2>Contest Tracker</h2>
-        <p>{db.contest.prize}</p>
+      </div>
+
+      {/*
+        Grand-prize banner. The background is a designed sunset-over-ocean
+        gradient (rights-clear, always renders). Drop a properly-licensed photo
+        at public/parade-entries/2026/prize.jpg and it layers in behind the
+        overlay automatically — do NOT use the resort's copyrighted image.
+      */}
+      <div
+        style={{
+          position: "relative",
+          borderRadius: "var(--radius)",
+          overflow: "hidden",
+          minHeight: 250,
+          display: "flex",
+          alignItems: "flex-end",
+          color: "#fff",
+          margin: "0 0 2rem",
+          backgroundColor: "#0a3a5c",
+          backgroundImage:
+            "linear-gradient(180deg, rgba(232,150,58,.72) 0%, rgba(210,95,55,.22) 32%, rgba(6,60,105,.5) 64%, rgba(2,18,34,.92) 100%), url('/parade-entries/2026/prize.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          boxShadow: "var(--shadow)",
+        }}
+      >
+        <div style={{ padding: "1.6rem 1.8rem" }}>
+          <span
+            style={{
+              textTransform: "uppercase",
+              letterSpacing: ".14em",
+              fontWeight: 700,
+              fontSize: ".78rem",
+              color: "var(--gold-light)",
+            }}
+          >
+            Grand Prize
+          </span>
+          <h3
+            style={{
+              color: "#fff",
+              fontSize: "1.8rem",
+              margin: ".3rem 0 .5rem",
+              textShadow: "0 2px 14px rgba(0,0,0,.45)",
+            }}
+          >
+            A 3-Night Oceanview Escape
+          </h3>
+          <p
+            style={{
+              fontSize: "1rem",
+              maxWidth: 640,
+              lineHeight: 1.5,
+              textShadow: "0 1px 8px rgba(0,0,0,.5)",
+            }}
+          >
+            {db.contest.prize}
+          </p>
+        </div>
       </div>
 
       <div className="card" style={{ padding: "2rem", marginBottom: "2rem" }}>
@@ -164,7 +225,7 @@ export default function ContestPage() {
                 className="route-stop"
                 style={{ textDecoration: "none" }}
               >
-                <span className="route-num">→</span>
+                <span className="route-num">{route.indexOf(h.id) + 1}</span>
                 <div style={{ flex: 1 }}>
                   <b style={{ fontSize: ".86rem" }}>{h.name}</b>
                   <div className="muted" style={{ fontSize: ".76rem" }}>
@@ -173,8 +234,12 @@ export default function ContestPage() {
                 </div>
               </Link>
             ))
+          ) : route.length ? (
+            <div className="empty">You’ve visited every stop on your route — amazing!</div>
           ) : (
-            <div className="empty">You’ve visited every home — amazing!</div>
+            <div className="empty">
+              No route planned yet. Tap “Plan My Route” to add your stops.
+            </div>
           )}
           <Link
             href="/map"

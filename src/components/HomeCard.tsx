@@ -13,8 +13,27 @@ export default function HomeCard({ home }: { home: Home }) {
   return (
     <Link href={`/home/${home.id}`} className="card card-hover home-card">
       <div className="photo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img loading="lazy" src={homePhoto(home)} alt={home.name} />
+        {homePhoto(home) ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img loading="lazy" src={homePhoto(home)} alt={home.name} />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "grid",
+              placeItems: "center",
+              textAlign: "center",
+              padding: "1rem",
+              color: "#fff",
+              fontFamily: "'Lora', serif",
+              fontWeight: 600,
+              background: `linear-gradient(135deg, ${n?.color || "var(--navy)"}, var(--navy-deep))`,
+            }}
+          >
+            {home.name}
+          </div>
+        )}
         <span className="tag">{home.style}</span>
       </div>
       <div className="body">

@@ -63,6 +63,7 @@ interface StoreContextValue {
   toggleRoute: (id: string) => void;
   removeRouteStop: (id: string) => void;
   clearRoute: () => void;
+  reorderRoute: (ids: string[]) => void;
   setTripActive: (v: boolean) => void;
   setTripIndex: (v: number) => void;
   rateHome: (id: string, val: number) => void;
@@ -307,6 +308,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   );
 
   const clearRoute = useCallback(() => persistRoute([]), [persistRoute]);
+
+  const reorderRoute = useCallback(
+    (ids: string[]) => persistRoute(ids),
+    [persistRoute],
+  );
 
   const rateHome = useCallback(
     (id: string, val: number) => {
@@ -605,6 +611,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toggleRoute,
     removeRouteStop,
     clearRoute,
+    reorderRoute,
     setTripActive,
     setTripIndex,
     rateHome,

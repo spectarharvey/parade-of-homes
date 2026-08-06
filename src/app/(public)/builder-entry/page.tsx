@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import FileUpload from "@/components/FileUpload";
+import PayPalCheckout, { type PaidDetails } from "@/components/PayPalCheckout";
 import { US_STATES } from "@/lib/usStates";
 
 const EMPTY = {
@@ -61,6 +62,14 @@ export default function BuilderEntryPage() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [paid, setPaid] = useState<PaidDetails | null>(null);
+  const [showPay, setShowPay] = useState(false);
+
+  // Reset any in-progress payment if the entry level or payment method changes.
+  useEffect(() => {
+    setPaid(null);
+    setShowPay(false);
+  }, [f.entryLevel, f.paymentMethod]);
 
   const set = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setF((p) => ({ ...p, [k]: e.target.value }));
@@ -68,18 +77,14 @@ export default function BuilderEntryPage() {
   const setSub = (i: number, key: "service" | "name", v: string) =>
     setSubs((p) => p.map((s, idx) => (idx === i ? { ...s, [key]: v } : s)));
 
-  const submit = async (ev: React.FormEvent) => {
-    ev.preventDefault();
-    setErr(null);
-    setSubmitting(true);
-
+  const buildPayload = (payment?: PaidDetails | null) => {
     const features = f.features
       .split("\n")
       .map((x) => x.replace(/^[-•]\s*/, "").trim())
       .filter(Boolean)
       .slice(0, 10);
 
-    const payload = {
+    return {
       contactName: f.contactName,
       contactPhone: f.contactPhone,
       contactEmail: f.contactEmail,
@@ -102,7 +107,7 @@ export default function BuilderEntryPage() {
       buildType: f.buildType,
       staged: f.staged,
       entryLevel: f.entryLevel,
-      paymentMethod: f.paymentMethod,
+      paymentMethod: payment ? "PayPal (paid online)" : f.paymentMethod,
       signature: f.signature,
       billingName: `${f.billingFirst} ${f.billingLast}`.trim(),
       receiptEmail: f.receiptEmail,
@@ -118,14 +123,19 @@ export default function BuilderEntryPage() {
         finding: f.finding,
         features,
         subcontractors: subs.filter((s) => s.service || s.name),
+        ...(payment ? { payment: { paid: true, ...payment } } : {}),
       },
     };
+  };
 
+  const postEntry = async (payment?: PaidDetails | null) => {
+    setErr(null);
+    setSubmitting(true);
     try {
       const res = await fetch("/api/builder-entry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(buildPayload(payment)),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Submission failed");
@@ -138,6 +148,35 @@ export default function BuilderEntryPage() {
     }
   };
 
+  const submit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    setErr(null);
+    // Online payers pay first; the entry then submits automatically on capture.
+    if (f.paymentMethod === "Credit Card" && !paid) {
+      setShowPay(true);
+      setTimeout(
+        () => document.getElementById("pay-panel")?.scrollIntoView({ behavior: "smooth", block: "center" }),
+        60,
+      );
+      return;
+    }
+    await postEntry(paid);
+  };
+
+  const handlePaid = async (details: PaidDetails) => {
+    setPaid(details);
+    await postEntry(details);
+  };
+
+  // Entry total incl. 3% card fee, parsed from the selected level (display only).
+  const feeBase = (() => {
+    const m = f.entryLevel.match(/\$([\d,]+)/);
+    return m ? Number(m[1].replace(/,/g, "")) : 0;
+  })();
+  const payTotal = feeBase
+    ? (feeBase * 1.03).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : "";
+
   if (done) {
     return (
       <div className="wrap" style={{ maxWidth: 720 }}>
@@ -146,8 +185,10 @@ export default function BuilderEntryPage() {
           <h2>Entry Received!</h2>
           <p className="muted">
             Thank you for entering the 2026 Parade of Homes. We&apos;ll review your
-            model home entry and follow up by email. Watch for your invoice based
-            on the entry level and payment method you selected.
+            model home entry and follow up by email.{" "}
+            {paid
+              ? "Your payment was received — a receipt will be emailed to you."
+              : "Watch for your invoice based on the entry level and payment method you selected."}
           </p>
           <div style={{ display: "flex", gap: ".6rem", justifyContent: "center", flexWrap: "wrap", marginTop: "1rem" }}>
             <Link href="/" className="btn btn-navy">Back to Home</Link>
@@ -318,9 +359,34 @@ export default function BuilderEntryPage() {
 
         {err && <p style={{ color: "var(--red)", marginTop: "1rem" }}>⚠ {err}</p>}
 
-        <button className="btn btn-gold btn-block" style={{ marginTop: "1.2rem" }} type="submit" disabled={submitting}>
-          {submitting ? "Submitting…" : "Submit Entry →"}
-        </button>
+        {f.paymentMethod === "Credit Card" && showPay && !paid && (
+          <div id="pay-panel" className="panel" style={{ marginTop: "1.2rem" }}>
+            <b style={{ fontSize: "1rem" }}>Pay your entry fee</b>
+            <p className="muted" style={{ fontSize: ".86rem", margin: ".3rem 0 .9rem" }}>
+              {f.entryLevel || "Selected level"} —{" "}
+              <b style={{ color: "var(--navy)" }}>${payTotal}</b> (includes 3% card fee)
+            </p>
+            <PayPalCheckout formType="builder" level={f.entryLevel} onPaid={handlePaid} />
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              style={{ marginTop: ".7rem" }}
+              onClick={() => setShowPay(false)}
+            >
+              ← Back to form
+            </button>
+          </div>
+        )}
+
+        {f.paymentMethod === "Credit Card" && !paid && showPay ? null : (
+          <button className="btn btn-gold btn-block" style={{ marginTop: "1.2rem" }} type="submit" disabled={submitting}>
+            {submitting
+              ? "Submitting…"
+              : f.paymentMethod === "Credit Card" && !paid
+                ? `Continue to Payment${payTotal ? ` — $${payTotal}` : ""} →`
+                : "Submit Entry →"}
+          </button>
+        )}
       </form>
     </div>
   );

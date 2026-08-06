@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@/lib/store";
-import { homePhoto, moneyK } from "@/lib/format";
+import { homePhoto } from "@/lib/format";
 import { builderLogo } from "@/lib/builderAssets";
 import HomeCard from "@/components/HomeCard";
 
@@ -66,20 +66,6 @@ export default function HomePage() {
       )
     : 0;
   const barWidth = isMobile ? scrollProgress : desktopProgress;
-
-  const [nbActiveIdx, setNbActiveIdx] = useState(0);
-  const nbTotal = db.neighborhoods.length;
-  const cardsToShow = windowWidth <= 768 ? 1 : windowWidth <= 900 ? 2 : 4;
-  const slidePercent = windowWidth <= 768 ? 100 : windowWidth <= 900 ? 50 : 25;
-  const nbMax = Math.max(0, nbTotal - cardsToShow);
-
-  const handleNbPrev = () => {
-    setNbActiveIdx((prev) => Math.max(0, prev - 1));
-  };
-
-  const handleNbNext = () => {
-    setNbActiveIdx((prev) => Math.min(nbMax, prev + 1));
-  };
 
   return (
     <>
@@ -162,92 +148,21 @@ export default function HomePage() {
               <span className="badge badge-navy home-badge">Win Big</span>
               <h2>Tour the homes. Enter to win. Pack your bags!</h2>
               <p>
-                Check in at {db.contest.target} showcase homes to be
-                automatically entered. {db.contest.prize}
+                Check-In at least 8 homes across the two Parade weekends for a
+                chance to win! Enjoy a three-day stay in a Premium Oceanview
+                Suite at Hammock Beach Golf Resort &amp; Spa, complete with daily
+                breakfast for two at Atlantic Grille. Sponsored by Umpleby
+                Travels.
+              </p>
+              <p style={{ marginTop: ".6rem" }}>
+                You must be registered and logged in to participate in the
+                contest.
               </p>
             </div>
             <div>
               <Link href="/contest" className="btn btn-navy">
                 Track My Progress
               </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="block">
-        <div className="wrap">
-          <div className="row-head">
-            <div>
-              <span className="eyebrow">Explore by Area</span>
-              <h2>Neighborhoods</h2>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.8rem", flexWrap: "wrap" }}>
-              <button 
-                onClick={handleNbPrev} 
-                disabled={nbActiveIdx === 0}
-                className="btn btn-outline btn-sm"
-                style={{ padding: "0.4rem 0.8rem", borderRadius: "50%", minWidth: "40px", height: "40px", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
-              >
-                ←
-              </button>
-              <button 
-                onClick={handleNbNext} 
-                disabled={nbActiveIdx >= nbMax}
-                className="btn btn-outline btn-sm"
-                style={{ padding: "0.4rem 0.8rem", borderRadius: "50%", minWidth: "40px", height: "40px", display: "inline-flex", alignItems: "center", justifyContent: "center" }}
-              >
-                →
-              </button>
-              <Link href="/neighborhoods" className="btn btn-outline btn-sm">
-                All Neighborhoods →
-              </Link>
-            </div>
-          </div>
-          <div className="nb-slider-container">
-            <div 
-              className="nb-slider-track"
-              style={{ transform: `translateX(-${nbActiveIdx * slidePercent}%)` }}
-            >
-              {db.neighborhoods.map((n) => {
-                const count = db.homes.filter((h) => h.nb === n.id).length;
-                return (
-                  <div key={n.id} className="nb-slider-card-wrapper">
-                    <Link
-                      href={`/neighborhood/${n.id}`}
-                      className="nb-card"
-                    >
-                      <span
-                        className="bg"
-                        style={{ backgroundImage: `url('${n.img}')` }}
-                      ></span>
-                      <span className="nb-body">
-                        <span
-                          className="badge"
-                          style={{
-                            background: "rgba(255,255,255,.18)",
-                            color: "#fff",
-                            backdropFilter: "blur(4px)",
-                          }}
-                        >
-                          <span
-                            className="dot"
-                            style={{ background: n.color }}
-                          ></span>
-                          {n.city}
-                        </span>
-                        <h3>{n.name}</h3>
-                        <span className="nb-meta">
-                          <span>{count} homes</span>
-                          <span>
-                            {moneyK(n.low)}–{moneyK(n.high)}
-                          </span>
-                        </span>
-                      </span>
-                    </Link>
-                  </div>
-                );
-              })}
             </div>
           </div>
         </div>
@@ -264,8 +179,8 @@ export default function HomePage() {
         <div className="wrap">
           <div className="row-head">
             <div>
-              <span className="eyebrow">Don&apos;t Miss These</span>
-              <h2>Showstopping Homes</h2>
+              <span className="eyebrow">Get Inspired</span>
+              <h2>by The Parade of Homes</h2>
             </div>
             <Link href="/homes" className="btn btn-outline btn-sm">
               View All Homes →

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useStore } from "@/lib/store";
+import { builderLogo } from "@/lib/builderAssets";
 import type { Sponsor } from "@/lib/types";
 
 const tiers: [Sponsor["tier"], string, string][] = [
@@ -12,6 +13,8 @@ const tiers: [Sponsor["tier"], string, string][] = [
 
 export default function SponsorsPage() {
   const { db } = useStore();
+  const fb = db.builders.find((b) => b.featured);
+  const fbLogo = fb ? builderLogo(fb) : "";
 
   return (
     <div className="wrap">
@@ -25,6 +28,59 @@ export default function SponsorsPage() {
           The 2026 sponsor list will be added as sponsorships are confirmed.
         </p>
       </div>
+
+      {fb ? (
+        <div
+          className="panel"
+          style={{
+            display: "flex",
+            gap: "1.4rem",
+            alignItems: "center",
+            flexWrap: "wrap",
+            marginBottom: "1.4rem",
+            borderLeft: "4px solid var(--gold)",
+          }}
+        >
+          <div
+            style={{
+              width: 130,
+              minWidth: 130,
+              height: 96,
+              display: "grid",
+              placeItems: "center",
+              background: "#fff",
+              borderRadius: 12,
+              border: "1px solid var(--line)",
+              padding: ".6rem",
+            }}
+          >
+            {fbLogo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={fbLogo}
+                alt={`${fb.name} logo`}
+                style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
+              />
+            ) : (
+              <b style={{ color: "var(--navy)" }}>{fb.initials}</b>
+            )}
+          </div>
+          <div style={{ flex: 1, minWidth: 260 }}>
+            <span className="badge badge-gold">★ 2026 Featured Builder</span>
+            <p style={{ margin: ".6rem 0 .9rem", fontSize: ".98rem", lineHeight: 1.55 }}>
+              A special thank you to our 2026 Featured Builder,{" "}
+              <b>Brije Homes</b>, for helping make this year&apos;s Parade of
+              Homes possible! Brije Homes is an award-winning custom home builder
+              serving Central Florida with a design-first, client-focused
+              building process.
+            </p>
+            <Link href={`/builders/${fb.id}`} className="btn btn-gold btn-sm">
+              View Brije Homes →
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
       {!db.sponsors.length ? (
         <div className="panel" style={{ textAlign: "center", color: "var(--muted)", marginBottom: "1.4rem" }}>
           Sponsor logos and ads are coming soon.

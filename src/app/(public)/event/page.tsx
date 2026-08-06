@@ -20,8 +20,7 @@ export default function EventCalendarPage() {
         <h2>2026 Parade of Homes</h2>
         <p style={{ fontSize: "1.02rem" }}>
           November 6–8 &amp; 13–15, 2026 have been reserved for the
-          MCBIA&apos;s 2026 Parade of Homes. Model homes are open{" "}
-          <strong>10 AM – 6 PM</strong> each day.
+          MCBIA&apos;s 2026 Parade of Homes.
         </p>
       </div>
 
@@ -37,7 +36,7 @@ export default function EventCalendarPage() {
       >
         {[
           ["Parade Weekends", "Nov 6–8 & 13–15, 2026"],
-          ["Hours", "10 AM – 6 PM daily"],
+          ["Hours", "Fri & Sat 11 AM – 5 PM\nSun 12 PM – 5 PM"],
           ["Featured Builder", FEATURED_BUILDER.name],
           ["Location", "Marion County, FL"],
         ].map(([l, v]) => (
@@ -45,7 +44,7 @@ export default function EventCalendarPage() {
             <div className="muted" style={{ fontSize: ".74rem", textTransform: "uppercase", letterSpacing: ".06em" }}>
               {l}
             </div>
-            <div style={{ fontWeight: 700, color: "var(--navy)", marginTop: ".2rem" }}>{v}</div>
+            <div style={{ fontWeight: 700, color: "var(--navy)", marginTop: ".2rem", whiteSpace: "pre-line" }}>{v}</div>
           </div>
         ))}
       </div>

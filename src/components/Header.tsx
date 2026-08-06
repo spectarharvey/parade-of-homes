@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import logo from "../assets/parade-logo.webp";
+import logo from "../assets/parade-logo-mcbia.webp";
 import { useStore } from "@/lib/store";
 
 const PUBLIC_NAV: [string, string][] = [

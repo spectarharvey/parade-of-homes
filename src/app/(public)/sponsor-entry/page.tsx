@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import FileUpload from "@/components/FileUpload";
+import PayPalCheckout, { type PaidDetails } from "@/components/PayPalCheckout";
 import { US_STATES } from "@/lib/usStates";
 
 const EMPTY = {
@@ -38,41 +39,48 @@ export default function SponsorEntryPage() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [paid, setPaid] = useState<PaidDetails | null>(null);
+  const [showPay, setShowPay] = useState(false);
+
+  // Reset any in-progress payment if the level or payment method changes.
+  useEffect(() => {
+    setPaid(null);
+    setShowPay(false);
+  }, [f.level, f.paymentMethod]);
 
   const set = (k: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setF((p) => ({ ...p, [k]: e.target.value }));
 
-  const submit = async (ev: React.FormEvent) => {
-    ev.preventDefault();
+  const buildPayload = (payment?: PaidDetails | null) => ({
+    contactName: f.contactName,
+    contactPhone: f.contactPhone,
+    contactEmail: f.contactEmail,
+    companyName: f.companyName,
+    companyPhone: f.companyPhone,
+    companyEmail: f.companyEmail,
+    website: f.website,
+    companyAddress: [f.companyStreet, f.companyCity, `${f.companyState} ${f.companyZip}`].filter(Boolean).join(", "),
+    level: f.level,
+    paymentMethod: payment ? "PayPal (paid online)" : f.paymentMethod,
+    signature: f.signature,
+    billingName: `${f.billingFirst} ${f.billingLast}`.trim(),
+    billingEmail: f.billingEmail,
+    billingAddress: [f.billingStreet, f.billingStreet2, f.billingCity, `${f.billingState} ${f.billingZip}`]
+      .filter(Boolean)
+      .join(", "),
+    logo: uploads.logo,
+    ad: uploads.ad,
+    details: payment ? { payment: { paid: true, ...payment } } : undefined,
+  });
+
+  const postEntry = async (payment?: PaidDetails | null) => {
     setErr(null);
     setSubmitting(true);
-
-    const payload = {
-      contactName: f.contactName,
-      contactPhone: f.contactPhone,
-      contactEmail: f.contactEmail,
-      companyName: f.companyName,
-      companyPhone: f.companyPhone,
-      companyEmail: f.companyEmail,
-      website: f.website,
-      companyAddress: [f.companyStreet, f.companyCity, `${f.companyState} ${f.companyZip}`].filter(Boolean).join(", "),
-      level: f.level,
-      paymentMethod: f.paymentMethod,
-      signature: f.signature,
-      billingName: `${f.billingFirst} ${f.billingLast}`.trim(),
-      billingEmail: f.billingEmail,
-      billingAddress: [f.billingStreet, f.billingStreet2, f.billingCity, `${f.billingState} ${f.billingZip}`]
-        .filter(Boolean)
-        .join(", "),
-      logo: uploads.logo,
-      ad: uploads.ad,
-    };
-
     try {
       const res = await fetch("/api/sponsor-entry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(buildPayload(payment)),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Submission failed");
@@ -85,6 +93,34 @@ export default function SponsorEntryPage() {
     }
   };
 
+  const submit = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    setErr(null);
+    if (f.paymentMethod === "Credit Card" && !paid) {
+      setShowPay(true);
+      setTimeout(
+        () => document.getElementById("pay-panel")?.scrollIntoView({ behavior: "smooth", block: "center" }),
+        60,
+      );
+      return;
+    }
+    await postEntry(paid);
+  };
+
+  const handlePaid = async (details: PaidDetails) => {
+    setPaid(details);
+    await postEntry(details);
+  };
+
+  // Sponsorship total incl. 3% card fee, parsed from the selected level (display only).
+  const feeBase = (() => {
+    const m = f.level.match(/\$([\d,]+)/);
+    return m ? Number(m[1].replace(/,/g, "")) : 0;
+  })();
+  const payTotal = feeBase
+    ? (feeBase * 1.03).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : "";
+
   if (done) {
     return (
       <div className="wrap" style={{ maxWidth: 720 }}>
@@ -93,8 +129,10 @@ export default function SponsorEntryPage() {
           <h2>Sponsorship Received!</h2>
           <p className="muted">
             Thank you for sponsoring the 2026 Parade of Homes. We&apos;ll follow up
-            by email and send your invoice based on the sponsorship level and
-            payment method you selected.
+            by email.{" "}
+            {paid
+              ? "Your payment was received — a receipt will be emailed to you."
+              : "We'll send your invoice based on the sponsorship level and payment method you selected."}
           </p>
           <div style={{ display: "flex", gap: ".6rem", justifyContent: "center", flexWrap: "wrap", marginTop: "1rem" }}>
             <Link href="/" className="btn btn-navy">Back to Home</Link>
@@ -209,9 +247,34 @@ export default function SponsorEntryPage() {
 
         {err && <p style={{ color: "var(--red)", marginTop: "1rem" }}>⚠ {err}</p>}
 
-        <button className="btn btn-gold btn-block" style={{ marginTop: "1.2rem" }} type="submit" disabled={submitting}>
-          {submitting ? "Submitting…" : "Submit Sponsorship →"}
-        </button>
+        {f.paymentMethod === "Credit Card" && showPay && !paid && (
+          <div id="pay-panel" className="panel" style={{ marginTop: "1.2rem" }}>
+            <b style={{ fontSize: "1rem" }}>Pay your sponsorship fee</b>
+            <p className="muted" style={{ fontSize: ".86rem", margin: ".3rem 0 .9rem" }}>
+              {f.level || "Selected level"} —{" "}
+              <b style={{ color: "var(--navy)" }}>${payTotal}</b> (includes 3% card fee)
+            </p>
+            <PayPalCheckout formType="sponsor" level={f.level} onPaid={handlePaid} />
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              style={{ marginTop: ".7rem" }}
+              onClick={() => setShowPay(false)}
+            >
+              ← Back to form
+            </button>
+          </div>
+        )}
+
+        {f.paymentMethod === "Credit Card" && !paid && showPay ? null : (
+          <button className="btn btn-gold btn-block" style={{ marginTop: "1.2rem" }} type="submit" disabled={submitting}>
+            {submitting
+              ? "Submitting…"
+              : f.paymentMethod === "Credit Card" && !paid
+                ? `Continue to Payment${payTotal ? ` — $${payTotal}` : ""} →`
+                : "Submit Sponsorship →"}
+          </button>
+        )}
       </form>
     </div>
   );

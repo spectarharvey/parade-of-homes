@@ -76,21 +76,39 @@ export default function HomeDetailPage() {
       </div>
 
       <div className="gallery">
-        {h.imgs.map((c, i) => {
-          const isDocumentAsset = /logo|floor-plan/.test(c);
-          return (
-            <div
-              key={i}
-              className={i === 0 ? "g0" : ""}
-              style={{
-                backgroundImage: `url('${imgUrl(c, i === 0 ? 1200 : 600)}')`,
-                backgroundSize: isDocumentAsset ? "contain" : "cover",
-                backgroundRepeat: "no-repeat",
-                backgroundColor: isDocumentAsset ? "#fff" : undefined,
-              }}
-            ></div>
-          );
-        })}
+        {h.imgs.length ? (
+          h.imgs.map((c, i) => {
+            const isDocumentAsset = /logo|floor-plan/.test(c);
+            return (
+              <div
+                key={i}
+                className={i === 0 ? "g0" : ""}
+                style={{
+                  backgroundImage: `url('${imgUrl(c, i === 0 ? 1200 : 600)}')`,
+                  backgroundSize: isDocumentAsset ? "contain" : "cover",
+                  backgroundRepeat: "no-repeat",
+                  backgroundColor: isDocumentAsset ? "#fff" : undefined,
+                }}
+              ></div>
+            );
+          })
+        ) : (
+          <div
+            className="g0"
+            style={{
+              display: "grid",
+              placeItems: "center",
+              textAlign: "center",
+              padding: "2rem",
+              color: "#fff",
+              fontFamily: "'Lora', serif",
+              fontSize: "1.6rem",
+              background: `linear-gradient(135deg, ${n?.color || "#116799"}, #033256)`,
+            }}
+          >
+            {h.name}
+          </div>
+        )}
       </div>
 
       <div className="detail-layout" style={{ marginTop: "1.6rem" }}>
@@ -206,7 +224,7 @@ export default function HomeDetailPage() {
                   toast(inRoute ? "Removed from route" : "Added to your route");
                 }}
               >
-                {inRoute ? "★ In My Route" : "+ Add to Route"}
+                {inRoute ? "Remove From My Route" : "+ Add to Route"}
               </button>
             </div>
             <hr className="soft" />

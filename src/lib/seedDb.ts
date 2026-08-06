@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import type { PrismaClient } from "@prisma/client";
-import { BUILDER_ENTRIES, SEED } from "./seed";
+import { BUILDER_ENTRIES, SPONSOR_ENTRIES, SEED } from "./seed";
 
 /**
  * Resets the database to the 2026 starter catalog. Used by both the
@@ -54,6 +54,7 @@ export async function seedDatabase(prisma: PrismaClient) {
   await prisma.submission.createMany({ data: SEED.submissions });
   await prisma.notification.createMany({ data: SEED.notifications });
   await prisma.builderEntry.createMany({ data: BUILDER_ENTRIES });
+  await prisma.sponsorEntry.createMany({ data: SPONSOR_ENTRIES });
   await prisma.contest.create({ data: { id: 1, ...SEED.contest } });
 
   // Auth accounts.

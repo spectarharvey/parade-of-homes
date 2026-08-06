@@ -1,14 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { homePhoto } from "@/lib/format";
 import { builderLogo } from "@/lib/builderAssets";
-import HomeCard from "@/components/HomeCard";
 import { Megaphone, Phone, Globe, Award, Home } from "lucide-react";
+
+const siteUrl = (w: string) => (/^https?:\/\//.test(w) ? w : `https://${w}`);
+const linkStyle: React.CSSProperties = { color: "inherit", textDecoration: "none" };
 
 export default function BuildersPage() {
   const { db } = useStore();
+  const router = useRouter();
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
   const fbHomes = db.homes.filter((h) => h.builder === fb.id).slice(0, 3);
   const fbLogo = builderLogo(fb);
@@ -53,12 +57,20 @@ export default function BuildersPage() {
               flexWrap: "wrap"
             }}
           >
-            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+            <a
+              href={`tel:${fb.phone.replace(/\D/g, "")}`}
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", ...linkStyle }}
+            >
               <Phone size={14} /> {fb.phone}
-            </span>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
+            </a>
+            <a
+              href={siteUrl(fb.website)}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", ...linkStyle }}
+            >
               <Globe size={14} /> {fb.website}
-            </span>
+            </a>
             {fb.years ? (
               <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem" }}>
                 <Award size={14} /> {fb.years} yrs
@@ -82,21 +94,6 @@ export default function BuildersPage() {
           ) : null}
         </div>
       </div>
-      {fbHomes.length ? (
-        <>
-          <div className="row-head">
-            <h3 style={{ fontSize: "1.3rem" }}>Homes by {fb.name}</h3>
-          </div>
-          <div className="grid-3" style={{ marginBottom: "2.6rem" }}>
-            {fbHomes.map((h) => (
-              <HomeCard key={h.id} home={h} />
-            ))}
-          </div>
-        </>
-      ) : null}
-      <div className="sec-head left" style={{ maxWidth: "none" }}>
-        <h2 style={{ fontSize: "1.5rem" }}>Builder Directory</h2>
-      </div>
       <div className="grid-2">
         {db.builders.map((b) => {
           const c = db.homes.filter((h) => h.builder === b.id).length;
@@ -104,12 +101,19 @@ export default function BuildersPage() {
           return (
             <div
               key={b.id}
-              className="card"
+              className="card card-hover"
+              onClick={() => router.push(`/builders/${b.id}`)}
+              role="link"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") router.push(`/builders/${b.id}`);
+              }}
               style={{
                 padding: "1.5rem",
                 display: "flex",
                 gap: "1rem",
                 alignItems: "flex-start",
+                cursor: "pointer",
               }}
             >
               <span
@@ -156,9 +160,9 @@ export default function BuildersPage() {
                   {b.blurb}
                 </p>
                 <div className="muted" style={{ fontSize: ".8rem", display: "flex", alignItems: "center", gap: "0.8rem", flexWrap: "wrap", marginTop: "0.4rem" }}>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}><Phone size={13} /> {b.phone}</span>
+                  <a href={`tel:${b.phone.replace(/\D/g, "")}`} onClick={(e) => e.stopPropagation()} style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", ...linkStyle }}><Phone size={13} /> {b.phone}</a>
                   <span>·</span>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}><Globe size={13} /> {b.website}</span>
+                  <a href={siteUrl(b.website)} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", ...linkStyle }}><Globe size={13} /> {b.website}</a>
                   <span>·</span>
                   <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}><Home size={13} /> {c} homes</span>
                   {b.years ? (

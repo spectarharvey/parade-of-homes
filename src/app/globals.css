@@ -527,7 +527,9 @@ footer.site .bottom {
 /* ============ HERO ============ */
 .hero {
   position: relative;
-  background: linear-gradient(160deg, #0332562a, #065694ab 55%, #03325694);
+  background:
+    linear-gradient(160deg, rgba(3, 50, 86, .85), rgba(4, 58, 100, .8) 50%, rgba(2, 20, 38, .93)),
+    url('/parade-entries/2026/brije-home.png') center / cover no-repeat;
   color: #fff;
   overflow: hidden
 }
@@ -536,9 +538,8 @@ footer.site .bottom {
   content: "";
   position: absolute;
   inset: 0;
-  background: url('/parade-entries/2026/brije-home.png') center/cover;
-  opacity: .22;
-  mix-blend-mode: luminosity
+  background: radial-gradient(130% 100% at 50% 0%, transparent 45%, rgba(2, 16, 30, .5));
+  pointer-events: none;
 }
 
 .hero .wrap {
@@ -579,9 +580,9 @@ footer.site .bottom {
   background: rgba(201, 161, 75, 0.288);
   border: 1px solid rgb(201, 161, 75);
   color: #ffffff;
-  padding: .45rem 1rem;
+  padding: .65rem 1.6rem;
   border-radius: 50px;
-  font-size: .82rem;
+  font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 1.4rem
 }

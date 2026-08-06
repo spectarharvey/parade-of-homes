@@ -15,6 +15,7 @@ export default function MapPage() {
     toggleRoute,
     removeRouteStop,
     clearRoute,
+    reorderRoute,
     tripActive,
     tripIndex,
     setTripActive,
@@ -24,6 +25,31 @@ export default function MapPage() {
   const [routeMode, setRouteMode] = useState(false);
   const [popupId, setPopupId] = useState<string | null>(null);
   const [hoverId, setHoverId] = useState<string | null>(null);
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [overIdx, setOverIdx] = useState<number | null>(null);
+
+  // Drop the dragged stop at position `target` and persist the new order.
+  const moveStop = (target: number) => {
+    const from = dragIdx;
+    setDragIdx(null);
+    setOverIdx(null);
+    if (from === null || from === target) return;
+    const next = [...route];
+    const [moved] = next.splice(from, 1);
+    next.splice(target, 0, moved);
+    reorderRoute(next);
+  };
+
+  // Neighborhood filter (legend toggles) — applies while browsing; Route Mode
+  // always shows every pin so any home can be added.
+  const [hiddenNbs, setHiddenNbs] = useState<Set<string>>(new Set());
+  const toggleNb = (id: string) =>
+    setHiddenNbs((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
 
   // A persisted, in-progress trip implies Route Mode — restore it when the page
   // remounts after navigating away.
@@ -140,6 +166,33 @@ export default function MapPage() {
     openDirections(directionsUrl(addrs[addrs.length - 1], addrs.slice(0, -1)));
   };
 
+  // Print a clean, standalone list of the route (own window — no page styles).
+  const printRoute = () => {
+    const rows = route
+      .map((id) => home(id))
+      .filter((h): h is Home => Boolean(h))
+      .map(
+        (h, i) =>
+          `<li><b>${i + 1}. ${h.name}</b><br/>${nbhd(h.nb)?.name ?? ""} · ${homeAddress(h)}</li>`,
+      )
+      .join("");
+    if (!rows) return;
+    const w = window.open("", "_blank", "width=560,height=720");
+    if (!w) return;
+    w.document.write(
+      "<!doctype html><html><head><title>My 2026 Parade Route</title><style>" +
+        "body{font-family:Arial,Helvetica,sans-serif;padding:28px;color:#12263a}" +
+        "h1{color:#033256;font-size:20px;margin:0 0 4px}ol{line-height:1.7;font-size:14px;padding-left:20px}" +
+        "li{margin-bottom:10px}p{color:#555;font-size:13px}" +
+        "</style></head><body><h1>My 2026 Parade of Homes Route</h1>" +
+        `<ol>${rows}</ol>` +
+        "<p>Open house hours: Fri &amp; Sat 11 AM – 5 PM · Sun 12 PM – 5 PM</p></body></html>",
+    );
+    w.document.close();
+    w.focus();
+    w.print();
+  };
+
   return (
     <div className="wrap">
       <div className="crumb">
@@ -150,8 +203,7 @@ export default function MapPage() {
           <span className="eyebrow">Plan Your Visit</span>
           <h2>Interactive Map</h2>
           <p className="muted">
-            Color-coded by neighborhood. Click a pin to preview a home, or build
-            a numbered route.
+            Click a pin to preview a home, or build a numbered route.
           </p>
         </div>
         <button
@@ -165,38 +217,104 @@ export default function MapPage() {
           {routeMode ? "✓ Route Mode On" : "Plan My Route"}
         </button>
       </div>
+      <div
+        style={{
+          fontWeight: 700,
+          fontSize: "1.15rem",
+          color: "var(--navy-deep)",
+          background: "rgba(201,162,75,.16)",
+          border: "1px solid var(--gold)",
+          borderRadius: "var(--radius)",
+          padding: "1rem 1.2rem",
+          margin: "0 0 1.2rem",
+        }}
+      >
+        You must be registered and logged in to vote. If you are not registered
+        and logged in, you will not be able to participate in the contest.
+      </div>
       <div className="map-layout">
         <div className="map-side">
           {!routeMode ? (
             <div>
-              <h4 style={{ fontSize: ".95rem" }}>Neighborhoods</h4>
-              {db.neighborhoods.map((n) => (
-                <div
-                  key={n.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: ".5rem",
-                    fontSize: ".84rem",
-                    marginBottom: ".4rem",
-                  }}
-                >
-                  <span
+              <h4 style={{ fontSize: ".95rem", marginBottom: ".2rem" }}>Neighborhoods</h4>
+              <p className="muted" style={{ fontSize: ".76rem", margin: "0 0 .5rem" }}>
+                Tap to show or hide on the map.
+              </p>
+              {db.neighborhoods.map((n) => {
+                const hidden = hiddenNbs.has(n.id);
+                const count = db.homes.filter((h) => h.nb === n.id).length;
+                return (
+                  <button
+                    key={n.id}
+                    type="button"
+                    onClick={() => toggleNb(n.id)}
+                    aria-pressed={!hidden}
                     style={{
-                      width: 14,
-                      height: 14,
-                      borderRadius: "50%",
-                      background: n.color,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: ".5rem",
+                      width: "100%",
+                      background: "none",
+                      border: "none",
+                      padding: ".3rem 0",
+                      cursor: "pointer",
+                      fontSize: ".84rem",
+                      textAlign: "left",
+                      color: "inherit",
+                      opacity: hidden ? 0.45 : 1,
                     }}
-                  ></span>
-                  {n.name}
-                </div>
-              ))}
+                  >
+                    <span
+                      style={{
+                        width: 14,
+                        height: 14,
+                        borderRadius: "50%",
+                        background: hidden ? "transparent" : n.color,
+                        border: `2px solid ${n.color}`,
+                        flexShrink: 0,
+                      }}
+                    ></span>
+                    <span style={{ flex: 1, textDecoration: hidden ? "line-through" : "none" }}>
+                      {n.name}
+                    </span>
+                    <span className="muted" style={{ fontSize: ".74rem" }}>{count}</span>
+                  </button>
+                );
+              })}
+              {hiddenNbs.size > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setHiddenNbs(new Set())}
+                  style={{ background: "none", border: "none", color: "var(--navy)", fontWeight: 600, fontSize: ".78rem", cursor: "pointer", padding: ".3rem 0 0" }}
+                >
+                  Show all
+                </button>
+              )}
+
+              {route.length > 0 && (
+                <>
+                  <hr className="soft" />
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: ".5rem" }}>
+                    <b style={{ fontSize: ".85rem" }}>
+                      🧭 My Route · {route.length} stop{route.length > 1 ? "s" : ""}
+                    </b>
+                    <button className="ico-btn" onClick={() => setRouteMode(true)}>Open</button>
+                  </div>
+                </>
+              )}
+
               <hr className="soft" />
               <p className="muted" style={{ fontSize: ".82rem" }}>
-                 <b>Tip:</b> turn on <b>Plan My Route</b>, then click pins in the order
+                <b>Tip:</b> turn on <b>Plan My Route</b>, then click pins in the order
                 you want to visit. We&apos;ll number your stops.
               </p>
+              <div className="muted" style={{ fontSize: ".8rem", marginTop: ".6rem", lineHeight: 1.5 }}>
+                <b>Open house hours</b>
+                <br />
+                Fri &amp; Sat 11 AM – 5 PM
+                <br />
+                Sun 12 PM – 5 PM
+              </div>
             </div>
           ) : (
             <div>
@@ -208,20 +326,27 @@ export default function MapPage() {
                 }}
               >
                 <h4 style={{ fontSize: ".95rem", margin: 0 }}>Your Route</h4>
-                <button
-                  className="ico-btn"
-                  onClick={() => {
-                    clearRoute();
-                    setTripActive(false);
-                    toast("Route cleared");
-                  }}
-                >
-                  Clear
-                </button>
+                <div style={{ display: "flex", gap: ".4rem" }}>
+                  {route.length > 0 && (
+                    <button className="ico-btn" onClick={printRoute}>
+                      🖨 Print
+                    </button>
+                  )}
+                  <button
+                    className="ico-btn"
+                    onClick={() => {
+                      clearRoute();
+                      setTripActive(false);
+                      toast("Route cleared");
+                    }}
+                  >
+                    Clear
+                  </button>
+                </div>
               </div>
               <p className="muted" style={{ fontSize: ".8rem" }}>
-                Click pins on the map to add numbered stops. Hover a pin to
-                preview the home.
+                Click pins on the map to add numbered stops. Drag stops to
+                reorder your route.
               </p>
               <div>
                 {!route.length ? (
@@ -236,22 +361,71 @@ export default function MapPage() {
                     const h = home(id);
                     if (!h) return null;
                     const active = tripActive && i === tripIndex;
+                    const isOver = overIdx === i && dragIdx !== null && dragIdx !== i;
+                    const stopStyle: React.CSSProperties = { cursor: "grab" };
+                    if (dragIdx === i) stopStyle.opacity = 0.4;
+                    if (isOver) stopStyle.background = "rgba(201,162,75,.18)";
+                    if (active) {
+                      stopStyle.borderColor = "var(--gold)";
+                      stopStyle.background = "rgba(116,167,202,.12)";
+                      stopStyle.boxShadow = "0 0 0 2px var(--gold)";
+                    }
                     return (
                       <div
                         key={id}
                         className="route-stop"
-                        style={
-                          active
-                            ? { borderColor: "var(--gold)", background: "rgba(116,167,202,.12)", boxShadow: "0 0 0 2px var(--gold)" }
-                            : undefined
-                        }
+                        draggable
+                        onDragStart={(e) => {
+                          setDragIdx(i);
+                          e.dataTransfer.effectAllowed = "move";
+                        }}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          if (overIdx !== i) setOverIdx(i);
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          moveStop(i);
+                        }}
+                        onDragEnd={() => {
+                          setDragIdx(null);
+                          setOverIdx(null);
+                        }}
+                        style={stopStyle}
                       >
+                        <span
+                          aria-hidden="true"
+                          title="Drag to reorder"
+                          style={{ color: "var(--muted)", cursor: "grab", fontSize: ".95rem", lineHeight: 1, userSelect: "none" }}
+                        >
+                          ⠿
+                        </span>
                         <span className="route-num">{i + 1}</span>
                         <div style={{ flex: 1 }}>
                           <b style={{ fontSize: ".85rem" }}>{h.name}</b>
                           <div className="muted" style={{ fontSize: ".76rem" }}>
                             {nbhd(h.nb)?.name} · {money(h.price)}
                           </div>
+                          <button
+                            type="button"
+                            draggable={false}
+                            onClick={() => openDirections(directionsUrl(homeAddress(h)))}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              padding: 0,
+                              marginTop: ".3rem",
+                              color: "var(--navy)",
+                              fontWeight: 600,
+                              fontSize: ".76rem",
+                              cursor: "pointer",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: ".25rem",
+                            }}
+                          >
+                            🧭 Get Directions
+                          </button>
                         </div>
                         <button
                           className="ico-btn danger"
@@ -313,9 +487,42 @@ export default function MapPage() {
           style={{
             cursor: isPanning ? "grabbing" : "grab",
             touchAction: "none",
-            overflow: "hidden"
+            overflow: "hidden",
+            position: "relative",
           }}
         >
+          {routeMode && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                zIndex: 6,
+                background: "rgba(3,50,86,.94)",
+                color: "#fff",
+                padding: ".55rem 1rem",
+                fontSize: ".85rem",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: ".5rem",
+                pointerEvents: "none",
+              }}
+            >
+              <span
+                style={{
+                  width: 9,
+                  height: 9,
+                  borderRadius: "50%",
+                  background: "var(--gold)",
+                  boxShadow: "0 0 0 3px rgba(201,162,75,.4)",
+                  flexShrink: 0,
+                }}
+              />
+              Planning your route — tap pins in the order you want to visit.
+            </div>
+          )}
           <div
             style={{
               width: "100%",
@@ -345,6 +552,8 @@ export default function MapPage() {
               const idx = route.indexOf(h.id);
               const numbered = routeMode && idx >= 0;
               const isCurrent = tripActive && idx === tripIndex;
+              // #4: hide filtered neighborhoods while browsing (all show in Route Mode).
+              if (!routeMode && hiddenNbs.has(h.nb)) return null;
               return (
                 <div
                   key={h.id}
@@ -378,7 +587,19 @@ export default function MapPage() {
                         : "none",
                     }}
                   >
-                    <span>{numbered ? idx + 1 : h.beds}</span>
+                    {numbered ? (
+                      <span>{idx + 1}</span>
+                    ) : (
+                      <span
+                        style={{
+                          display: "block",
+                          width: 7,
+                          height: 7,
+                          borderRadius: "50%",
+                          background: "rgba(255,255,255,.9)",
+                        }}
+                      />
+                    )}
                   </div>
                   <span className="pin-tip">{h.name}</span>
                 </div>

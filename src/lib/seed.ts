@@ -98,6 +98,45 @@ export const SEED: DB = {
         "Ocala luxury builder showcasing the Golden Hills spec home in Golden Hills & Country Club.",
       ad: "Standard Builder Entry - Golden Hills in Golden Hills & Country Club.",
     },
+    {
+      id: "b_otow",
+      name: "On Top of the World",
+      initials: "OW",
+      color: "#1f4e8c",
+      featured: false,
+      phone: "866-228-5878",
+      website: "ontopoftheworldcommunities.com",
+      years: 0,
+      blurb:
+        "Ocala's premier master-planned community showcasing The Whitmore — a 2,870 sq ft spec home in Balfour with two master suites, a gourmet kitchen, and a pool with sundeck.",
+      ad: "Standard Builder Entry - The Whitmore in Balfour at On Top of the World.",
+    },
+    {
+      id: "b_calesa",
+      name: "Calesa Township",
+      initials: "CT",
+      color: "#c8791f",
+      featured: false,
+      phone: "352-353-2112",
+      website: "MyCalesa.com",
+      years: 0,
+      blurb:
+        "Innovative master-planned Ocala community presenting The Heritage — a 1,551 sq ft spec home in Perlino Grove with an open great room, laundry suite, and whole-house fresh air exchange.",
+      ad: "Additional Home Entry - The Heritage in Perlino Grove at Calesa Township.",
+    },
+    {
+      id: "b_townsley",
+      name: "Townsley Construction",
+      initials: "TC",
+      color: "#5b3a8a",
+      featured: false,
+      phone: "352-270-1199",
+      website: "townsleyconstruction.com",
+      years: 0,
+      blurb:
+        "Ocala custom home builder showcasing The Wyrick II — a 2,655 sq ft custom home with four bedrooms, a hidden butler's pantry, and open-concept living.",
+      ad: "Standard Builder Entry - The Wyrick II custom home.",
+    },
   ],
   neighborhoods: [
     {

@@ -79,14 +79,10 @@ async function main() {
     }),
   ]);
 
-  // Seed the 2026 public form entries only when empty, so real submissions and
-  // any already-entered rows are never clobbered.
-  if ((await prisma.builderEntry.count()) === 0) {
-    await prisma.builderEntry.createMany({ data: BUILDER_ENTRIES });
-  }
-  if ((await prisma.sponsorEntry.count()) === 0) {
-    await prisma.sponsorEntry.createMany({ data: SPONSOR_ENTRIES });
-  }
+  // Add any 2026 form entries not already present (skipDuplicates keeps every
+  // existing row untouched, so real submissions are never clobbered).
+  await prisma.builderEntry.createMany({ data: BUILDER_ENTRIES, skipDuplicates: true });
+  await prisma.sponsorEntry.createMany({ data: SPONSOR_ENTRIES, skipDuplicates: true });
 
   console.log("AFTER: ", await counts());
 }

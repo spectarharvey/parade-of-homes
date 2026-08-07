@@ -13,6 +13,9 @@ const HOME_COORDS: Record<string, [number, number]> = {
   h_curington_sebastian: [29.2508, -82.2903], // Irish Acres area, NW Ocala
   h_brije_aspen: [29.2836, -82.4534], // Morriston, west of Ocala
   h_luetgert_golden_hills: [29.2381, -82.2447], // Golden Hills & Country Club, NW Ocala
+  h_otow_whitmore: [29.125, -82.285], // On Top of the World (Balfour), SW Ocala
+  h_calesa_heritage: [29.135, -82.215], // Calesa Township (Perlino Grove), SW Ocala
+  h_townsley_wyrick: [29.165, -82.105], // Townsley custom home, SE Ocala
 };
 
 /** Central Ocala — the fallback for any home without mapped coordinates. */

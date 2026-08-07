@@ -91,7 +91,7 @@ export default function ContestPage() {
               textShadow: "0 2px 14px rgba(0,0,0,.45)",
             }}
           >
-            A 3-Night Oceanview Escape
+            A 3-Day Oceanview Escape
           </h3>
           <p
             style={{

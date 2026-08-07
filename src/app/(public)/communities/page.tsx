@@ -10,11 +10,11 @@ export default function NeighborhoodsPage() {
   return (
     <div className="wrap">
       <div className="crumb">
-        <Link href="/">Home</Link> / Neighborhoods
+        <Link href="/">Home</Link> / Communities
       </div>
       <div className="sec-head">
-        <span className="eyebrow">Explore by Area</span>
-        <h2>Our Neighborhoods</h2>
+        <span className="eyebrow">Explore Local</span>
+        <h2>Our Communities</h2>
         <p>
           Browse the current 2026 Parade subdivisions and model-home locations.
         </p>

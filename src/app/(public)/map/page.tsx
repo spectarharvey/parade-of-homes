@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useStore, useToast } from "@/lib/store";
-import { money, stars, homePhoto } from "@/lib/format";
+import { money, stars, homePhoto, NO_IMAGE_FALLBACK } from "@/lib/format";
 import type { Home } from "@/lib/types";
+import {Info } from "lucide-react";
 
 export default function MapPage() {
   const {
@@ -217,20 +218,24 @@ export default function MapPage() {
           {routeMode ? "✓ Route Mode On" : "Plan My Route"}
         </button>
       </div>
+       
       <div
         style={{
-          fontWeight: 700,
-          fontSize: "1.15rem",
-          color: "var(--navy-deep)",
-          background: "rgba(201,162,75,.16)",
-          border: "1px solid var(--gold)",
+          background: "rgba(17, 103, 153, 0.08)",
+          border: "1px solid rgba(17, 103, 153, 0.25)",
           borderRadius: "var(--radius)",
-          padding: "1rem 1.2rem",
-          margin: "0 0 1.2rem",
+          padding: "0.85rem 1.2rem",
+          marginBottom: "1.2rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem",
+          color: "var(--navy)",
+          fontSize: "0.95rem",
+          fontWeight: 600,
         }}
       >
-        You must be registered and logged in to vote. If you are not registered
-        and logged in, you will not be able to participate in the contest.
+        <Info size={20} style={{ color: "var(--navy)", flexShrink: 0 }} />
+        <span>You must be registered and logged in to plan your route.</span>
       </div>
       <div className="map-layout">
         <div className="map-side">
@@ -626,7 +631,13 @@ export default function MapPage() {
                     }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={homePhoto(h)} alt="" />
+                    <img
+                      src={homePhoto(h)}
+                      alt={h.name}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = NO_IMAGE_FALLBACK;
+                      }}
+                    />
                     <div style={{ padding: ".7rem .8rem" }}>
                       <b style={{ fontSize: ".9rem" }}>{h.name}</b>
                       <div className="muted" style={{ fontSize: ".76rem" }}>

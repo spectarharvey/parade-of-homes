@@ -140,8 +140,7 @@ export default function HomePage() {
               <span className="badge badge-navy home-badge">Win Big</span>
               <h2>Tour the homes. Enter to win. Pack your bags!</h2>
               <p>
-                Check-In at least 8 homes across the two Parade weekends for a
-                chance to win! Enjoy a three-day stay in a Premium Oceanview
+                Visit at least 8 homes across the two Parade weekends for a chance to win! Enjoy a three-day stay in a Premium Oceanview
                 Suite at Hammock Beach Golf Resort &amp; Spa, complete with daily
                 breakfast for two at Atlantic Grille. Sponsored by Umpleby
                 Travels.
@@ -303,7 +302,7 @@ function CountdownTimer() {
     <div className="statsbar countdown">
       <div className="wrap">
         <div className="cd-title">
-          {t.done ? "The 2026 Parade of Homes is here" : "Countdown to the 2026 Parade of Homes · Nov 6"}
+          {t.done ? "The 2026 Parade of Homes is here" : "Countdown to the 2026 Parade of Homes (EST)"}
         </div>
         <div className="grid">
           {cells.map((c) => (

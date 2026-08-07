@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
-import { money, stars, homePhoto } from "@/lib/format";
+import { money, stars, homePhoto, NO_IMAGE_FALLBACK } from "@/lib/format";
 import type { Home } from "@/lib/types";
 
 export default function HomeCard({ home }: { home: Home }) {
@@ -20,25 +20,14 @@ export default function HomeCard({ home }: { home: Home }) {
   return (
     <Link href={`/home/${home.id}`} className="card card-hover home-card">
       <div className="photo">
-        {photo && !imageFailed ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            loading="lazy"
-            src={photo}
-            alt={home.name}
-            onError={() => setImageFailed(true)}
-          />
-        ) : (
-          <div
-            className="photo-fallback"
-            style={{
-              background: `linear-gradient(135deg, ${n?.color || "var(--navy)"}, var(--navy-deep))`,
-            }}
-          >
-            <span>Home photo coming soon</span>
-            <b>{home.name}</b>
-          </div>
-        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          loading="lazy"
+          src={!imageFailed ? photo : NO_IMAGE_FALLBACK}
+          alt={home.name}
+          onError={() => setImageFailed(true)}
+          style={imageFailed ? { objectFit: "contain", background: "#f8fafc" } : undefined}
+        />
         <span className="tag">{home.style}</span>
       </div>
       <div className="body">

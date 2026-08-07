@@ -9,7 +9,7 @@ import { useStore } from "@/lib/store";
 
 const PUBLIC_NAV: [string, string][] = [
   ["/homes", "Homes"],
-  ["/neighborhoods", "Neighborhoods"],
+  ["/communities", "Communities"],
   ["/builders", "Builders"],
   ["/event", "Parade Schedule"],
   ["/map", "Map & Route"],

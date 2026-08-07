@@ -149,7 +149,7 @@ export default function BuildersPage() {
                   <span>·</span>
                   <a href={siteUrl(b.website)} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", ...linkStyle }}><Globe size={13} /> {b.website}</a>
                   <span>·</span>
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}><Home size={13} /> {c} homes</span>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}><Home size={13} /> {c} {c === 1 ? "home" : "homes"}</span>
                   {b.years ? (
                     <>
                       <span>·</span>

@@ -45,8 +45,8 @@ export default function NeighborhoodDetailPage() {
               Home
             </Link>{" "}
             /{" "}
-            <Link href="/neighborhoods" style={{ color: "#cdd8e3" }}>
-              Neighborhoods
+            <Link href="/communities" style={{ color: "#cdd8e3" }}>
+              Communities
             </Link>{" "}
             / {n.name}
           </div>

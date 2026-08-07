@@ -124,20 +124,7 @@ export default function SponsorsPage() {
           </div>
         );
       })}
-      <div className="contest-cta" style={{ marginTop: "1rem" }}>
-        <div>
-          <h2 style={{ fontSize: "1.6rem" }}>Want to sponsor the Parade?</h2>
-          <p>
-            Put your brand in front of thousands of motivated home shoppers
-            across Marion County.
-          </p>
-        </div>
-        <div>
-          <Link href="/sponsor-entry" className="btn btn-navy">
-            Become a Sponsor
-          </Link>
-        </div>
-      </div>
+  
     </div>
   );
 }

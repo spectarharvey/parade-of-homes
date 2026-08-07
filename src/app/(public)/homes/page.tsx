@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useStore } from "@/lib/store";
 import HomeCard from "@/components/HomeCard";
+import { ArrowUp, ArrowDown } from "lucide-react";
 
 // Price brackets from the 2026 Parade award categories.
 const PRICE_RANGES = [
@@ -33,7 +34,7 @@ export default function HomesPage() {
   const [beds, setBeds] = useState(0);
   const [baths, setBaths] = useState(0);
   const [sqftRange, setSqftRange] = useState("");
-  const [sort, setSort] = useState("alpha");
+  const [sort, setSort] = useState("price-asc");
 
   const results = useMemo(() => {
     let list = db.homes.slice();
@@ -92,12 +93,9 @@ export default function HomesPage() {
         className="sec-head left"
         style={{ marginBottom: "1.4rem", maxWidth: "none" }}
       >
-        <span className="eyebrow">Showscase Listings</span>
+        <span className="eyebrow">Showcase Listings</span>
         <h2>Explore All Homes</h2>
-        <p className="muted">
-          Filter {db.homes.length} showcase homes by price, bedrooms &amp;
-          bathrooms, and square footage.
-        </p>
+        
       </div>
       <div className="toolbar">
         <input
@@ -121,9 +119,9 @@ export default function HomesPage() {
           <span className="field-label">Beds</span>
           <select value={beds} onChange={(e) => setBeds(Number(e.target.value))}>
             <option value={0}>Any</option>
-            {[1, 2, 3, 4, 5].map((v) => (
+            {[2, 3, 4, 5].map((v) => (
               <option key={v} value={v}>
-                {v}+
+                {v}
               </option>
             ))}
           </select>
@@ -132,9 +130,9 @@ export default function HomesPage() {
           <span className="field-label">Baths</span>
           <select value={baths} onChange={(e) => setBaths(Number(e.target.value))}>
             <option value={0}>Any</option>
-            {[1, 2, 3, 4].map((v) => (
+            {[ 2, 3, 4].map((v) => (
               <option key={v} value={v}>
-                {v}+
+                {v}
               </option>
             ))}
           </select>
@@ -151,16 +149,22 @@ export default function HomesPage() {
           </select>
         </span>
         <span>
-          <span className="field-label">Sort</span>
-          <select value={sort} onChange={(e) => setSort(e.target.value)}>
-            <option value="alpha">Alphabetical (A–Z)</option>
-            <option value="featured">Featured</option>
-            <option value="price-asc">Price ↑</option>
-            <option value="price-desc">Price ↓</option>
-            <option value="beds">Most Bedrooms</option>
-            <option value="baths">Most Bathrooms</option>
-            <option value="sqft">Largest (Sq Ft)</option>
-          </select>
+          <span className="field-label">Price</span>
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={() => setSort((prev) => (prev === "price-asc" ? "price-desc" : "price-asc"))}
+            style={{
+              padding: "0.4rem 0.8rem",
+              fontSize: "0.88rem",
+              height: "38px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.3rem",
+            }}
+          >
+            Price {sort === "price-asc" ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
+          </button>
         </span>
       </div>
       <p className="muted" style={{ fontSize: ".85rem", margin: "0 0 1rem" }}>

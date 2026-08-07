@@ -4,6 +4,7 @@ import Link from "next/link";
 import BuilderLogo from "@/components/BuilderLogo";
 
 const FEATURED_BUILDER = {
+  id: "b_brije",
   name: "Brije Homes",
   website: "https://www.brije.com/",
 };
@@ -20,8 +21,7 @@ export default function EventCalendarPage() {
         <span className="eyebrow">Parade Schedule</span>
         <h2>2026 Parade of Homes</h2>
         <p style={{ fontSize: "1.02rem" }}>
-          November 6–8 &amp; 13–15, 2026 have been reserved for the
-          MCBIA&apos;s 2026 Parade of Homes.
+         The 2026 MCBIA Parade of Homes will take place this November.
         </p>
       </div>
 
@@ -37,8 +37,8 @@ export default function EventCalendarPage() {
       >
         {[
           ["Parade Weekends", "Nov 6–8 & 13–15, 2026"],
-          ["Hours", "Fri & Sat 11 AM – 5 PM\nSun 12 PM – 5 PM"],
-          ["Featured Builder", FEATURED_BUILDER.name],
+          ["Fri & Sat Hours", "11 AM – 5 PM"],
+          ["Sunday Hours", "12 PM – 5 PM"],
           ["Location", "Marion County, FL"],
         ].map(([l, v]) => (
           <div key={l}>
@@ -84,9 +84,9 @@ export default function EventCalendarPage() {
             </p>
           </div>
         </div>
-        <a href={FEATURED_BUILDER.website} target="_blank" rel="noreferrer" className="btn btn-outline">
+        <Link href={`/builders/${FEATURED_BUILDER.id}`} className="btn btn-outline">
           Visit Brije Homes →
-        </a>
+        </Link>
       </div>
 
       {/* Public visitor CTAs */}
@@ -104,8 +104,7 @@ export default function EventCalendarPage() {
         <div>
           <h2 style={{ fontSize: "1.4rem" }}>Plan your Parade visit</h2>
           <p>
-            Browse the showcase homes, map your route, and register to vote for
-            your favorites and enter the visitor giveaway.
+            Take a look at this year’s Parade of Homes, map your route, and register to vote for your favorites so that you can participate in the giveaway.
           </p>
         </div>
         <div style={{ display: "flex", gap: ".6rem", flexWrap: "wrap" }}>

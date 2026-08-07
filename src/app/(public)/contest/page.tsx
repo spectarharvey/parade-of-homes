@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { money, stars } from "@/lib/format";
-import { PartyPopper, Home, MapPin } from "lucide-react";
+import { PartyPopper, Home, MapPin, Info } from "lucide-react";
 
 export default function ContestPage() {
   const { db, home, nbhd, visited, myRatings, route } = useStore();
@@ -25,6 +25,26 @@ export default function ContestPage() {
       <div className="sec-head">
         <span className="eyebrow">Visit · Vote · Win</span>
         <h2>Contest Tracker</h2>
+      </div>
+
+      {/* Attention / Requirement Banner */}
+      <div
+        style={{
+          background: "rgba(17, 103, 153, 0.08)",
+          border: "1px solid rgba(17, 103, 153, 0.25)",
+          borderRadius: "var(--radius)",
+          padding: "0.85rem 1.2rem",
+          marginBottom: "1.2rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem",
+          color: "var(--navy)",
+          fontSize: "0.95rem",
+          fontWeight: 600,
+        }}
+      >
+        <Info size={20} style={{ color: "var(--navy)", flexShrink: 0 }} />
+        <span>You must be registered and logged in to participate in the giveaway contest.</span>
       </div>
 
       {/*

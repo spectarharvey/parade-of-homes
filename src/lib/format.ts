@@ -20,8 +20,10 @@ export const imgUrl = (code: string, w = 900) => {
   return `https://images.unsplash.com/photo-${code}?auto=format&fit=crop&w=${w}&q=70`;
 };
 
+export const NO_IMAGE_FALLBACK = "https://static.vecteezy.com/system/resources/thumbnails/022/059/000/small/no-image-available-icon-vector.jpg";
+
 export const homePhoto = (h: Home) =>
-  h.imgs && h.imgs.length ? imgUrl(h.imgs[0]) : "";
+  h.imgs && h.imgs.length ? imgUrl(h.imgs[0]) : NO_IMAGE_FALLBACK;
 
 /** Deterministic pseudo-QR (decorative, not scannable). Returns an SVG string. */
 export function qrSVG(seed: string) {

@@ -24,7 +24,7 @@ export default function Footer() {
           <div>
             <h4>Explore</h4>
             <Link href="/homes">All Homes</Link>
-            <Link href="/neighborhoods">Neighborhoods</Link>
+            <Link href="/communities">Communities</Link>
             <Link href="/builders">Builders</Link>
             <Link href="/map">Map &amp; Route</Link>
             <Link href="/event">Parade Schedule</Link>
@@ -33,8 +33,8 @@ export default function Footer() {
             <h4>Get Involved</h4>
             <Link href="/register">Register</Link>
             <Link href="/contest">Contest</Link>
-            <Link href="/builder-entry">Builder Entry Form</Link>
-            <Link href="/sponsor-entry">Sponsor Form</Link>
+            {/* <Link href="/builder-entry">Builder Entry Form</Link> */}
+            {/* <Link href="/sponsor-entry">Sponsor Form</Link> */}
             <Link href="/builder">Builder Portal</Link>
             <Link href="/admin">Admin Login</Link>
           </div>

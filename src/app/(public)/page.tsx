@@ -254,8 +254,9 @@ export default function HomePage() {
   );
 }
 
-// Opening day of the 2026 Parade of Homes (Fri, Nov 6, 2026 — anchored to US Eastern).
-const PARADE_START = new Date("2026-11-06T00:00:00-05:00").getTime();
+// Parade opening: Fri, Nov 6, 2026 at 11:00 AM ET — the first open-house hour.
+// EST (-05:00) is correct: DST ends Sun, Nov 1, 2026, so Nov 6 is standard time.
+const PARADE_START = new Date("2026-11-06T11:00:00-05:00").getTime();
 
 function CountdownTimer() {
   const calc = () => {

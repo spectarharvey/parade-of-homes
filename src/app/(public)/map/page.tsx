@@ -76,11 +76,11 @@ export default function MapPage() {
     reorderRoute(next);
   };
 
-  // Neighborhood filter (legend toggles) — applies while browsing; Route Mode
-  // always shows every pin so any home can be added.
-  const [hiddenNbs, setHiddenNbs] = useState<Set<string>>(new Set());
-  const toggleNb = (id: string) =>
-    setHiddenNbs((prev) => {
+  // Home filter (legend toggles) — applies while browsing; Route Mode always
+  // shows every pin so any home can be added.
+  const [hiddenHomes, setHiddenHomes] = useState<Set<string>>(new Set());
+  const toggleHome = (id: string) =>
+    setHiddenHomes((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -213,17 +213,18 @@ export default function MapPage() {
         <div className="map-side">
           {!routeMode ? (
             <div>
-              <h4 style={{ fontSize: ".95rem", marginBottom: ".2rem" }}>Communities</h4>
+              <h4 style={{ fontSize: ".95rem", marginBottom: ".2rem" }}>Homes</h4>
               <p className="muted" style={{ fontSize: ".76rem", margin: "0 0 .5rem" }}>
                 Tap to show or hide on the map.
               </p>
-              {db.neighborhoods.map((n) => {
-                const hidden = hiddenNbs.has(n.id);
+              {db.homes.map((h) => {
+                const hidden = hiddenHomes.has(h.id);
+                const loc = nbhd(h.nb)?.name;
                 return (
                   <button
-                    key={n.id}
+                    key={h.id}
                     type="button"
-                    onClick={() => toggleNb(n.id)}
+                    onClick={() => toggleHome(h.id)}
                     aria-pressed={!hidden}
                     style={{
                       display: "flex",
@@ -232,7 +233,7 @@ export default function MapPage() {
                       width: "100%",
                       background: "none",
                       border: "none",
-                      padding: ".3rem 0",
+                      padding: ".35rem 0",
                       cursor: "pointer",
                       fontSize: ".84rem",
                       textAlign: "left",
@@ -245,21 +246,26 @@ export default function MapPage() {
                         width: 14,
                         height: 14,
                         borderRadius: "50%",
-                        background: hidden ? "transparent" : n.color,
-                        border: `2px solid ${n.color}`,
+                        background: hidden ? "transparent" : h.color,
+                        border: `2px solid ${h.color}`,
                         flexShrink: 0,
                       }}
                     ></span>
                     <span style={{ flex: 1, textDecoration: hidden ? "line-through" : "none" }}>
-                      {n.name}
+                      {h.name}
+                      {loc ? (
+                        <span className="muted" style={{ display: "block", fontSize: ".72rem", textDecoration: "none" }}>
+                          {loc}
+                        </span>
+                      ) : null}
                     </span>
                   </button>
                 );
               })}
-              {hiddenNbs.size > 0 && (
+              {hiddenHomes.size > 0 && (
                 <button
                   type="button"
-                  onClick={() => setHiddenNbs(new Set())}
+                  onClick={() => setHiddenHomes(new Set())}
                   style={{ background: "none", border: "none", color: "var(--navy)", fontWeight: 600, fontSize: ".78rem", cursor: "pointer", padding: ".3rem 0 0" }}
                 >
                   Show all
@@ -483,7 +489,7 @@ export default function MapPage() {
               Planning your route — tap pins in the order you want to visit.
             </div>
           )}
-          <LeafletMap routeMode={routeMode} hiddenNbs={hiddenNbs} />
+          <LeafletMap routeMode={routeMode} hiddenHomes={hiddenHomes} />
         </div>
       </div>
 

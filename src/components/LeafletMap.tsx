@@ -10,7 +10,7 @@ import type { Home } from "@/lib/types";
 
 type Props = {
   routeMode: boolean;
-  hiddenNbs: Set<string>;
+  hiddenHomes: Set<string>;
 };
 
 const esc = (s: string) =>
@@ -24,7 +24,7 @@ const esc = (s: string) =>
  * the sidebar: browse mode opens a detail popup with "Add to Route"; route mode
  * toggles the home in/out of the route and numbers the pins in visit order.
  */
-export default function LeafletMap({ routeMode, hiddenNbs }: Props) {
+export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
   const { db, nbhd, route, toggleRoute, tripActive, tripIndex } = useStore();
   const { toast } = useToast();
 
@@ -69,7 +69,7 @@ export default function LeafletMap({ routeMode, hiddenNbs }: Props) {
   useEffect(() => {
     draw();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [db.homes, route, routeMode, hiddenNbs, tripActive, tripIndex]);
+  }, [db.homes, route, routeMode, hiddenHomes, tripActive, tripIndex]);
 
   function popupHtml(h: Home) {
     const n = nbhd(h.nb);
@@ -101,7 +101,7 @@ export default function LeafletMap({ routeMode, hiddenNbs }: Props) {
 
     // Browse mode respects the legend filter; route mode shows every pin so any
     // home can be added.
-    const visible = db.homes.filter((h) => routeMode || !hiddenNbs.has(h.nb));
+    const visible = db.homes.filter((h) => routeMode || !hiddenHomes.has(h.id));
     const bounds: [number, number][] = [];
 
     visible.forEach((h) => {

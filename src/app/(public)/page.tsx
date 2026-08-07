@@ -234,7 +234,7 @@ export default function HomePage() {
                         src={sponsor.img}
                         alt={sponsor.name}
                         className="sponsor-logo-img"
-                        style={{ width: "auto", height: "100%", maxHeight: "50px", objectFit: "contain" }}
+                        style={{ width: "auto", height: "100%", maxHeight: "90px", objectFit: "contain" }}
                       />
                     ) : <b>{sponsor.name}</b>}
                   </div>

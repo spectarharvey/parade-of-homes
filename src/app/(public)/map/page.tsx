@@ -213,7 +213,7 @@ export default function MapPage() {
         <div className="map-side">
           {!routeMode ? (
             <div>
-              <h4 style={{ fontSize: ".95rem", marginBottom: ".2rem" }}>Neighborhoods</h4>
+              <h4 style={{ fontSize: ".95rem", marginBottom: ".2rem" }}>Communities</h4>
               <p className="muted" style={{ fontSize: ".76rem", margin: "0 0 .5rem" }}>
                 Tap to show or hide on the map.
               </p>

@@ -27,6 +27,7 @@ const builds: Record<string, { model: string; prefix: string; build: Build }> = 
     build: (b, create) => {
       const o: Record<string, unknown> = {};
       set(o, b, "name", String, create, "");
+      set(o, b, "color", String, create, "#116799");
       set(o, b, "style", String, create, "");
       set(o, b, "blurb", String, create, "");
       if (b.builder !== undefined) o.builderId = String(b.builder);

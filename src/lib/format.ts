@@ -20,7 +20,9 @@ export const imgUrl = (code: string, w = 900) => {
   return `https://images.unsplash.com/photo-${code}?auto=format&fit=crop&w=${w}&q=70`;
 };
 
-export const NO_IMAGE_FALLBACK = "https://static.vecteezy.com/system/resources/thumbnails/022/059/000/small/no-image-available-icon-vector.jpg";
+// Local placeholder so image-less homes never depend on an external (hotlink-
+// protected) URL that renders as a broken-image icon in the browser.
+export const NO_IMAGE_FALLBACK = "/placeholder-home.svg";
 
 export const homePhoto = (h: Home) =>
   h.imgs && h.imgs.length ? imgUrl(h.imgs[0]) : NO_IMAGE_FALLBACK;

@@ -81,9 +81,9 @@ export default function SponsorsPage() {
         if (!list.length) return null;
         
         const sizeSettings = {
-          platinum: { logoHeight: "80px", nameSize: "1rem", catSize: "0.78rem", minColWidth: "180px" },
-          gold: { logoHeight: "65px", nameSize: "0.9rem", catSize: "0.74rem", minColWidth: "150px" },
-          silver: { logoHeight: "50px", nameSize: "0.8rem", catSize: "0.7rem", minColWidth: "120px" },
+          platinum: { logoHeight: "96px", minColWidth: "200px" },
+          gold: { logoHeight: "76px", minColWidth: "170px" },
+          silver: { logoHeight: "60px", minColWidth: "140px" },
         }[t];
 
         return (
@@ -91,17 +91,18 @@ export default function SponsorsPage() {
             <div className="tier-head">
               <span className="ribbon">{label}</span>
             </div>
-            <div 
-              className="premium-sponsor-grid" 
+            <div
+              className="premium-sponsor-grid"
               style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${sizeSettings.minColWidth}, 1fr))` }}
             >
               {list.map((s, idx) => (
-                  <div 
-                    key={s.id} 
-                    className="premium-sponsor-card" 
+                  <div
+                    key={s.id}
+                    className="premium-sponsor-card"
                     style={{ animationDelay: `${idx * 0.08}s, ${idx * 0.35}s` }}
+                    title={s.name}
                   >
-                    <div style={{ height: sizeSettings.logoHeight, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "0.8rem", width: "100%" }}>
+                    <div style={{ height: sizeSettings.logoHeight, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
                       {s.img ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -110,13 +111,6 @@ export default function SponsorsPage() {
                           style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
                         />
                       ) : <b style={{ color: "var(--navy)", textAlign: "center" }}>{s.name}</b>}
-                    </div>
-                    <b style={{ fontSize: sizeSettings.nameSize, color: "var(--navy)", fontWeight: 600 }}>{s.name}</b>
-                    <div
-                      className="muted"
-                      style={{ fontSize: sizeSettings.catSize, marginTop: ".15rem" }}
-                    >
-                      {s.cat}
                     </div>
                   </div>
                 ))}

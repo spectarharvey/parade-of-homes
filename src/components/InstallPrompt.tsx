@@ -85,8 +85,8 @@ export default function InstallPrompt() {
       <div className="install-prompt-text">
         <b>Save to your Home Screen</b>
         <span>
-          Install the Parade of Homes app for one-tap check-ins and offline
-          access.
+          Install the Parade of Homes app for one-tap check-ins and fast access
+          from your home screen.
         </span>
         {showIOSHelp && isIOS && (
           <span className="install-prompt-help">

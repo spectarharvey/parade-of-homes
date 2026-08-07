@@ -1,11 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useStore, useToast } from "@/lib/store";
-import { money, stars, homePhoto, NO_IMAGE_FALLBACK } from "@/lib/format";
+import { money } from "@/lib/format";
 import type { Home } from "@/lib/types";
+import QRScanner from "@/components/QRScanner";
 import {Info } from "lucide-react";
+
+// The map is client-only (Leaflet needs `window`), so load it without SSR.
+const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
+  ssr: false,
+  loading: () => (
+    <div
+      className="leaflet-map"
+      style={{ display: "grid", placeItems: "center", color: "var(--muted)", fontSize: ".85rem" }}
+    >
+      Loading map…
+    </div>
+  ),
+});
 
 export default function MapPage() {
   const {
@@ -21,13 +36,33 @@ export default function MapPage() {
     tripIndex,
     setTripActive,
     setTripIndex,
+    visited,
+    checkIn,
   } = useStore();
   const { toast } = useToast();
   const [routeMode, setRouteMode] = useState(false);
-  const [popupId, setPopupId] = useState<string | null>(null);
-  const [hoverId, setHoverId] = useState<string | null>(null);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [overIdx, setOverIdx] = useState<number | null>(null);
+  const [scanning, setScanning] = useState(false);
+
+  // Record a visit from a scanned check-in QR (…/home/<id>?checkin=1) without
+  // leaving the route — mirrors the scanner on the home detail page.
+  const handleScan = (text: string) => {
+    setScanning(false);
+    const match = text.match(/\/home\/([^/?#\s]+)/);
+    const scannedId = match ? decodeURIComponent(match[1]) : null;
+    const target = scannedId && home(scannedId) ? scannedId : null;
+    if (!target) {
+      toast("That doesn't look like a Parade check-in code.");
+      return;
+    }
+    if (visited.includes(target)) {
+      toast("You're already checked in here.");
+      return;
+    }
+    checkIn(target);
+    toast("✓ Checked in at " + (home(target)?.name ?? "this home") + "!");
+  };
 
   // Drop the dragged stop at position `target` and persist the new order.
   const moveStop = (target: number) => {
@@ -58,47 +93,6 @@ export default function MapPage() {
     if (tripActive) setRouteMode(true);
   }, [tripActive]);
 
-  // Map panning state
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [isPanning, setIsPanning] = useState(false);
-  const [startPan, setStartPan] = useState({ x: 0, y: 0 });
-  const [startClient, setStartClient] = useState({ x: 0, y: 0 });
-  const [draggedDistance, setDraggedDistance] = useState(0);
-
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (e.button !== 0) return; // Only drag with left click
-    setIsPanning(true);
-    setStartPan({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-    setStartClient({ x: e.clientX, y: e.clientY });
-    setDraggedDistance(0);
-  };
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isPanning) return;
-    const dist = Math.hypot(e.clientX - startClient.x, e.clientY - startClient.y);
-    setDraggedDistance(dist);
-
-    // Only drag / pan the map if mouse has moved more than 5 pixels (drag threshold)
-    if (dist > 5) {
-      if (e.currentTarget.setPointerCapture) {
-        e.currentTarget.setPointerCapture(e.pointerId);
-      }
-      const newX = e.clientX - startPan.x;
-      const newY = e.clientY - startPan.y;
-      setPan({ x: newX, y: newY });
-    }
-  };
-
-  const handlePointerUp = (e: React.PointerEvent) => {
-    if (!isPanning) return;
-    setIsPanning(false);
-    if (e.currentTarget.releasePointerCapture) {
-      try {
-        e.currentTarget.releasePointerCapture(e.pointerId);
-      } catch (err) {}
-    }
-  };
-
   const startTrip = () => {
     if (!route.length) {
       toast("Add at least one stop to your route first");
@@ -111,27 +105,6 @@ export default function MapPage() {
   };
 
   const currentStop = tripActive ? home(route[tripIndex]) : null;
-
-  // In Route Mode the preview follows the hovered pin; otherwise it's click-driven.
-  const shownPopupId = routeMode ? hoverId : popupId;
-
-  // Hover-intent: a small delay before hiding lets the pointer travel from the
-  // pin into the popup to click "Add to Route".
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const cancelHide = () => {
-    if (hideTimer.current) {
-      clearTimeout(hideTimer.current);
-      hideTimer.current = null;
-    }
-  };
-  const showPreview = (id: string) => {
-    cancelHide();
-    setHoverId(id);
-  };
-  const hidePreviewSoon = () => {
-    cancelHide();
-    hideTimer.current = setTimeout(() => setHoverId(null), 160);
-  };
 
   // The model's street address (stored as a "Model location: …" feature),
   // falling back to the neighborhood for homes without one.
@@ -196,6 +169,9 @@ export default function MapPage() {
 
   return (
     <div className="wrap">
+      {scanning && (
+        <QRScanner onScan={handleScan} onClose={() => setScanning(false)} />
+      )}
       <div className="crumb">
         <Link href="/">Home</Link> / Map &amp; Route
       </div>
@@ -209,11 +185,7 @@ export default function MapPage() {
         </div>
         <button
           className={"btn btn-sm " + (routeMode ? "btn-navy" : "btn-gold")}
-          onClick={() => {
-            setRouteMode((m) => !m);
-            setPopupId(null);
-            setHoverId(null);
-          }}
+          onClick={() => setRouteMode((m) => !m)}
         >
           {routeMode ? "✓ Route Mode On" : "Plan My Route"}
         </button>
@@ -247,7 +219,6 @@ export default function MapPage() {
               </p>
               {db.neighborhoods.map((n) => {
                 const hidden = hiddenNbs.has(n.id);
-                const count = db.homes.filter((h) => h.nb === n.id).length;
                 return (
                   <button
                     key={n.id}
@@ -282,7 +253,6 @@ export default function MapPage() {
                     <span style={{ flex: 1, textDecoration: hidden ? "line-through" : "none" }}>
                       {n.name}
                     </span>
-                    <span className="muted" style={{ fontSize: ".74rem" }}>{count}</span>
                   </button>
                 );
               })}
@@ -480,22 +450,7 @@ export default function MapPage() {
             </div>
           )}
         </div>
-        <div
-          className="map-canvas"
-          onClick={() => {
-            if (draggedDistance > 5) return;
-            setPopupId(null);
-          }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          style={{
-            cursor: isPanning ? "grabbing" : "grab",
-            touchAction: "none",
-            overflow: "hidden",
-            position: "relative",
-          }}
-        >
+        <div className="map-canvas" style={{ position: "relative", overflow: "hidden" }}>
           {routeMode && (
             <div
               style={{
@@ -503,7 +458,7 @@ export default function MapPage() {
                 top: 0,
                 left: 0,
                 right: 0,
-                zIndex: 6,
+                zIndex: 1000,
                 background: "rgba(3,50,86,.94)",
                 color: "#fff",
                 padding: ".55rem 1rem",
@@ -528,153 +483,7 @@ export default function MapPage() {
               Planning your route — tap pins in the order you want to visit.
             </div>
           )}
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "relative",
-              transform: `translate(${pan.x}px, ${pan.y}px)`,
-            }}
-          >
-            <svg className="roads" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <path
-                d="M0,40 Q30,38 50,52 T100,46"
-                stroke="#fff"
-                strokeWidth="2.2"
-                fill="none"
-              />
-              <path
-                d="M20,0 Q26,40 40,70 T55,100"
-                stroke="#fff"
-                strokeWidth="1.6"
-                fill="none"
-              />
-              <path d="M70,0 L72,100" stroke="#fff" strokeWidth="1.6" fill="none" />
-              <path d="M0,75 L100,72" stroke="#fff" strokeWidth="1.4" fill="none" />
-            </svg>
-            {db.homes.map((h) => {
-              const n = nbhd(h.nb);
-              const idx = route.indexOf(h.id);
-              const numbered = routeMode && idx >= 0;
-              const isCurrent = tripActive && idx === tripIndex;
-              // #4: hide filtered neighborhoods while browsing (all show in Route Mode).
-              if (!routeMode && hiddenNbs.has(h.nb)) return null;
-              return (
-                <div
-                  key={h.id}
-                  className="pin"
-                  style={{ left: `${h.x}%`, top: `${h.y}%` }}
-                  title={`${h.name} — ${n?.name ?? ""}`}
-                  onMouseEnter={() => {
-                    if (routeMode) showPreview(h.id);
-                  }}
-                  onMouseLeave={() => {
-                    if (routeMode) hidePreviewSoon();
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (draggedDistance > 5) return;
-                    if (routeMode) {
-                      toggleRoute(h.id);
-                    } else {
-                      setPopupId((p) => (p === h.id ? null : h.id));
-                    }
-                  }}
-                >
-                  <div
-                    className="dot"
-                    style={{
-                      background: n?.color,
-                      outline: numbered
-                        ? isCurrent
-                          ? "4px solid var(--gold)"
-                          : "3px solid var(--gold-light)"
-                        : "none",
-                    }}
-                  >
-                    {numbered ? (
-                      <span>{idx + 1}</span>
-                    ) : (
-                      <span
-                        style={{
-                          display: "block",
-                          width: 7,
-                          height: 7,
-                          borderRadius: "50%",
-                          background: "rgba(255,255,255,.9)",
-                        }}
-                      />
-                    )}
-                  </div>
-                  <span className="pin-tip">{h.name}</span>
-                </div>
-              );
-            })}
-            {shownPopupId &&
-              (() => {
-                const h = home(shownPopupId);
-                if (!h) return null;
-                return (
-                  <div
-                    className="map-pop"
-                    style={{
-                      left: `${Math.min(Math.max(h.x, 15), 85)}%`,
-                      top: h.y < 30 ? `${h.y}%` : `${Math.max(h.y - 2, 2)}%`,
-                      transform: h.y < 30 ? "translate(-50%, 15px)" : "translate(-50%,-100%)",
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                    onMouseEnter={() => {
-                      if (routeMode) cancelHide();
-                    }}
-                    onMouseLeave={() => {
-                      if (routeMode) hidePreviewSoon();
-                    }}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={homePhoto(h)}
-                      alt={h.name}
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = NO_IMAGE_FALLBACK;
-                      }}
-                    />
-                    <div style={{ padding: ".7rem .8rem" }}>
-                      <b style={{ fontSize: ".9rem" }}>{h.name}</b>
-                      <div className="muted" style={{ fontSize: ".76rem" }}>
-                        {nbhd(h.nb)?.name} · {money(h.price)}
-                      </div>
-                      {h.ratings > 0 && (
-                        <div style={{ fontSize: ".76rem", margin: ".3rem 0" }}>
-                          <span className="stars">{stars(h.rating)}</span> {h.rating}
-                        </div>
-                      )}
-                      {(() => {
-                        const inRoute = route.includes(h.id);
-                        return (
-                          <button
-                            className={
-                              "btn btn-sm btn-block " +
-                              (inRoute ? "btn-outline" : "btn-navy")
-                            }
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleRoute(h.id);
-                              toast(
-                                inRoute
-                                  ? "Removed from route"
-                                  : "Added to your route"
-                              );
-                            }}
-                          >
-                            {inRoute ? "✓ In Route" : "Add to Route"}
-                          </button>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                );
-              })()}
-          </div>
+          <LeafletMap routeMode={routeMode} hiddenNbs={hiddenNbs} />
         </div>
       </div>
 
@@ -691,6 +500,18 @@ export default function MapPage() {
             </span>
           </div>
           <div className="trip-bar-actions">
+            {visited.includes(currentStop.id) ? (
+              <button className="btn btn-outline btn-sm" disabled>
+                ✓ Checked In
+              </button>
+            ) : (
+              <button
+                className="btn btn-gold btn-sm"
+                onClick={() => setScanning(true)}
+              >
+                📷 Check In
+              </button>
+            )}
             <Link href={`/home/${currentStop.id}`} className="btn btn-outline btn-sm">
               Details
             </Link>
@@ -702,7 +523,10 @@ export default function MapPage() {
             </button>
             {tripIndex < route.length - 1 ? (
               <button
-                className="btn btn-gold btn-sm"
+                className={
+                  "btn btn-sm " +
+                  (visited.includes(currentStop.id) ? "btn-gold" : "btn-navy")
+                }
                 onClick={() => {
                   setTripIndex(tripIndex + 1);
                   toast("➡ Next stop");
@@ -712,7 +536,10 @@ export default function MapPage() {
               </button>
             ) : (
               <button
-                className="btn btn-navy btn-sm"
+                className={
+                  "btn btn-sm " +
+                  (visited.includes(currentStop.id) ? "btn-gold" : "btn-navy")
+                }
                 onClick={() => {
                   setTripActive(false);
                   toast("🏁 You finished your parade route!");

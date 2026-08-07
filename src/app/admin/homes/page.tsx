@@ -14,6 +14,7 @@ type HomeDraft = Partial<Record<keyof Home, unknown>> & {
 
 const emptyHome = (): HomeDraft => ({
   name: "",
+  color: "#116799",
   builder: "",
   nb: "",
   style: "",
@@ -226,12 +227,23 @@ export default function AdminHomesPage() {
                 </select>
               </div>
             </div>
-            <div className="fld">
-              <label>Style</label>
-              <input
-                value={(draft.style as string) || ""}
-                onChange={(e) => setDraft({ ...draft, style: e.target.value })}
-              />
+            <div className="form-grid">
+              <div className="fld">
+                <label>Style</label>
+                <input
+                  value={(draft.style as string) || ""}
+                  onChange={(e) => setDraft({ ...draft, style: e.target.value })}
+                />
+              </div>
+              <div className="fld">
+                <label>Map Pin Color</label>
+                <input
+                  type="color"
+                  value={(draft.color as string) || "#116799"}
+                  onChange={(e) => setDraft({ ...draft, color: e.target.value })}
+                  style={{ width: "100%", height: 40, padding: 3 }}
+                />
+              </div>
             </div>
             <div className="form-grid">
               <div className="fld">

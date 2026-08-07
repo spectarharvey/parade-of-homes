@@ -101,48 +101,26 @@ export const SEED: DB = {
   ],
   neighborhoods: [
     {
-      id: "n_tartan_farms",
-      name: "Tartan Farms at Winding Oaks",
+      id: "n_on_top_of_the_world",
+      name: "On Top of the World",
       city: "Ocala",
-      color: "#1a2858",
-      img: "/parade-entries/2026/dr-horton-holden-home.jpg",
+      color: "#1f4e8c",
+      img: "",
       blurb:
-        "Ocala subdivision featuring D.R. Horton's two-story Holden model for the 2026 Parade.",
-      low: 416990,
+        "Master-planned Ocala community — 2026 Parade details coming soon.",
+      low: 350000,
       high: 416990,
     },
     {
-      id: "n_marion_oaks",
-      name: "Marion Oaks",
+      id: "n_calesa_township",
+      name: "Calesa Township",
       city: "Ocala",
-      color: "#f28a20",
-      img: "/parade-entries/2026/deltona-mustang-home.jpg",
+      color: "#c8791f",
+      img: "",
       blurb:
-        "Southwest Ocala community represented by The Deltona Corporation's Mustang model.",
-      low: 350000,
-      high: 350000,
-    },
-    {
-      id: "n_irish_acres",
-      name: "Irish Acres",
-      city: "Ocala",
-      color: "#d62027",
-      img: "/parade-entries/2026/secure-built-rutherford-home.jpg",
-      blurb:
-        "Ocala acreage setting for Secure Built's Rutherford Farmhouse and Curington's Sebastian VIII Craftsman custom homes.",
+        "Master-planned Ocala community — 2026 Parade details coming soon.",
       low: 615000,
-      high: 699000,
-    },
-    {
-      id: "n_brije_morriston",
-      name: "Morriston",
-      city: "Morriston",
-      color: "#116799",
-      img: "/parade-entries/2026/brije-home.png",
-      blurb:
-        "Twelve-acre countryside setting in Morriston showcasing Brije Homes' custom Aspen modern farmhouse, the 2026 Featured Builder entry.",
-      low: 2750000,
-      high: 3200000,
+      high: 2750000,
     },
     {
       id: "n_golden_hills",
@@ -159,9 +137,10 @@ export const SEED: DB = {
   homes: [
     {
       id: "h_dr_horton_holden",
+      color: "#2563a8",
       name: "Holden",
       builder: "b_dr_horton",
-      nb: "n_tartan_farms",
+      nb: "n_on_top_of_the_world",
       style: "Spec Home",
       price: 416990,
       beds: 4,
@@ -197,9 +176,10 @@ export const SEED: DB = {
     },
     {
       id: "h_deltona_mustang",
+      color: "#e07b1a",
       name: "Mustang",
       builder: "b_deltona",
-      nb: "n_marion_oaks",
+      nb: "n_on_top_of_the_world",
       style: "Spec Home",
       price: 350000,
       beds: 4,
@@ -235,9 +215,10 @@ export const SEED: DB = {
     },
     {
       id: "h_secure_built_rutherford",
+      color: "#c0392b",
       name: "Rutherford Farmhouse",
       builder: "b_secure_built",
-      nb: "n_irish_acres",
+      nb: "n_calesa_township",
       style: "Custom Home",
       price: 679000,
       beds: 3,
@@ -273,9 +254,10 @@ export const SEED: DB = {
     },
     {
       id: "h_brije_aspen",
+      color: "#b8860b",
       name: "The Aspen",
       builder: "b_brije",
-      nb: "n_brije_morriston",
+      nb: "n_calesa_township",
       style: "Custom Home",
       price: 2750000,
       beds: 4,
@@ -311,9 +293,10 @@ export const SEED: DB = {
     },
     {
       id: "h_curington_sebastian",
+      color: "#7d4ba0",
       name: "Sebastian VIII Craftsman Edition",
       builder: "b_curington",
-      nb: "n_irish_acres",
+      nb: "n_calesa_township",
       style: "Custom Home",
       price: 615000,
       beds: 4,
@@ -344,6 +327,7 @@ export const SEED: DB = {
     },
     {
       id: "h_luetgert_golden_hills",
+      color: "#1f8a5b",
       name: "Golden Hills",
       builder: "b_luetgert",
       nb: "n_golden_hills",
@@ -377,6 +361,14 @@ export const SEED: DB = {
     },
   ],
   sponsors: [
+    {
+      id: "sp_brije",
+      name: "Brije Homes",
+      tier: "platinum",
+      color: "#1a3a5c",
+      cat: "2026 Featured Builder · Custom Home Builder",
+      img: "/parade-entries/2026/brije-logo.webp",
+    },
     {
       id: "sp_bennett",
       name: "Bennett Custom Homes",

@@ -28,6 +28,7 @@ export async function seedDatabase(prisma: PrismaClient) {
     data: SEED.homes.map((h) => ({
       id: h.id,
       name: h.name,
+      color: h.color,
       builderId: h.builder,
       nbId: h.nb,
       style: h.style,

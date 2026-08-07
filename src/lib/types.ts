@@ -25,6 +25,7 @@ export interface Neighborhood {
 export interface Home {
   id: string;
   name: string;
+  color: string; // map pin color
   builder: string; // builder id
   nb: string; // neighborhood id
   style: string;

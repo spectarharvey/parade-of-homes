@@ -10,6 +10,8 @@ const BUILDER_LOGOS: Record<string, string> = {
   "deltona corporation": "/parade-entries/2026/deltona-logo.jpg",
   "secure built, llc": "/parade-entries/2026/secure-built-logo.png",
   "secure built llc": "/parade-entries/2026/secure-built-logo.png",
+  "curington homes": "/parade-entries/2026/curington-logo.png",
+  "curington": "/parade-entries/2026/curington-logo.png",
 };
 
 export function builderLogo(builder?: Pick<Builder, "name"> | null) {

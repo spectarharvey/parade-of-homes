@@ -66,6 +66,14 @@ export default function HomePage() {
     : 0;
   const barWidth = isMobile ? scrollProgress : desktopProgress;
 
+  // Build a seamless, continuously-rotating reel of sponsor logos. Repeat the
+  // sponsor list enough times to comfortably fill wide screens so the loop has
+  // no visible gap or jump, even when there are only a couple of sponsors.
+  const sponsorReps = db.sponsors.length
+    ? Math.max(1, Math.ceil(6 / db.sponsors.length))
+    : 0;
+  const sponsorReel = Array.from({ length: sponsorReps }, () => db.sponsors).flat();
+
   return (
     <>
       <section className="hero">
@@ -215,27 +223,10 @@ export default function HomePage() {
             Proudly Supported By Our Sponsors
           </p>
           
-          {/* Desktop Grid */}
-          <div className="sponsor-grid">
-            {db.sponsors.slice(0, 7).map((sponsor) => (
-                <div key={sponsor.id} className="sponsor-logo-container">
-                  {sponsor.img ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={sponsor.img}
-                      alt={sponsor.name}
-                      className="sponsor-logo-img"
-                      style={{ width: "auto", height: "100%", maxHeight: "50px", objectFit: "contain" }}
-                    />
-                  ) : <b>{sponsor.name}</b>}
-                </div>
-              ))}
-          </div>
-
-          {/* Mobile Marquee */}
-          <div className="marquee-container">
-            <div className="marquee-content">
-              {[...db.sponsors.slice(0, 7), ...db.sponsors.slice(0, 7)].map((sponsor, idx) => (
+          {/* Rotating sponsor logo slider (all breakpoints) */}
+          <div className="sponsor-slider">
+            <div className="sponsor-slider-track" aria-hidden="true">
+              {[...sponsorReel, ...sponsorReel].map((sponsor, idx) => (
                   <div key={`${sponsor.id}-${idx}`} className="sponsor-logo-container">
                     {sponsor.img ? (
                       // eslint-disable-next-line @next/next/no-img-element

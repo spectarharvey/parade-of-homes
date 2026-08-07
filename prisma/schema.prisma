@@ -55,6 +55,7 @@ model Neighborhood {
 model Home {
   id           String       @id
   name         String
+  color        String       @default("#116799")
   builderId    String
   builder      Builder      @relation(fields: [builderId], references: [id], onDelete: Cascade)
   nbId         String

@@ -1,0 +1,36 @@
+import type { Home } from "./types";
+
+/**
+ * Approximate placeholder coordinates for the 2026 Parade homes, keyed by home
+ * id. These are rough community/city-level locations across Marion County — good
+ * enough to show every home on a real street map, and easy to refine later with
+ * each model's exact address.
+ */
+const HOME_COORDS: Record<string, [number, number]> = {
+  h_dr_horton_holden: [29.1153, -82.2812], // Tartan Farms at Winding Oaks, SW Ocala
+  h_deltona_mustang: [29.0049, -82.2007], // Marion Oaks, south of Ocala
+  h_secure_built_rutherford: [29.2461, -82.2795], // Irish Acres area, NW Ocala
+  h_curington_sebastian: [29.2508, -82.2903], // Irish Acres area, NW Ocala
+  h_brije_aspen: [29.2836, -82.4534], // Morriston, west of Ocala
+  h_luetgert_golden_hills: [29.2381, -82.2447], // Golden Hills & Country Club, NW Ocala
+};
+
+/** Central Ocala — the fallback for any home without mapped coordinates. */
+export const MAP_FALLBACK_CENTER: [number, number] = [29.1872, -82.1401];
+
+/** Small deterministic offset so unmapped homes don't stack on one point. */
+function jitter(id: string): [number, number] {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
+  const dLat = (((h % 100) + 100) % 100) / 100 - 0.5;
+  const dLng = ((((h >> 8) % 100) + 100) % 100) / 100 - 0.5;
+  return [dLat * 0.06, dLng * 0.06];
+}
+
+/** The [lat, lng] to place a home at on the map. */
+export function homeLatLng(home: Pick<Home, "id">): [number, number] {
+  const mapped = HOME_COORDS[home.id];
+  if (mapped) return mapped;
+  const [dLat, dLng] = jitter(home.id);
+  return [MAP_FALLBACK_CENTER[0] + dLat, MAP_FALLBACK_CENTER[1] + dLng];
+}

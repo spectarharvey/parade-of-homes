@@ -8,6 +8,7 @@ import type { Home } from "./types";
 export function serializeHome(h: {
   id: string;
   name: string;
+  color: string;
   builderId: string;
   nbId: string;
   style: string;

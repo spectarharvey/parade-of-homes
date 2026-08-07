@@ -78,12 +78,16 @@ model Home {
 }
 
 model Sponsor {
-  id    String @id
-  name  String
-  tier  Tier
-  color String
-  cat   String
-  img   String @default("")
+  id      String @id
+  name    String
+  tier    Tier
+  color   String
+  cat     String
+  img     String @default("")
+  website String @default("")
+  phone   String @default("")
+  email   String @default("")
+  address String @default("")
 }
 
 model Faq {

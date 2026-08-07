@@ -14,6 +14,10 @@ type Draft = {
   color: string;
   cat: string;
   img: string;
+  website: string;
+  phone: string;
+  email: string;
+  address: string;
 };
 
 const empty: Draft = {
@@ -22,6 +26,10 @@ const empty: Draft = {
   color: "#1b2a4a",
   cat: "",
   img: "",
+  website: "",
+  phone: "",
+  email: "",
+  address: "",
 };
 
 const tierBadge: Record<Tier, string> = {
@@ -193,6 +201,36 @@ export default function AdminSponsorsPage() {
                 <input
                   value={draft.cat}
                   onChange={(e) => set("cat", e.target.value)}
+                />
+              </div>
+              <div className="fld full">
+                <label>Website</label>
+                <input
+                  value={draft.website}
+                  onChange={(e) => set("website", e.target.value)}
+                  placeholder="https://example.com"
+                />
+              </div>
+              <div className="fld">
+                <label>Phone</label>
+                <input
+                  value={draft.phone}
+                  onChange={(e) => set("phone", e.target.value)}
+                />
+              </div>
+              <div className="fld">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={draft.email}
+                  onChange={(e) => set("email", e.target.value)}
+                />
+              </div>
+              <div className="fld full">
+                <label>Address</label>
+                <input
+                  value={draft.address}
+                  onChange={(e) => set("address", e.target.value)}
                 />
               </div>
               <div className="fld full">

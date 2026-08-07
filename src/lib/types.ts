@@ -52,6 +52,10 @@ export interface Sponsor {
   color: string;
   cat: string;
   img: string;
+  website: string;
+  phone: string;
+  email: string;
+  address: string;
 }
 
 export interface Faq {

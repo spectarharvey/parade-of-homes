@@ -96,6 +96,10 @@ const builds: Record<string, { model: string; prefix: string; build: Build }> = 
       set(o, b, "color", String, create, "#6b7686");
       set(o, b, "cat", String, create, "");
       set(o, b, "img", String, create, "");
+      set(o, b, "website", String, create, "");
+      set(o, b, "phone", String, create, "");
+      set(o, b, "email", String, create, "");
+      set(o, b, "address", String, create, "");
       return o;
     },
   },

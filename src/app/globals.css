@@ -2437,6 +2437,70 @@ hr.soft {
   transform: scale(1.1) !important;
 }
 
+.premium-sponsor-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.premium-sponsor-logo img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.premium-sponsor-card--details {
+  align-items: stretch;
+  padding: 1.35rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: left;
+}
+
+.premium-sponsor-card--details:hover {
+  transform: translateY(-4px) !important;
+  border-color: var(--gold);
+}
+
+.premium-sponsor-card--details .premium-sponsor-logo {
+  margin-bottom: 1.1rem;
+}
+
+.premium-sponsor-details h3 {
+  margin: 0;
+  color: var(--navy);
+  font-size: 1.08rem;
+}
+
+.premium-sponsor-category {
+  margin: .25rem 0 .75rem;
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.premium-sponsor-contact {
+  display: grid;
+  gap: .35rem;
+  margin-bottom: 1rem;
+}
+
+.premium-sponsor-contact a {
+  color: var(--ink);
+  font-size: .86rem;
+  line-height: 1.4;
+}
+
+.premium-sponsor-contact a:hover {
+  color: var(--blue);
+}
+
 @keyframes sponsor-fade-in {
   to {
     opacity: 1;

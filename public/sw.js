@@ -1,7 +1,9 @@
 // Minimal service worker — enables "Add to Home Screen" installability and
 // provides a lightweight offline fallback for the app shell. Data (API calls)
 // always go to the network.
-const CACHE = "poh-shell-v1";
+// Bump this version on deploys that must invalidate cached assets — the
+// activate handler deletes every cache that isn't the current name.
+const CACHE = "poh-shell-v2";
 const SHELL = ["/", "/homes"];
 
 self.addEventListener("install", (event) => {

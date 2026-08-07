@@ -90,7 +90,7 @@ export default function NeighborhoodsPage() {
                       letterSpacing: ".08em",
                     }}
                   >
-                    Homes
+                    {homes.length === 1 ? "Home" : "Homes"}
                   </div>
                 </div>
                 <div>

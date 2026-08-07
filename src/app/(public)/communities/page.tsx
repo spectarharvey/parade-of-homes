@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useStore } from "@/lib/store";
-import { moneyK } from "@/lib/format";
+import { moneyK, homePhoto, NO_IMAGE_FALLBACK } from "@/lib/format";
 
 export default function NeighborhoodsPage() {
   const { db } = useStore();
@@ -24,6 +24,10 @@ export default function NeighborhoodsPage() {
         const avg = homes.length
           ? Math.round(homes.reduce((s, h) => s + h.price, 0) / homes.length)
           : 0;
+        // Fall back to a photo from a home in this community (then a placeholder)
+        // when the neighborhood has no image of its own, so the card is never blank.
+        const photoHome = homes.find((h) => h.imgs && h.imgs.length);
+        const cardImg = n.img || (photoHome ? homePhoto(photoHome) : NO_IMAGE_FALLBACK);
         const reverse = i % 2 === 1;
         return (
           <div
@@ -33,7 +37,7 @@ export default function NeighborhoodsPage() {
             <div
               className="neighborhood-card-img"
               style={{
-                background: `url('${n.img}') center/cover`,
+                background: `url('${cardImg}') center/cover`,
               }}
             ></div>
             <div

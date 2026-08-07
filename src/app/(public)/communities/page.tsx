@@ -129,7 +129,7 @@ export default function NeighborhoodsPage() {
                 href={`/neighborhood/${n.id}`}
                 className="btn btn-navy btn-sm"
               >
-                View Homes in {n.name} →
+                View Model Home{homes.length === 1 ? "" : "s"} →
               </Link>
             </div>
           </div>

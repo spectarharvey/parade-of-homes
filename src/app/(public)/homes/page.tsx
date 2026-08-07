@@ -92,7 +92,7 @@ export default function HomesPage() {
         className="sec-head left"
         style={{ marginBottom: "1.4rem", maxWidth: "none" }}
       >
-        <span className="eyebrow">Showcase Listings</span>
+        <span className="eyebrow">Showscase Listings</span>
         <h2>Explore All Homes</h2>
         <p className="muted">
           Filter {db.homes.length} showcase homes by price, bedrooms &amp;

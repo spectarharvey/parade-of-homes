@@ -34,63 +34,58 @@ async function counts() {
 async function main() {
   console.log("BEFORE:", await counts());
 
-  // Replace the catalog atomically, step by step so any failure is visible.
-  // Homes cascade-delete with their builder / neighborhood; the builder
-  // account's builderId is set null (not deleted).
-  await prisma.$transaction(
-    async (tx) => {
-      await tx.home.deleteMany();
-      await tx.sponsor.deleteMany();
-      await tx.faq.deleteMany();
-      await tx.builder.deleteMany();
-      await tx.neighborhood.deleteMany();
-      console.log("  cleared catalog");
+  // Replace the catalog with individual statements (no wrapping transaction),
+  // so there is nothing to time out on a distant database. FK-safe order: homes
+  // are deleted before their builders/neighborhoods and re-created after them.
+  await prisma.home.deleteMany();
+  await prisma.sponsor.deleteMany();
+  await prisma.faq.deleteMany();
+  await prisma.builder.deleteMany();
+  await prisma.neighborhood.deleteMany();
+  console.log("  cleared catalog");
 
-      await tx.neighborhood.createMany({ data: SEED.neighborhoods });
-      console.log(`  + ${SEED.neighborhoods.length} neighborhoods`);
-      await tx.builder.createMany({ data: SEED.builders });
-      console.log(`  + ${SEED.builders.length} builders`);
-      await tx.sponsor.createMany({ data: SEED.sponsors });
-      console.log(`  + ${SEED.sponsors.length} sponsors`);
-      await tx.home.createMany({
-        data: SEED.homes.map((h) => ({
-          id: h.id,
-          name: h.name,
-          color: h.color,
-          builderId: h.builder,
-          nbId: h.nb,
-          style: h.style,
-          price: h.price,
-          beds: h.beds,
-          baths: h.baths,
-          sqft: h.sqft,
-          garage: h.garage,
-          checkins: h.checkins,
-          rating: h.rating,
-          ratings: h.ratings,
-          featured: h.featured,
-          x: h.x,
-          y: h.y,
-          blurb: h.blurb,
-          features: h.features,
-          imgs: h.imgs,
-        })),
-      });
-      console.log(`  + ${SEED.homes.length} homes`);
-      await tx.faq.createMany({
-        data: SEED.faqs.map((f, i) => ({ q: f.q, a: f.a, order: i })),
-      });
-      console.log(`  + ${SEED.faqs.length} faqs`);
+  await prisma.neighborhood.createMany({ data: SEED.neighborhoods });
+  console.log(`  + ${SEED.neighborhoods.length} neighborhoods`);
+  await prisma.builder.createMany({ data: SEED.builders });
+  console.log(`  + ${SEED.builders.length} builders`);
+  await prisma.sponsor.createMany({ data: SEED.sponsors });
+  console.log(`  + ${SEED.sponsors.length} sponsors`);
+  await prisma.home.createMany({
+    data: SEED.homes.map((h) => ({
+      id: h.id,
+      name: h.name,
+      color: h.color,
+      builderId: h.builder,
+      nbId: h.nb,
+      style: h.style,
+      price: h.price,
+      beds: h.beds,
+      baths: h.baths,
+      sqft: h.sqft,
+      garage: h.garage,
+      checkins: h.checkins,
+      rating: h.rating,
+      ratings: h.ratings,
+      featured: h.featured,
+      x: h.x,
+      y: h.y,
+      blurb: h.blurb,
+      features: h.features,
+      imgs: h.imgs,
+    })),
+  });
+  console.log(`  + ${SEED.homes.length} homes`);
+  await prisma.faq.createMany({
+    data: SEED.faqs.map((f, i) => ({ q: f.q, a: f.a, order: i })),
+  });
+  console.log(`  + ${SEED.faqs.length} faqs`);
 
-      // Re-link the builder portal login to the real featured builder.
-      await tx.account.updateMany({
-        where: { role: "BUILDER" },
-        data: { builderId: "b_brije" },
-      });
-      console.log("  relinked builder account");
-    },
-    { timeout: 60_000, maxWait: 15_000 },
-  );
+  // Re-link the builder portal login to the real featured builder.
+  await prisma.account.updateMany({
+    where: { role: "BUILDER" },
+    data: { builderId: "b_brije" },
+  });
+  console.log("  relinked builder account");
 
   // Add any 2026 form entries not already present (skipDuplicates keeps every
   // existing row untouched, so real submissions are never clobbered).

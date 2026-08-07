@@ -4,8 +4,19 @@ import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { moneyK, homePhoto, NO_IMAGE_FALLBACK } from "@/lib/format";
 
+// "Communities" is its own competition category — a curated set, separate from
+// a home's location/neighborhood. Only these appear on the Communities page.
+const COMMUNITY_IDS = [
+  "n_on_top_of_the_world",
+  "n_calesa_township",
+  "n_golden_hills",
+];
+
 export default function NeighborhoodsPage() {
   const { db } = useStore();
+  const communities = db.neighborhoods.filter((n) =>
+    COMMUNITY_IDS.includes(n.id),
+  );
 
   return (
     <div className="wrap">
@@ -19,7 +30,7 @@ export default function NeighborhoodsPage() {
           Browse the current 2026 Parade subdivisions and model-home locations.
         </p>
       </div>
-      {db.neighborhoods.map((n, i) => {
+      {communities.map((n, i) => {
         const homes = db.homes.filter((h) => h.nb === n.id);
         const avg = homes.length
           ? Math.round(homes.reduce((s, h) => s + h.price, 0) / homes.length)

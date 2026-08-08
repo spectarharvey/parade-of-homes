@@ -1,7 +1,32 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { AppProvider } from "@/lib/store";
 import PWARegister from "@/components/PWARegister";
+
+// Chrome fires `beforeinstallprompt` very early — frequently before React has
+// mounted the InstallButton. Capture it globally here (before hydration) and
+// stash it on window so the button can always find it and fire the native
+// install dialog. Without this the button often misses the event and can only
+// show fallback instructions.
+const INSTALL_CAPTURE = `(function(){
+  try {
+    var w = window;
+    w.__pohInstalled =
+      (w.matchMedia && w.matchMedia('(display-mode: standalone)').matches) ||
+      w.navigator.standalone === true;
+    w.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      w.__pohInstallPrompt = e;
+      w.dispatchEvent(new Event('poh-install-ready'));
+    });
+    w.addEventListener('appinstalled', function () {
+      w.__pohInstallPrompt = null;
+      w.__pohInstalled = true;
+      w.dispatchEvent(new Event('poh-installed'));
+    });
+  } catch (_) {}
+})();`;
 
 export const metadata: Metadata = {
   title: "MCBIA Parade of Homes",
@@ -38,6 +63,9 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <Script id="poh-install-capture" strategy="beforeInteractive">
+          {INSTALL_CAPTURE}
+        </Script>
         <AppProvider>{children}</AppProvider>
         <PWARegister />
       </body>

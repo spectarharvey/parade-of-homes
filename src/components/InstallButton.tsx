@@ -7,6 +7,13 @@ interface BIPEvent extends Event {
   userChoice: Promise<{ outcome: string }>;
 }
 
+declare global {
+  interface Window {
+    __pohInstallPrompt?: BIPEvent | null;
+    __pohInstalled?: boolean;
+  }
+}
+
 export default function InstallButton({
   className = "btn btn-gold btn-block",
   label = "⬇ Install the App",
@@ -23,7 +30,8 @@ export default function InstallButton({
     const standalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       // iOS Safari
-      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true ||
+      window.__pohInstalled === true;
     if (standalone) {
       setInstalled(true);
       return;
@@ -31,16 +39,33 @@ export default function InstallButton({
     const ua = window.navigator.userAgent.toLowerCase();
     setIsIOS(/iphone|ipad|ipod/.test(ua));
 
+    // The global capture (in layout.tsx) may have already stored the prompt
+    // before this component mounted — pick it up immediately.
+    if (window.__pohInstallPrompt) setDeferred(window.__pohInstallPrompt);
+
+    const syncFromGlobal = () => {
+      if (window.__pohInstallPrompt) setDeferred(window.__pohInstallPrompt);
+    };
+    // Also listen directly, in case the event fires after mount.
     const onBIP = (e: Event) => {
       e.preventDefault();
+      window.__pohInstallPrompt = e as BIPEvent;
       setDeferred(e as BIPEvent);
     };
-    const onInstalled = () => setInstalled(true);
+    const onInstalled = () => {
+      window.__pohInstallPrompt = null;
+      setDeferred(null);
+      setInstalled(true);
+    };
+    window.addEventListener("poh-install-ready", syncFromGlobal);
     window.addEventListener("beforeinstallprompt", onBIP);
     window.addEventListener("appinstalled", onInstalled);
+    window.addEventListener("poh-installed", onInstalled);
     return () => {
+      window.removeEventListener("poh-install-ready", syncFromGlobal);
       window.removeEventListener("beforeinstallprompt", onBIP);
       window.removeEventListener("appinstalled", onInstalled);
+      window.removeEventListener("poh-installed", onInstalled);
     };
   }, []);
 
@@ -53,9 +78,16 @@ export default function InstallButton({
   }
 
   const handleClick = async () => {
-    if (deferred) {
-      await deferred.prompt();
-      await deferred.userChoice;
+    const prompt = deferred || window.__pohInstallPrompt || null;
+    if (prompt) {
+      await prompt.prompt();
+      try {
+        await prompt.userChoice;
+      } catch {
+        /* user dismissed */
+      }
+      // A prompt can only be used once.
+      window.__pohInstallPrompt = null;
       setDeferred(null);
     } else {
       setShowHelp(true);

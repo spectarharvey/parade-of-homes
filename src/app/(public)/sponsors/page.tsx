@@ -43,44 +43,70 @@ export default function SponsorsPage() {
       </div>
 
       {fb ? (
-        <div
-          className="panel"
-          style={{
-            display: "flex",
-            gap: "1.4rem",
-            alignItems: "center",
-            flexWrap: "wrap",
-            marginBottom: "1.4rem",
-            borderLeft: "4px solid var(--gold)",
-          }}
-        >
-          <BuilderLogo
-            builder={fb}
-            className="sponsor-featured-logo"
+        <div className="tier tier-platinum">
+          <div
+            className="panel"
             style={{
-              width: 130,
-              minWidth: 130,
-              height: 96,
-              display: "grid",
-              placeItems: "center",
-              background: "#fff",
-              borderRadius: 12,
-              border: "1px solid var(--line)",
-              padding: ".6rem",
+              position: "relative",
+              display: "flex",
+              gap: "1.4rem",
+              alignItems: "center",
+              flexWrap: "wrap",
+              marginTop: "1.6rem",
+              borderLeft: "4px solid var(--gold)",
             }}
-          />
-          <div style={{ flex: 1, minWidth: 260 }}>
-            <span className="badge badge-gold">★ 2026 Featured Builder</span>
-            <p style={{ margin: ".6rem 0 .9rem", fontSize: ".98rem", lineHeight: 1.55 }}>
-              A special thank you to our 2026 Featured Builder,{" "}
-              <b>Brije Homes</b>, for helping make this year&apos;s Parade of
-              Homes possible! Brije Homes is an award-winning custom home builder
-              serving Central Florida with a design-first, client-focused
-              building process.
-            </p>
-            <Link href={`/builders/${fb.id}`} className="btn btn-gold btn-sm">
-              View Brije Homes →
-            </Link>
+          >
+            {/* Platinum badge sits on the card itself, not as a section header. */}
+            <span
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                whiteSpace: "nowrap",
+                display: "inline-block",
+                padding: ".4rem 1.4rem",
+                borderRadius: "50px",
+                fontWeight: 800,
+                letterSpacing: ".1em",
+                textTransform: "uppercase",
+                fontSize: ".8rem",
+                background: "linear-gradient(135deg, #dfe6ee, #b9c6d6)",
+                color: "#3a4a5c",
+                boxShadow: "var(--shadow)",
+                zIndex: 2,
+              }}
+            >
+              Platinum Sponsor
+            </span>
+            <BuilderLogo
+              builder={fb}
+              className="sponsor-featured-logo"
+              style={{
+                width: 130,
+                minWidth: 130,
+                height: 96,
+                display: "grid",
+                placeItems: "center",
+                background: "#fff",
+                borderRadius: 12,
+                border: "1px solid var(--line)",
+                padding: ".6rem",
+              }}
+            />
+            <div style={{ flex: 1, minWidth: 260 }}>
+              <span className="badge badge-gold">★ 2026 Featured Builder</span>
+              <p style={{ margin: ".6rem 0 .9rem", fontSize: ".98rem", lineHeight: 1.55 }}>
+                A special thank you to our 2026 Featured Builder,{" "}
+                <b>Brije Homes</b>, for helping make this year&apos;s Parade of
+                Homes possible! Brije Homes is an award-winning custom home builder
+                serving Central Florida with a design-first, client-focused
+                building process.
+              </p>
+              <Link href={`/builders/${fb.id}`} className="btn btn-gold btn-sm">
+                View Brije Homes →
+              </Link>
+            </div>
           </div>
         </div>
       ) : null}

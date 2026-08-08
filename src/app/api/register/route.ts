@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { json, error } from "@/lib/api";
+import { sendWelcomeEmail } from "@/lib/email";
 import bcrypt from "bcryptjs";
 
 export const dynamic = "force-dynamic";
@@ -57,6 +58,7 @@ export async function POST(req: Request) {
       where: { id: existing.id },
       data: { ...fields, passwordHash },
     });
+    await sendWelcome(updated.email, updated.first);
     return json(publicUser(updated), 200);
   }
 
@@ -68,5 +70,15 @@ export async function POST(req: Request) {
       date: new Date().toISOString().slice(0, 10),
     },
   });
+  await sendWelcome(user.email, user.first);
   return json(publicUser(user), 201);
+}
+
+// Send the welcome email but never let a delivery failure fail registration.
+async function sendWelcome(email: string, first: string) {
+  try {
+    await sendWelcomeEmail(email, first);
+  } catch (e) {
+    console.error("[register] welcome email failed:", (e as Error).message);
+  }
 }

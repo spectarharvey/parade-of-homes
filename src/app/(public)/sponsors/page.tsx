@@ -21,6 +21,14 @@ export default function SponsorsPage() {
   const { db } = useStore();
   const fb = db.builders.find((b) => b.featured);
 
+  // The Featured Builder (Brije Homes) is showcased in the banner below and must
+  // never also appear as a sponsor card — drop any sponsor with the same name so
+  // a duplicate can't sneak back in via the admin.
+  const fbName = fb?.name.trim().toLowerCase();
+  const sponsors = fbName
+    ? db.sponsors.filter((s) => s.name.trim().toLowerCase() !== fbName)
+    : db.sponsors;
+
   return (
     <div className="wrap">
       <div className="crumb">
@@ -34,13 +42,56 @@ export default function SponsorsPage() {
         </p>
       </div>
 
-      {!db.sponsors.length ? (
+      {fb ? (
+        <div
+          className="panel"
+          style={{
+            display: "flex",
+            gap: "1.4rem",
+            alignItems: "center",
+            flexWrap: "wrap",
+            marginBottom: "1.4rem",
+            borderLeft: "4px solid var(--gold)",
+          }}
+        >
+          <BuilderLogo
+            builder={fb}
+            className="sponsor-featured-logo"
+            style={{
+              width: 130,
+              minWidth: 130,
+              height: 96,
+              display: "grid",
+              placeItems: "center",
+              background: "#fff",
+              borderRadius: 12,
+              border: "1px solid var(--line)",
+              padding: ".6rem",
+            }}
+          />
+          <div style={{ flex: 1, minWidth: 260 }}>
+            <span className="badge badge-gold">★ 2026 Featured Builder</span>
+            <p style={{ margin: ".6rem 0 .9rem", fontSize: ".98rem", lineHeight: 1.55 }}>
+              A special thank you to our 2026 Featured Builder,{" "}
+              <b>Brije Homes</b>, for helping make this year&apos;s Parade of
+              Homes possible! Brije Homes is an award-winning custom home builder
+              serving Central Florida with a design-first, client-focused
+              building process.
+            </p>
+            <Link href={`/builders/${fb.id}`} className="btn btn-gold btn-sm">
+              View Brije Homes →
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
+      {!sponsors.length ? (
         <div className="panel" style={{ textAlign: "center", color: "var(--muted)", marginBottom: "1.4rem" }}>
           Sponsor logos and ads are coming soon.
         </div>
       ) : null}
       {tiers.map(([t, label, cls]) => {
-        const list = db.sponsors.filter((s) => s.tier === t);
+        const list = sponsors.filter((s) => s.tier === t);
         if (!list.length) return null;
 
         const sizeSettings = {
@@ -114,49 +165,6 @@ export default function SponsorsPage() {
           </div>
         );
       })}
-
-      {fb ? (
-        <div
-          className="panel"
-          style={{
-            display: "flex",
-            gap: "1.4rem",
-            alignItems: "center",
-            flexWrap: "wrap",
-            marginTop: "1.4rem",
-            borderLeft: "4px solid var(--gold)",
-          }}
-        >
-          <BuilderLogo
-            builder={fb}
-            className="sponsor-featured-logo"
-            style={{
-              width: 130,
-              minWidth: 130,
-              height: 96,
-              display: "grid",
-              placeItems: "center",
-              background: "#fff",
-              borderRadius: 12,
-              border: "1px solid var(--line)",
-              padding: ".6rem",
-            }}
-          />
-          <div style={{ flex: 1, minWidth: 260 }}>
-            <span className="badge badge-gold">★ 2026 Featured Builder</span>
-            <p style={{ margin: ".6rem 0 .9rem", fontSize: ".98rem", lineHeight: 1.55 }}>
-              A special thank you to our 2026 Featured Builder,{" "}
-              <b>Brije Homes</b>, for helping make this year&apos;s Parade of
-              Homes possible! Brije Homes is an award-winning custom home builder
-              serving Central Florida with a design-first, client-focused
-              building process.
-            </p>
-            <Link href={`/builders/${fb.id}`} className="btn btn-gold btn-sm">
-              View Brije Homes →
-            </Link>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }

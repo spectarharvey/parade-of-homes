@@ -557,18 +557,6 @@ export const SEED: DB = {
   ],
   sponsors: [
     {
-      id: "sp_brije",
-      name: "Brije Homes",
-      tier: "platinum",
-      color: "#1a3a5c",
-      cat: "2026 Featured Builder · Custom Home Builder",
-      img: "/parade-entries/2026/brije-logo.webp",
-      website: "",
-      phone: "",
-      email: "",
-      address: "",
-    },
-    {
       id: "sp_bennett",
       name: "Bennett Custom Homes",
       tier: "gold",

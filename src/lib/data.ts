@@ -48,7 +48,10 @@ export async function getPublicState() {
 /** Admin-only datasets (registrations, submissions, notifications). */
 export async function getAdminState() {
   const [users, submissions, notifications] = await Promise.all([
-    prisma.registrant.findMany({ orderBy: { date: "asc" } }),
+    prisma.registrant.findMany({
+      orderBy: { date: "asc" },
+      omit: { passwordHash: true },
+    }),
     prisma.submission.findMany({ orderBy: { date: "desc" } }),
     prisma.notification.findMany({ orderBy: { sent: "desc" } }),
   ]);

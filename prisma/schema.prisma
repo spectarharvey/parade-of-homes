@@ -99,15 +99,16 @@ model Faq {
 
 /// End-user (visitor) registrations. Serialized to the frontend `User` shape.
 model Registrant {
-  id       String  @id @default(cuid())
-  first    String
-  last     String
-  email    String
-  phone    String
-  zip      String
-  sms      Boolean @default(false)
-  checkins Int     @default(0)
-  date     String
+  id           String  @id @default(cuid())
+  first        String
+  last         String
+  email        String
+  phone        String
+  zip          String
+  sms          Boolean @default(false)
+  passwordHash String? // bcrypt hash; null for legacy passes created before passwords
+  checkins     Int     @default(0)
+  date         String
 }
 
 model Submission {

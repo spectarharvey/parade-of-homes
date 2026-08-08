@@ -67,10 +67,8 @@ interface StoreContextValue {
   setTripActive: (v: boolean) => void;
   setTripIndex: (v: number) => void;
   rateHome: (id: string, val: number) => void;
-  startRegistration: (u: User) => Promise<{ token: string; devCode?: string }>;
-  verifyRegistration: (token: string, code: string) => Promise<void>;
-  startLogin: (email: string) => Promise<{ token: string; devCode?: string }>;
-  verifyLogin: (token: string, code: string) => Promise<void>;
+  registerGuest: (u: User, password: string) => Promise<void>;
+  loginGuest: (email: string, password: string) => Promise<void>;
   addSubmission: (s: Submission) => Promise<void>;
   // admin mutations
   removeHome: (id: string) => void;
@@ -336,26 +334,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [refetchPublic]
   );
 
-  // Step 1: email a verification code. Returns a short-lived token (and, in dev
-  // without an email provider, the code itself) — no Registrant is created yet.
-  const startRegistration = useCallback(
-    async (u: User): Promise<{ token: string; devCode?: string }> => {
-      return api("/api/register/start", {
-        method: "POST",
-        body: JSON.stringify({
-          first: u.first,
-          last: u.last,
-          email: u.email,
-          phone: u.phone,
-          zip: u.zip,
-          sms: u.sms,
-        }),
-      });
-    },
-    []
-  );
-
-  // Restores the guest session from a verified registrant record.
+  // Restores the guest session from a registrant record.
   const finalizeGuest = useCallback(
     async (user: { first: string; last: string; email: string }) => {
       const guest = { first: user.first, last: user.last, email: user.email };
@@ -371,35 +350,32 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [refetchPublic, refetchAdmin, isAdmin]
   );
 
-  // Step 2: confirm the code, which creates the Registrant and signs in the guest.
-  const verifyRegistration = useCallback(
-    async (token: string, code: string) => {
-      const user = await api("/api/register/verify", {
+  // Create a guest pass with a password, then sign the guest in.
+  const registerGuest = useCallback(
+    async (u: User, password: string) => {
+      const user = await api("/api/register", {
         method: "POST",
-        body: JSON.stringify({ token, code }),
+        body: JSON.stringify({
+          first: u.first,
+          last: u.last,
+          email: u.email,
+          phone: u.phone,
+          zip: u.zip,
+          sms: u.sms,
+          password,
+        }),
       });
       await finalizeGuest(user);
     },
     [finalizeGuest]
   );
 
-  // Returning guest: email a login code (no new registration).
-  const startLogin = useCallback(
-    async (email: string): Promise<{ token: string; devCode?: string }> => {
-      return api("/api/guest/login/start", {
+  // Returning guest: sign in with email + password.
+  const loginGuest = useCallback(
+    async (email: string, password: string) => {
+      const user = await api("/api/guest/login", {
         method: "POST",
-        body: JSON.stringify({ email }),
-      });
-    },
-    []
-  );
-
-  // Returning guest: confirm the login code and restore the guest session.
-  const verifyLogin = useCallback(
-    async (token: string, code: string) => {
-      const user = await api("/api/guest/login/verify", {
-        method: "POST",
-        body: JSON.stringify({ token, code }),
+        body: JSON.stringify({ email, password }),
       });
       await finalizeGuest(user);
     },
@@ -615,10 +591,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setTripActive,
     setTripIndex,
     rateHome,
-    startRegistration,
-    verifyRegistration,
-    startLogin,
-    verifyLogin,
+    registerGuest,
+    loginGuest,
     addSubmission,
     removeHome,
     toggleFeatureHome,

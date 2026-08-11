@@ -84,41 +84,47 @@ export default function ContestPage() {
           boxShadow: "var(--shadow)",
         }}
       >
-        <div style={{ padding: "1.6rem 1.8rem" }}>
-          <span
-            style={{
-              textTransform: "uppercase",
-              letterSpacing: ".14em",
-              fontWeight: 700,
-              fontSize: ".78rem",
-              color: "var(--gold-light)",
-            }}
-          >
-            Grand Prize
-          </span>
-          <h3
-            style={{
-              color: "#fff",
-              fontSize: "1.8rem",
-              margin: ".3rem 0 .5rem",
-              textShadow: "0 2px 14px rgba(0,0,0,.45)",
-            }}
-          >
-            An Oceanview Getaway Awaits
-          </h3>
-          <p
-            style={{
-              fontSize: "1rem",
-              maxWidth: 640,
-              lineHeight: 1.5,
-              textShadow: "0 1px 8px rgba(0,0,0,.5)",
-            }}
-          >
-            {prize ||
-              "Tour the Parade, check in at the required number of homes, and you could win a relaxing three-day oceanview getaway for two. The full prize will be announced soon — keep stamping your contest card to stay eligible!"}
-          </p>
-        </div>
-      </div>
+      <div
+  style={{
+    padding: "2.8rem 2.2rem",
+  }}
+>
+  <span
+    style={{
+      textTransform: "uppercase",
+      letterSpacing: ".14em",
+      fontWeight: 700,
+      fontSize: ".78rem",
+      color: "var(--gold-light)",
+    }}
+  >
+    Grand Prize
+  </span>
+
+  <h3
+    style={{
+      color: "#fff",
+      fontSize: "1.8rem",
+      margin: ".3rem 0 .5rem",
+      textShadow: "0 2px 14px rgba(0,0,0,.45)",
+    }}
+  >
+    An Oceanview Getaway Awaits
+  </h3>
+
+  <p
+    style={{
+      fontSize: "1rem",
+      maxWidth: 640,
+      lineHeight: 1.5,
+      textShadow: "0 1px 8px rgba(0,0,0,.5)",
+      marginBottom: 0,
+    }}
+  >
+    {prize ||
+      "Tour the Parade, check in at the required number of homes, and you could win a relaxing three-day oceanview getaway for two. The full prize will be announced soon — keep stamping your contest card to stay eligible!"}
+  </p>
+</div>
 
       <div className="card" style={{ padding: "2rem", marginBottom: "2rem" }}>
         <div

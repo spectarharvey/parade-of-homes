@@ -91,6 +91,31 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
     );
   }
 
+  // Non-interactive hover preview for Route Mode — same card, minus the buttons,
+  // plus a line telling you what clicking the pin will do.
+  function previewHtml(h: Home) {
+    const n = nbhd(h.nb);
+    const idx = route.indexOf(h.id);
+    const inRoute = idx >= 0;
+    const ratingRow =
+      h.ratings > 0
+        ? `<div class="pop-rating"><span class="stars">${stars(h.rating)}</span> ${h.rating}</div>`
+        : "";
+    const status = inRoute
+      ? `<div class="pop-status in">✓ Stop ${idx + 1} in your route · click to remove</div>`
+      : `<div class="pop-status">Click pin to add to route</div>`;
+    return (
+      `<div class="pop-card">` +
+      `<img src="${esc(homePhoto(h))}" alt="${esc(h.name)}" onerror="this.src='/placeholder-home.svg'"/>` +
+      `<div class="pop-body">` +
+      `<b>${esc(h.name)}</b>` +
+      `<div class="pop-sub">${esc(n?.name ?? "")} · ${money(h.price)}</div>` +
+      ratingRow +
+      status +
+      `</div></div>`
+    );
+  }
+
   function draw() {
     const L = leafletRef.current;
     const map = mapRef.current;
@@ -138,6 +163,14 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
             };
         });
       } else {
+        // Route mode: hover shows a quick preview so you can see what a pin is
+        // before adding it; clicking still toggles it in/out of the route.
+        marker.bindTooltip(previewHtml(h), {
+          direction: "top",
+          offset: L.point(0, -14),
+          opacity: 1,
+          className: "home-tooltip",
+        });
         marker.on("click", () => {
           const inRoute = route.includes(h.id);
           toggleRoute(h.id);

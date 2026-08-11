@@ -3,14 +3,7 @@
 import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { moneyK, homePhoto, NO_IMAGE_FALLBACK } from "@/lib/format";
-
-// "Communities" is its own competition category — a curated set, separate from
-// a home's location/neighborhood. Only these appear on the Communities page.
-const COMMUNITY_IDS = [
-  "n_on_top_of_the_world",
-  "n_calesa_township",
-  "n_golden_hills",
-];
+import { COMMUNITY_IDS } from "@/lib/communities";
 
 export default function NeighborhoodsPage() {
   const { db } = useStore();

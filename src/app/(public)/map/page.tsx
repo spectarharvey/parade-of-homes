@@ -127,8 +127,22 @@ export default function MapPage() {
     return `https://www.google.com/maps/dir/?${params.toString()}`;
   };
 
-  const openDirections = (url: string) =>
-    window.open(url, "_blank", "noopener,noreferrer");
+  const openDirections = (url: string) => {
+    // On iOS Safari, window.open(_blank) to a Google Maps universal link hands
+    // off to the Maps app but strands an about:blank tab — that stray blank tab
+    // is the "white screen" users land on when they return, and a fresh one piles
+    // up on every tap. Navigating the current tab hands off cleanly with no stray
+    // tab (and opens an in-app browser in an installed PWA). Desktop keeps the
+    // new-tab behavior so the app stays put.
+    const isTouch =
+      /iphone|ipad|ipod|android/i.test(navigator.userAgent) ||
+      window.matchMedia?.("(pointer: coarse)").matches;
+    if (isTouch) {
+      window.location.href = url;
+    } else {
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+  };
 
   // Full route: current location → each stop in order.
   const openRouteDirections = () => {
@@ -207,7 +221,17 @@ export default function MapPage() {
         }}
       >
         <Info size={20} style={{ color: "var(--navy)", flexShrink: 0 }} />
-        <span>You must be registered and logged in to plan your route.</span>
+        <span>
+          You must be registered and logged in to plan your route.{" "}
+          <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline" }}>
+            Log in
+          </Link>{" "}
+          or{" "}
+          <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline" }}>
+            register
+          </Link>
+          .
+        </span>
       </div>
       <div className="map-layout">
         <div className="map-side">

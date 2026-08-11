@@ -43,7 +43,7 @@ export default function SponsorsPage() {
       </div>
 
       {fb ? (
-        <div className="tier tier-platinum">
+        <div className="tier">
           <div
             className="panel"
             style={{
@@ -56,7 +56,7 @@ export default function SponsorsPage() {
               borderLeft: "4px solid var(--gold)",
             }}
           >
-            {/* Platinum badge sits on the card itself, not as a section header. */}
+            {/* Featured Builder badge sits on the card itself, not as a section header. */}
             <span
               style={{
                 position: "absolute",
@@ -71,13 +71,13 @@ export default function SponsorsPage() {
                 letterSpacing: ".1em",
                 textTransform: "uppercase",
                 fontSize: ".8rem",
-                background: "linear-gradient(135deg, #dfe6ee, #b9c6d6)",
-                color: "#3a4a5c",
+                background: "linear-gradient(135deg, var(--gold-light), var(--gold))",
+                color: "var(--navy-deep)",
                 boxShadow: "var(--shadow)",
                 zIndex: 2,
               }}
             >
-              Platinum Sponsor
+              ★ 2026 Featured Builder
             </span>
             <BuilderLogo
               builder={fb}
@@ -95,8 +95,7 @@ export default function SponsorsPage() {
               }}
             />
             <div style={{ flex: 1, minWidth: 260 }}>
-              <span className="badge badge-gold">★ 2026 Featured Builder</span>
-              <p style={{ margin: ".6rem 0 .9rem", fontSize: ".98rem", lineHeight: 1.55 }}>
+              <p style={{ margin: ".2rem 0 .9rem", fontSize: ".98rem", lineHeight: 1.55 }}>
                 A special thank you to our 2026 Featured Builder,{" "}
                 <b>Brije Homes</b>, for helping make this year&apos;s Parade of
                 Homes possible! Brije Homes is an award-winning custom home builder

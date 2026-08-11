@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useStore, useToast } from "@/lib/store";
 import { money, stars, imgUrl } from "@/lib/format";
+import { isCommunity } from "@/lib/communities";
 import BuilderLogo from "@/components/BuilderLogo";
 import HomeCard from "@/components/HomeCard";
 import QRScanner from "@/components/QRScanner";
@@ -12,12 +13,13 @@ import NotFoundBlock from "@/components/NotFoundBlock";
 
 export default function HomeDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { db, home, builder, nbhd, visited, route, checkIn, toggleRoute, rateHome } =
+  const { db, home, builder, nbhd, visited, route, checkIn, toggleRoute, rateHome, myRatings } =
     useStore();
   const { toast } = useToast();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [scanning, setScanning] = useState(false);
+  const [hoverStar, setHoverStar] = useState(0);
 
   const h = home(id);
 
@@ -174,6 +176,7 @@ export default function HomeDetailPage() {
             Tap a star to cast your vote — it counts toward our Awards leaderboard.
           </p>
           <div
+            onMouseLeave={() => setHoverStar(0)}
             style={{
               fontSize: "1.8rem",
               color: "var(--gold)",
@@ -184,15 +187,23 @@ export default function HomeDetailPage() {
             {[1, 2, 3, 4, 5].map((v) => (
               <span
                 key={v}
+                role="button"
+                aria-label={`Rate ${v} star${v > 1 ? "s" : ""}`}
+                onMouseEnter={() => setHoverStar(v)}
                 onClick={() => {
                   rateHome(h.id, v);
                   toast("Thanks for voting! ★ " + v);
                 }}
               >
-                ★
+                {v <= (hoverStar || myRatings[h.id] || 0) ? "★" : "☆"}
               </span>
             ))}
           </div>
+          {myRatings[h.id] ? (
+            <p className="muted" style={{ fontSize: ".82rem", marginTop: ".35rem" }}>
+              You rated this {myRatings[h.id]} star{myRatings[h.id] > 1 ? "s" : ""}.
+            </p>
+          ) : null}
         </div>
         <aside>
           <div className="side-card">
@@ -213,7 +224,15 @@ export default function HomeDetailPage() {
                 {isVisited ? "✓ Already Checked In" : "📷 Check In Here"}
               </button>
               <p className="muted" style={{ fontSize: ".72rem", margin: ".7rem 0 0" }}>
-                You must be registered with the Parade of Homes app to vote.
+                You must be registered with the Parade of Homes app to vote.{" "}
+                <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline", fontWeight: 600 }}>
+                  Log in
+                </Link>{" "}
+                or{" "}
+                <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline", fontWeight: 600 }}>
+                  register
+                </Link>
+                .
               </p>
               <button
                 className="btn btn-outline btn-block"
@@ -277,9 +296,11 @@ export default function HomeDetailPage() {
       <section className="block" style={{ paddingBottom: "1rem" }}>
         <div className="row-head">
           <h2 style={{ fontSize: "1.5rem" }}>You may also like</h2>
-          <Link href={`/neighborhood/${n?.id}`} className="btn btn-outline btn-sm">
-            More in {n?.name} →
-          </Link>
+          {isCommunity(n?.id) && (
+            <Link href={`/neighborhood/${n?.id}`} className="btn btn-outline btn-sm">
+              More in {n?.name} →
+            </Link>
+          )}
         </div>
         <div className="grid-3">
           {related.map((r) => (

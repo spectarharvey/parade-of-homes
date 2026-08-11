@@ -43,6 +43,8 @@ export default function BuilderLogo({
         <img
           src={src}
           alt={`${builder?.name ?? "Builder"} logo`}
+          loading="lazy"
+          referrerPolicy="no-referrer"
           onError={() => setSourceIndex((index) => index + 1)}
           style={{
             maxWidth: "100%",

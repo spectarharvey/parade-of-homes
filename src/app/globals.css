@@ -1617,6 +1617,34 @@ section.block {
   margin-top: .1rem;
 }
 
+/* Route-mode hover preview — a Leaflet tooltip styled like the popup card. */
+.leaflet-tooltip.home-tooltip {
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  width: 220px;
+  white-space: normal;
+  background: var(--paper);
+  color: inherit;
+}
+
+.leaflet-tooltip.home-tooltip::before {
+  display: none;
+}
+
+.pop-status {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-top: .4rem;
+}
+
+.pop-status.in {
+  color: #b8860b;
+}
+
 .pin {
   position: absolute;
   transform: translate(-50%, -100%);

@@ -148,14 +148,22 @@ export default function HomePage() {
               <span className="badge badge-navy home-badge">Win Big</span>
               <h2>Tour the homes. Enter to win. Pack your bags!</h2>
               <p>
-                Visit at least 8 homes across the two Parade weekends for a chance to win! Enjoy a three-day stay in a Premium Oceanview
-                Suite at Hammock Beach Golf Resort &amp; Spa, complete with daily
-                breakfast for two at Atlantic Grille. Sponsored by Umpleby
-                Travels.
+                Visit at least 8 homes across the two Parade weekends for your
+                chance to win our grand-prize giveaway — a relaxing three-day
+                oceanview getaway for two. Full prize details will be announced
+                soon!
               </p>
               <p className="contest-registration-note">
                 You must be registered and logged in to participate in the
-                contest.
+                contest.{" "}
+                <Link href="/register?tab=login" style={{ color: "inherit", textDecoration: "underline", fontWeight: 700 }}>
+                  Log in
+                </Link>{" "}
+                or{" "}
+                <Link href="/register" style={{ color: "inherit", textDecoration: "underline", fontWeight: 700 }}>
+                  register
+                </Link>
+                .
               </p>
             </div>
             <div>

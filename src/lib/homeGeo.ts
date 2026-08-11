@@ -16,6 +16,7 @@ const HOME_COORDS: Record<string, [number, number]> = {
   h_otow_whitmore: [29.125, -82.285], // On Top of the World (Balfour), SW Ocala
   h_calesa_heritage: [29.135, -82.215], // Calesa Township (Perlino Grove), SW Ocala
   h_townsley_wyrick: [29.165, -82.105], // Townsley custom home, SE Ocala
+  h_stentiford_fortking: [29.18, -82.128], // 49 SE 15th Terrace, near downtown Ocala
 };
 
 /** Central Ocala — the fallback for any home without mapped coordinates. */

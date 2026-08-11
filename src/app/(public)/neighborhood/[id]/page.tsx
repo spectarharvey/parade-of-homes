@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { moneyK } from "@/lib/format";
+import { isCommunity } from "@/lib/communities";
 import HomeCard from "@/components/HomeCard";
 
 export default function NeighborhoodDetailPage() {
@@ -11,7 +12,9 @@ export default function NeighborhoodDetailPage() {
   const { db, nbhd } = useStore();
   const n = nbhd(id);
 
-  if (!n) {
+  // Only the curated communities have a public page; other neighborhoods are
+  // just model-home locations (Morriston, Marion Oaks, …) and 404 here.
+  if (!n || !isCommunity(id)) {
     return (
       <div className="wrap">
         <div className="empty" style={{ padding: "5rem" }}>

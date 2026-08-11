@@ -8,6 +8,9 @@ import { PartyPopper, Home, MapPin, Info } from "lucide-react";
 export default function ContestPage() {
   const { db, home, nbhd, visited, myRatings, route } = useStore();
   const target = db.contest.target;
+  // Prize description is admin-editable; fall back to evergreen copy when unset
+  // so the grand-prize banner never renders a blank line.
+  const prize = db.contest.prize?.trim();
   const done = visited.length;
   const remaining = Math.max(0, target - done);
   const pct = Math.min(100, Math.round((done / target) * 100));
@@ -44,7 +47,17 @@ export default function ContestPage() {
         }}
       >
         <Info size={20} style={{ color: "var(--navy)", flexShrink: 0 }} />
-        <span>You must be registered and logged in to participate in the giveaway contest.</span>
+        <span>
+          You must be registered and logged in to participate in the giveaway contest.{" "}
+          <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline" }}>
+            Log in
+          </Link>{" "}
+          or{" "}
+          <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline" }}>
+            register
+          </Link>
+          .
+        </span>
       </div>
 
       {/*
@@ -91,7 +104,7 @@ export default function ContestPage() {
               textShadow: "0 2px 14px rgba(0,0,0,.45)",
             }}
           >
-            A 3-Day Oceanview Escape
+            An Oceanview Getaway Awaits
           </h3>
           <p
             style={{
@@ -101,7 +114,8 @@ export default function ContestPage() {
               textShadow: "0 1px 8px rgba(0,0,0,.5)",
             }}
           >
-            {db.contest.prize}
+            {prize ||
+              "Tour the Parade, check in at the required number of homes, and you could win a relaxing three-day oceanview getaway for two. The full prize will be announced soon — keep stamping your contest card to stay eligible!"}
           </p>
         </div>
       </div>

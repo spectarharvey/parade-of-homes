@@ -21,15 +21,20 @@ export function builderLogo(builder?: (Pick<Builder, "name"> & { logo?: string |
 }
 
 /**
- * Prefer database logo, then local logo, then fast Google CDN favicon, then site favicon fallback.
+ * Ordered list of logo candidates for a builder. The <img> tries each in turn
+ * (advancing on error) so a logo loads automatically for every builder that has
+ * a website — curated logos first, then several web sources for redundancy, and
+ * only initials if every source fails.
+ *
+ * Order: database logo → local file → Google favicon (256px) → unavatar
+ * (aggregates Clearbit/favicon/DuckDuckGo) → DuckDuckGo icon → site favicon.
  */
 export function builderLogoSources(
   builder?: (Pick<Builder, "name" | "website"> & { logo?: string | null }) | null,
 ) {
   const dbLogo = builder?.logo?.trim() ?? "";
   const localLogo = builderLogo(builder);
-  let googleFavicon = "";
-  let siteLogo = "";
+  const webSources: string[] = [];
 
   try {
     const website = builder?.website?.trim();
@@ -38,13 +43,19 @@ export function builderLogoSources(
       const url = new URL(cleanWeb);
       const domain = url.hostname.replace(/^www\./, "");
       if (domain) {
-        googleFavicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
-        siteLogo = `${url.origin}/favicon.ico`;
+        // Google usually serves a crisp favicon; unavatar is a reliable
+        // aggregator that resolves logos Google misses. `fallback=false` makes
+        // unavatar 404 (so the chain advances) instead of returning a generic
+        // placeholder avatar.
+        webSources.push(`https://www.google.com/s2/favicons?domain=${domain}&sz=256`);
+        webSources.push(`https://unavatar.io/${domain}?fallback=false`);
+        webSources.push(`https://icons.duckduckgo.com/ip3/${domain}.ico`);
+        webSources.push(`${url.origin}/favicon.ico`);
       }
     }
   } catch {
     // An invalid or missing website simply has no logo fallback.
   }
 
-  return [...new Set([dbLogo, localLogo, googleFavicon, siteLogo].filter(Boolean))];
+  return [...new Set([dbLogo, localLogo, ...webSources].filter(Boolean))];
 }

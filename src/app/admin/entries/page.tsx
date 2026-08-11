@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useToast } from "@/lib/store";
+import { normalizeSubs } from "@/lib/subcontractors";
 
 type BuilderEntry = {
   id: string;
@@ -230,6 +231,21 @@ export default function EntriesPage() {
                                 </ul>
                               </div>
                             )}
+                            {(() => {
+                              const subs = normalizeSubs(d.subcontractors);
+                              return subs.length > 0 ? (
+                                <div style={{ marginTop: ".4rem" }}>
+                                  <div className="muted" style={{ fontSize: ".78rem" }}>Subcontractors</div>
+                                  <ul style={{ margin: ".2rem 0 .2rem 1.2rem", fontSize: ".82rem" }}>
+                                    {subs.map((s, i) => (
+                                      <li key={i}>
+                                        {s.service ? <b>{s.service}:</b> : null} {s.name}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              ) : null;
+                            })()}
                           </div>
                           <div>
                             <h4 style={{ fontSize: ".9rem", marginBottom: ".3rem" }}>Contact &amp; Billing</h4>

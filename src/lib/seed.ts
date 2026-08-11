@@ -3,8 +3,9 @@ import type { DB } from "./types";
 export const SEED: DB = {
   contest: {
     target: 8,
-    prize:
-      "Enjoy a three-day stay in a Premium Oceanview Suite at Hammock Beach Golf Resort & Spa, complete with daily breakfast for two at Atlantic Grille. Sponsored by Umpleby Travels.",
+    // Prize unset by default — the contest banner shows evergreen placeholder
+    // copy until an admin enters this year's confirmed prize in Settings.
+    prize: "",
   },
   builders: [
     {
@@ -136,6 +137,19 @@ export const SEED: DB = {
       blurb:
         "Ocala custom home builder showcasing The Wyrick II — a 2,655 sq ft custom home with four bedrooms, a hidden butler's pantry, and open-concept living.",
       ad: "Standard Builder Entry - The Wyrick II custom home.",
+    },
+    {
+      id: "b_stentiford",
+      name: "Stentiford Construction",
+      initials: "SC",
+      color: "#2f6f4f",
+      featured: false,
+      phone: "352-266-8994",
+      website: "stentifordfl.com",
+      years: 0,
+      blurb:
+        "Ocala builder showcasing the Fort King Townhome — a 1,513 sq ft, three-bedroom spec townhome near downtown Ocala.",
+      ad: "Premier Builder Entry - Fort King Townhome.",
     },
   ],
   neighborhoods: [
@@ -551,6 +565,36 @@ export const SEED: DB = {
         "Open-concept living for easy entertaining",
         "Private primary suite retreat",
         "Custom home — not for sale",
+      ],
+      imgs: [],
+    },
+    {
+      id: "h_stentiford_fortking",
+      name: "Fort King Townhome",
+      color: "#2f6f4f",
+      builder: "b_stentiford",
+      nb: "n_ocala",
+      style: "Townhome",
+      price: 310000,
+      beds: 3,
+      baths: 2.5,
+      sqft: 1513,
+      garage: 1,
+      checkins: 0,
+      rating: 0,
+      ratings: 0,
+      featured: false,
+      x: 50,
+      y: 50,
+      blurb:
+        "Stentiford Construction's 2026 Parade entry — a 1,513 sq ft townhome near downtown Ocala with three bedrooms, 2.5 baths, and a one-car garage. Professionally staged spec home.",
+      features: [
+        "Model location: 49 SE 15th Terrace, Ocala, FL 34471",
+        "1,833 sq ft total under roof",
+        "3 bedrooms",
+        "2.5 baths",
+        "1-car garage",
+        "Spec home — professionally staged",
       ],
       imgs: [],
     },

@@ -163,7 +163,7 @@ export default function HomesPage() {
               gap: "0.3rem",
             }}
           >
-            Price {sort === "price-asc" ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
+            Price {sort === "price-asc" ? <ArrowDown size={14} /> : <ArrowUp size={14} />}
           </button>
         </span>
       </div>

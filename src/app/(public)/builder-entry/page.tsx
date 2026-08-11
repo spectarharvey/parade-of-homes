@@ -319,7 +319,7 @@ export default function BuilderEntryPage() {
             <option>Standard Builder Entry (Members) - $2,500</option>
             <option>Premier Builder Entry (Members) - $5,000</option>
             <option>Premier Associate Entry (Members) - $5,000</option>
-            <option>Additional Home Entry (after first entry) - $2,000</option>
+            <option> (after first entry) - $2,000</option>
           </select>
         </div>
         <p className="muted form-hint">A 3% processing fee applies to all credit card payments. You must be a member of MCBIA to enter.</p>

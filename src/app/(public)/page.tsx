@@ -117,7 +117,7 @@ export default function HomePage() {
                 <h3>{fb.name}</h3>
                 <p>{fb.blurb}</p>
                 <div className="adbox">{fb.ad}</div>
-                <Link href="/builders" className="btn btn-gold btn-sm">
+                <Link href={`/builders/${fb.id}`} className="btn btn-gold btn-sm">
                   View Builder Profile
                 </Link>
               </div>

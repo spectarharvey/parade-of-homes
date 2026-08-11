@@ -126,7 +126,7 @@ export default function SponsorsPage() {
           silver: { logoHeight: "60px", minColWidth: "140px" },
         }[t];
         const minColWidth = list.some(hasSponsorDetails)
-          ? "280px"
+          ? "310px"
           : sizeSettings.minColWidth;
 
         return (
@@ -134,15 +134,17 @@ export default function SponsorsPage() {
             <div className="tier-head">
               <span className="ribbon">{label}</span>
             </div>
-            <div
-              className="premium-sponsor-grid"
-              style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${minColWidth}, 1fr))` }}
-            >
+            <div className="premium-sponsor-grid">
               {list.map((s, idx) => (
                 <div
                   key={s.id}
                   className={`premium-sponsor-card${hasSponsorDetails(s) ? " premium-sponsor-card--details" : ""}`}
-                  style={{ animationDelay: `${idx * 0.08}s, ${idx * 0.35}s` }}
+                  style={{
+                    animationDelay: `${idx * 0.08}s, ${idx * 0.35}s`,
+                    width: "100%",
+                    maxWidth: minColWidth,
+                    flex: `1 1 ${minColWidth}`,
+                  }}
                   title={s.name}
                 >
                   <div

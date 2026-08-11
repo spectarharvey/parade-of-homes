@@ -9,6 +9,7 @@ export interface Builder {
   years: number;
   blurb: string;
   ad: string;
+  logo?: string | null;
 }
 
 export interface Neighborhood {

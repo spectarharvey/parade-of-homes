@@ -71,7 +71,7 @@ export default function ContestPage() {
           position: "relative",
           borderRadius: "var(--radius)",
           overflow: "hidden",
-          minHeight: 250,
+          // minHeight: 250,
           display: "flex",
           alignItems: "flex-end",
           color: "#fff",
@@ -85,10 +85,12 @@ export default function ContestPage() {
         }}
       >
       <div
-  style={{
-    padding: "2.8rem 2.2rem",
-  }}
->
+        style={{
+          padding: "2.5rem",
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
   <span
     style={{
       textTransform: "uppercase",
@@ -124,6 +126,7 @@ export default function ContestPage() {
     {prize ||
       "Tour the Parade, check in at the required number of homes, and you could win a relaxing three-day oceanview getaway for two. The full prize will be announced soon — keep stamping your contest card to stay eligible!"}
   </p>
+</div>
 </div>
 
       <div className="card" style={{ padding: "2rem", marginBottom: "2rem" }}>

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useStore, useToast } from "@/lib/store";
 import { money } from "@/lib/format";
+import { homeLatLng, tourNumber } from "@/lib/homeGeo";
 import type { Home } from "@/lib/types";
 import QRScanner from "@/components/QRScanner";
 import {Info } from "lucide-react";
@@ -181,6 +182,50 @@ export default function MapPage() {
     w.print();
   };
 
+  // Printable handout: a static map of every home + a numbered tour list.
+  // Numbers match the tour numbers on the on-screen map pins. The static map
+  // image is best-effort (external service); the legend always renders.
+  const printTourMap = () => {
+    const homes = [...db.homes];
+    if (!homes.length) return;
+    const nums = tourNumber(homes);
+    const ordered = homes.sort((a, b) => nums[a.id] - nums[b.id]);
+    const pins = ordered
+      .map((h) => {
+        const [la, ln] = homeLatLng(h);
+        return `${la.toFixed(5)},${ln.toFixed(5)},ol-marker-blue`;
+      })
+      .join("|");
+    const mapUrl = `https://staticmap.openstreetmap.de/staticmap.php?size=680x460&maptype=mapnik&markers=${pins}`;
+    const rows = ordered
+      .map((h) => {
+        const b = db.builders.find((x) => x.id === h.builder)?.name ?? "";
+        return `<li><b>${h.name}</b><br/>${b}${b ? " · " : ""}${nbhd(h.nb)?.name ?? ""}<br/><span class="addr">${homeAddress(h)}</span></li>`;
+      })
+      .join("");
+    const w = window.open("", "_blank", "width=760,height=900");
+    if (!w) return;
+    w.document.write(
+      "<!doctype html><html><head><title>2026 Parade of Homes — Tour Map</title><style>" +
+        "body{font-family:Arial,Helvetica,sans-serif;padding:28px;color:#12263a}" +
+        "h1{color:#033256;font-size:22px;margin:0 0 2px}.sub{color:#555;font-size:13px;margin:0 0 14px}" +
+        "img{width:100%;max-width:680px;border:1px solid #d8dee5;border-radius:8px;display:block;margin:0 0 16px}" +
+        "ol{line-height:1.45;font-size:13px;padding-left:22px;columns:2;column-gap:28px}" +
+        "li{margin-bottom:9px;break-inside:avoid}.addr{color:#666;font-size:12px}" +
+        "p.hours{color:#555;font-size:12px;margin-top:14px}" +
+        "</style></head><body>" +
+        "<h1>2026 MCBIA Parade of Homes — Tour Map</h1>" +
+        `<p class="sub">${ordered.length} model homes · numbered tour order</p>` +
+        `<img src="${mapUrl}" alt="Parade of Homes map" onerror="this.style.display='none'"/>` +
+        `<ol>${rows}</ol>` +
+        '<p class="hours">Open house hours: Fri &amp; Sat 11 AM – 5 PM · Sun 12 PM – 5 PM</p>' +
+        "</body></html>",
+    );
+    w.document.close();
+    w.focus();
+    w.print();
+  };
+
   return (
     <div className="wrap">
       {scanning && (
@@ -241,6 +286,15 @@ export default function MapPage() {
               <p className="muted" style={{ fontSize: ".76rem", margin: "0 0 .5rem" }}>
                 Tap to show or hide on the map.
               </p>
+              {db.homes.length > 0 && (
+                <button
+                  className="btn btn-outline btn-sm btn-block"
+                  style={{ marginBottom: ".7rem" }}
+                  onClick={printTourMap}
+                >
+                  🖨 Print Tour Map
+                </button>
+              )}
               {db.homes.map((h) => {
                 const hidden = hiddenHomes.has(h.id);
                 const loc = nbhd(h.nb)?.name;

@@ -5,7 +5,7 @@ import type { Map as LeafletMapInstance, Marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useStore, useToast } from "@/lib/store";
 import { money, homePhoto, stars } from "@/lib/format";
-import { homeLatLng, MAP_FALLBACK_CENTER } from "@/lib/homeGeo";
+import { homeLatLng, MAP_FALLBACK_CENTER, tourNumber } from "@/lib/homeGeo";
 import type { Home } from "@/lib/types";
 
 type Props = {
@@ -46,11 +46,29 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
         zoom: 11,
         scrollWheelZoom: true,
       });
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+      // Muted CARTO Positron basemap so the branded pins stand out (no API key).
+      // Falls back to OSM raster if CARTO tiles fail.
+      const carto = L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        {
+          subdomains: "abcd",
+          maxZoom: 19,
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        },
+      );
+      let swappedToOsm = false;
+      carto.on("tileerror", () => {
+        if (swappedToOsm) return;
+        swappedToOsm = true;
+        carto.remove();
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+      });
+      carto.addTo(map);
       mapRef.current = map;
       // The grid cell may finish sizing after mount.
       setTimeout(() => map.invalidateSize(), 0);
@@ -128,6 +146,8 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
     // home can be added.
     const visible = db.homes.filter((h) => routeMode || !hiddenHomes.has(h.id));
     const bounds: [number, number][] = [];
+    // Stable tour numbers (grouped by community) for the pin labels.
+    const nums = tourNumber(db.homes);
 
     visible.forEach((h) => {
       const ll = homeLatLng(h);
@@ -135,17 +155,15 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
       const idx = route.indexOf(h.id);
       const numbered = routeMode && idx >= 0;
       const isCurrent = tripActive && idx === tripIndex;
-      const ring = isCurrent
-        ? "0 0 0 4px #c9a24b"
-        : numbered
-          ? "0 0 0 3px rgba(201,162,75,.65)"
-          : "0 3px 8px rgba(0,0,0,.35)";
+      // Route stops show their visit order; every other pin shows its tour number.
+      const label = numbered ? idx + 1 : (nums[h.id] ?? "");
+      const stateClass = isCurrent ? "is-current" : numbered ? "is-route" : "";
       const icon = L.divIcon({
         className: "home-marker",
-        html: `<span class="home-marker-dot" style="background:${h.color};box-shadow:${ring}">${numbered ? idx + 1 : ""}</span>`,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14],
-        popupAnchor: [0, -14],
+        html: `<span class="pin-marker ${stateClass}" style="--pin:${h.color || "#116799"}"><b>${label}</b></span>`,
+        iconSize: [30, 40],
+        iconAnchor: [15, 38],
+        popupAnchor: [0, -34],
       });
       const marker = L.marker(ll, { icon, title: h.name }).addTo(map);
 

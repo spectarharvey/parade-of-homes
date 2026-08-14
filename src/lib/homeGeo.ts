@@ -33,10 +33,32 @@ function jitter(id: string): [number, number] {
   return [dLat * 0.06, dLng * 0.06];
 }
 
-/** The [lat, lng] to place a home at on the map. */
-export function homeLatLng(home: Pick<Home, "id">): [number, number] {
+/**
+ * The [lat, lng] to place a home at on the map. Prefers the home's real,
+ * admin-set coordinates; falls back to the legacy per-id approximations, then
+ * to a deterministic jitter near Ocala so unmapped homes don't stack.
+ */
+export function homeLatLng(
+  home: Pick<Home, "id"> & Partial<Pick<Home, "lat" | "lng">>,
+): [number, number] {
+  if (typeof home.lat === "number" && typeof home.lng === "number")
+    return [home.lat, home.lng];
   const mapped = HOME_COORDS[home.id];
   if (mapped) return mapped;
   const [dLat, dLng] = jitter(home.id);
   return [MAP_FALLBACK_CENTER[0] + dLat, MAP_FALLBACK_CENTER[1] + dLng];
+}
+
+/**
+ * Stable 1-based tour numbers keyed by home id, grouped by neighborhood then
+ * name — a sensible community-by-community walking order. Derived (no schema),
+ * deterministic, used for map marker labels and the printable tour handout.
+ */
+export function tourNumber(
+  homes: { id: string; nb: string; name: string }[],
+): Record<string, number> {
+  const sorted = [...homes].sort(
+    (a, b) => a.nb.localeCompare(b.nb) || a.name.localeCompare(b.name),
+  );
+  return Object.fromEntries(sorted.map((h, i) => [h.id, i + 1]));
 }

@@ -41,6 +41,8 @@ export interface Home {
   featured: boolean;
   x: number;
   y: number;
+  lat?: number | null; // real map coordinates (preferred over homeGeo lookup)
+  lng?: number | null;
   blurb: string;
   features: string[];
   imgs: string[];

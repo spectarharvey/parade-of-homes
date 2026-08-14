@@ -1547,18 +1547,38 @@ section.block {
   border: none;
 }
 
-.home-marker-dot {
+/* Branded teardrop map pin. Fill = the home's color via --pin (default navy);
+   gold ring for route stops / current trip stop. Used by the public map and the
+   admin LocationPicker. */
+.pin-marker {
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--pin, #116799);
   border: 2px solid #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .35);
+  cursor: pointer;
+}
+
+.pin-marker b {
+  transform: rotate(45deg);
   color: #fff;
   font-weight: 800;
-  font-size: .78rem;
+  font-size: .72rem;
   line-height: 1;
-  cursor: pointer;
+}
+
+.pin-marker.is-route {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 75, .55), 0 3px 8px rgba(0, 0, 0, .35);
+}
+
+.pin-marker.is-current {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px var(--gold), 0 3px 10px rgba(0, 0, 0, .4);
 }
 
 /* Home popup, styled to match the old preview card */

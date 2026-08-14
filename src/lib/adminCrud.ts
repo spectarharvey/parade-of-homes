@@ -39,6 +39,12 @@ const builds: Record<string, { model: string; prefix: string; build: Build }> = 
       set(o, b, "garage", (v) => num(v), create, 0);
       set(o, b, "x", (v) => num(v, 50), create, 50);
       set(o, b, "y", (v) => num(v, 50), create, 50);
+      // Real map coordinates set by the admin pin-picker. Presence-checked so an
+      // unpinned home stays null (→ falls back to homeGeo) instead of snapping to 0/50.
+      if (b.lat !== undefined && b.lat !== "" && b.lat !== null) o.lat = Number(b.lat);
+      else if (create) o.lat = null;
+      if (b.lng !== undefined && b.lng !== "" && b.lng !== null) o.lng = Number(b.lng);
+      else if (create) o.lng = null;
       if (b.features !== undefined) o.features = arr(b.features);
       else if (create) o.features = [];
       if (b.imgs !== undefined) o.imgs = arr(b.imgs);

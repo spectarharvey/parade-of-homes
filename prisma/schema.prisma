@@ -72,6 +72,8 @@ model Home {
   featured     Boolean      @default(false)
   x            Float
   y            Float
+  lat          Float?
+  lng          Float?
   blurb        String
   features     String[]
   imgs         String[]

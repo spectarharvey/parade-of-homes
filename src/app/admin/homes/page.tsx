@@ -1,11 +1,32 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { useStore, useToast } from "@/lib/store";
 import { money, stars, homePhoto } from "@/lib/format";
 import Modal from "@/components/Modal";
 import ImageUpload from "@/components/ImageUpload";
 import type { Home } from "@/lib/types";
+
+// Client-only — Leaflet needs `window`.
+const LocationPicker = dynamic(() => import("@/components/LocationPicker"), {
+  ssr: false,
+  loading: () => (
+    <div
+      style={{
+        height: 260,
+        display: "grid",
+        placeItems: "center",
+        color: "var(--muted)",
+        fontSize: ".8rem",
+        border: "1px solid var(--line)",
+        borderRadius: 10,
+      }}
+    >
+      Loading map…
+    </div>
+  ),
+});
 
 type HomeDraft = Partial<Record<keyof Home, unknown>> & {
   imgs?: string[];
@@ -27,8 +48,8 @@ const emptyHome = (): HomeDraft => ({
   features: "",
   imgs: [],
   featured: false,
-  x: "",
-  y: "",
+  lat: null,
+  lng: null,
 });
 
 export default function AdminHomesPage() {
@@ -293,27 +314,13 @@ export default function AdminHomesPage() {
                 />
               </div>
             </div>
-            <div className="form-grid">
-              <div className="fld">
-                <label>Map X %</label>
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={(draft.x as string) ?? ""}
-                  onChange={(e) => setDraft({ ...draft, x: e.target.value })}
-                />
-              </div>
-              <div className="fld">
-                <label>Map Y %</label>
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={(draft.y as string) ?? ""}
-                  onChange={(e) => setDraft({ ...draft, y: e.target.value })}
-                />
-              </div>
+            <div className="fld full">
+              <label>Model Home Location</label>
+              <LocationPicker
+                lat={(draft.lat as number | null) ?? null}
+                lng={(draft.lng as number | null) ?? null}
+                onChange={(lat, lng) => setDraft({ ...draft, lat, lng })}
+              />
             </div>
             <div className="fld full">
               <label>Blurb</label>

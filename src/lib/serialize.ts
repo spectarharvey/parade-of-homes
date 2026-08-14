@@ -23,6 +23,8 @@ export function serializeHome(h: {
   featured: boolean;
   x: number;
   y: number;
+  lat: number | null;
+  lng: number | null;
   blurb: string;
   features: string[];
   imgs: string[];

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@/lib/store";
 import { homePhoto } from "@/lib/format";
+import { isPremierBuilder } from "@/lib/builderTier";
 import BuilderLogo from "@/components/BuilderLogo";
 import HomeCard from "@/components/HomeCard";
 
@@ -13,10 +14,14 @@ export default function HomePage() {
   const fbHomes = fb ? db.homes.filter((h) => h.builder === fb.id) : [];
   const fbHero = fbHomes[0] ? homePhoto(fbHomes[0]) : "";
   
-  // Prioritize featured homes, pad to exactly 6 using non-featured homes
+  // The "Get Inspired" slider showcases PREMIER-tier builders only. Within
+  // those, prioritize featured homes, then pad with the rest, capped at 6.
+  const premierHomes = db.homes.filter((h) =>
+    isPremierBuilder(db.builders.find((b) => b.id === h.builder)),
+  );
   const featured = [
-    ...db.homes.filter((h) => h.featured),
-    ...db.homes.filter((h) => !h.featured)
+    ...premierHomes.filter((h) => h.featured),
+    ...premierHomes.filter((h) => !h.featured),
   ].slice(0, 6);
   const desktopVisibleCards = 3;
   const maxFeaturedIndex = Math.max(0, featured.length - desktopVisibleCards);
@@ -175,6 +180,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {featured.length > 0 && (
       <section
         className="block"
         style={{
@@ -213,6 +219,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {db.sponsors.length ? (
       <div className="sponsor-bar">

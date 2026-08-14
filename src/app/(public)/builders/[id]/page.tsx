@@ -7,7 +7,6 @@ import { homePhoto } from "@/lib/format";
 import BuilderLogo from "@/components/BuilderLogo";
 import HomeCard from "@/components/HomeCard";
 import NotFoundBlock from "@/components/NotFoundBlock";
-import { BUILDER_SUBS } from "@/lib/subcontractors";
 import { Phone, Globe, Award } from "lucide-react";
 
 const siteUrl = (w: string) => (/^https?:\/\//.test(w) ? w : `https://${w}`);
@@ -22,7 +21,6 @@ export default function BuilderProfilePage() {
 
   const homes = db.homes.filter((h) => h.builder === b.id);
   const hero = homes[0] ? homePhoto(homes[0]) : "";
-  const subs = BUILDER_SUBS[b.id] ?? [];
 
   return (
     <div className="wrap">
@@ -103,50 +101,6 @@ export default function BuilderProfilePage() {
       ) : (
         <div className="empty">No showcase homes listed yet.</div>
       )}
-
-      {subs.length > 0 ? (
-        <div style={{ marginTop: "2.4rem" }}>
-          <div className="row-head">
-            <h3 style={{ fontSize: "1.3rem" }}>MCBIA Member Trade Partners</h3>
-          </div>
-          <p className="muted" style={{ marginTop: "-.4rem", fontSize: ".86rem" }}>
-            The MCBIA member sub-contractors {b.name} worked with on this Parade home.
-          </p>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-              gap: ".7rem",
-              marginTop: "1rem",
-            }}
-          >
-            {subs.map((s, i) => (
-              <div
-                key={i}
-                className="panel"
-                style={{ padding: ".8rem 1rem" }}
-              >
-                {s.service ? (
-                  <div
-                    className="muted"
-                    style={{
-                      fontSize: ".68rem",
-                      textTransform: "uppercase",
-                      letterSpacing: ".08em",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {s.service}
-                  </div>
-                ) : null}
-                <div style={{ fontWeight: 600, fontSize: ".92rem", color: "var(--navy)" }}>
-                  {s.name}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }

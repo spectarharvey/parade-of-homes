@@ -94,7 +94,7 @@ export default function NeighborhoodDetailPage() {
                   color: "#bcc8d4",
                 }}
               >
-                Homes
+                {homes.length === 1 ? "Home" : "Homes"}
               </div>
             </div>
             <div>

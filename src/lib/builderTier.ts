@@ -11,6 +11,7 @@ export const PREMIER_BUILDER_IDS = [
   "b_curington",
   "b_ferrer",
   "b_stentiford",
+  "b_cbi",
 ];
 
 /**

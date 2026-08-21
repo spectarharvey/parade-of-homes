@@ -4,12 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { useStore } from "@/lib/store";
 import { homePhoto } from "@/lib/format";
-import {
-  isPremierBuilder,
-  LEAD_BUILDER_ID,
-  SLIDER_EXCLUDED_HOME_IDS,
-  SLIDER_HOME_LIMIT,
-} from "@/lib/builderTier";
+import { isPremierHome, LEAD_BUILDER_ID, SLIDER_HOME_LIMIT } from "@/lib/builderTier";
 import BuilderLogo from "@/components/BuilderLogo";
 import HomeCard from "@/components/HomeCard";
 
@@ -19,13 +14,10 @@ export default function HomePage() {
   const fbHomes = fb ? db.homes.filter((h) => h.builder === fb.id) : [];
   const fbHero = fbHomes[0] ? homePhoto(fbHomes[0]) : "";
   
-  // The "Get Inspired" slider showcases PREMIER-tier builders only, minus any
-  // individually excluded home. Within those, lead with the pinned builder,
-  // then featured homes, then pad with the rest.
-  const premierHomes = db.homes.filter(
-    (h) =>
-      isPremierBuilder(db.builders.find((b) => b.id === h.builder)) &&
-      !SLIDER_EXCLUDED_HOME_IDS.includes(h.id),
+  // The "Get Inspired" slider showcases PREMIER-tier homes only. Within those,
+  // lead with the pinned builder, then featured homes, then pad with the rest.
+  const premierHomes = db.homes.filter((h) =>
+    isPremierHome(h, db.builders.find((b) => b.id === h.builder)),
   );
   const isLead = (h: (typeof premierHomes)[number]) => h.builder === LEAD_BUILDER_ID;
   const featured = [

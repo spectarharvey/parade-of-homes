@@ -22,11 +22,12 @@ export const PREMIER_BUILDER_IDS = [
 export const LEAD_BUILDER_ID = "b_brije";
 
 /**
- * Homes kept out of the home page "Get Inspired" slider even though their
- * builder is Premier tier — e.g. a builder's $2,000 additional-home entry,
- * which MCBIA lists as Standard.
+ * Homes MCBIA lists as Standard even though their builder is Premier tier —
+ * typically a builder's second, $2,000 additional-home entry. They are treated
+ * as Standard everywhere tier is shown: no Premier badge, and no slot in the
+ * home page "Get Inspired" slider.
  */
-export const SLIDER_EXCLUDED_HOME_IDS = ["h_bakan_fusion"];
+export const STANDARD_HOME_IDS = ["h_brije_boone", "h_bakan_fusion"];
 
 /** How many cards the "Get Inspired" slider will hold. */
 export const SLIDER_HOME_LIMIT = 8;
@@ -45,4 +46,16 @@ export function isPremierBuilder(
     PREMIER_BUILDER_IDS.includes(builder.id) ||
     /premier builder entry/i.test(builder.ad ?? "")
   );
+}
+
+/**
+ * Whether a specific home counts as Premier: its builder is Premier tier and
+ * the home itself is not one of the Standard entries above.
+ */
+export function isPremierHome(
+  home: { id: string } | null | undefined,
+  builder: Pick<Builder, "id" | "ad"> | null | undefined,
+): boolean {
+  if (!home || STANDARD_HOME_IDS.includes(home.id)) return false;
+  return isPremierBuilder(builder);
 }

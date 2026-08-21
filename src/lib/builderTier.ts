@@ -22,6 +22,16 @@ export const PREMIER_BUILDER_IDS = [
 export const LEAD_BUILDER_ID = "b_brije";
 
 /**
+ * Homes kept out of the home page "Get Inspired" slider even though their
+ * builder is Premier tier — e.g. a builder's $2,000 additional-home entry,
+ * which MCBIA lists as Standard.
+ */
+export const SLIDER_EXCLUDED_HOME_IDS = ["h_bakan_fusion"];
+
+/** How many cards the "Get Inspired" slider will hold. */
+export const SLIDER_HOME_LIMIT = 8;
+
+/**
  * Whether a builder is Premier tier: the curated list above, OR an `ad` that
  * still follows the "Premier Builder Entry - …" convention (so newly added
  * builders are picked up automatically). "Standard"/"Additional"/"Featured"

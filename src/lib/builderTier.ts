@@ -9,7 +9,6 @@ import type { Builder } from "./types";
 export const PREMIER_BUILDER_IDS = [
   "b_deltona",
   "b_curington",
-  "b_ferrer",
   "b_stentiford",
   "b_cbi",
 ];

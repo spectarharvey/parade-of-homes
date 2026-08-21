@@ -74,19 +74,6 @@ export const SEED: DB = {
       ad: "Premier Builder Entry - Sebastian VIII Craftsman Edition in Irish Acres.",
     },
     {
-      id: "b_ferrer",
-      name: "Ferrer Construction",
-      initials: "FC",
-      color: "#2f5d8a",
-      featured: false,
-      phone: "352-297-2287",
-      website: "ferrerbuilder.com",
-      years: 0,
-      blurb:
-        "Ocala custom home builder participating in the 2026 Parade of Homes. Model details coming soon.",
-      ad: "Premier Builder Entry - 2026 Parade of Homes.",
-    },
-    {
       id: "b_luetgert",
       name: "Luetgert Development Corp",
       initials: "LD",
@@ -830,6 +817,18 @@ export const SEED: DB = {
       phone: "",
       email: "",
       address: "",
+    },
+    {
+      id: "s_956bc76c",
+      name: "Ferrer Construction",
+      tier: "gold",
+      color: "#3f5992",
+      cat: "",
+      img: "https://res.cloudinary.com/deqetry9x/image/upload/v1787288969/parade-of-homes/vjmveu0xg0d4aumdkscs.png",
+      website: "https://ferrerbuilder.com/",
+      phone: "352-297-2287",
+      email: "brandon@ferrerconstruction.com",
+      address: "1015 SE 3rd Ave Ocala, Florida 34471 United States",
     },
     {
       id: "sp_kitchenwise_closetwise",

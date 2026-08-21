@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
 import { money, stars, homePhoto, NO_IMAGE_FALLBACK } from "@/lib/format";
+import { isPremierBuilder } from "@/lib/builderTier";
 import type { Home } from "@/lib/types";
 
 export default function HomeCard({ home }: { home: Home }) {
@@ -29,6 +30,7 @@ export default function HomeCard({ home }: { home: Home }) {
           style={imageFailed ? { objectFit: "contain", background: "#f8fafc" } : undefined}
         />
         <span className="tag">{home.style}</span>
+        {isPremierBuilder(b) && <span className="tag tag-premier">Premier</span>}
       </div>
       <div className="body">
         <div className="price">{money(home.price)}</div>

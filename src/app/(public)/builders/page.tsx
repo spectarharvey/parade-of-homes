@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { homePhoto } from "@/lib/format";
 import BuilderLogo from "@/components/BuilderLogo";
+import { isPremierBuilder, LEAD_BUILDER_ID } from "@/lib/builderTier";
 import { Megaphone, Phone, Globe, Award, Home } from "lucide-react";
 
 const siteUrl = (w: string) => (/^https?:\/\//.test(w) ? w : `https://${w}`);
@@ -16,6 +17,16 @@ export default function BuildersPage() {
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
   const fbHomes = db.homes.filter((h) => h.builder === fb.id).slice(0, 3);
   const fbHero = fbHomes[0] ? homePhoto(fbHomes[0]) : "";
+
+  // Listing order: the pinned lead builder, then Premier tier, then the rest —
+  // alphabetical within each group.
+  const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name);
+  const rest = db.builders.filter((b) => b.id !== LEAD_BUILDER_ID);
+  const orderedBuilders = [
+    ...db.builders.filter((b) => b.id === LEAD_BUILDER_ID),
+    ...rest.filter(isPremierBuilder).sort(byName),
+    ...rest.filter((b) => !isPremierBuilder(b)).sort(byName),
+  ];
 
   return (
     <div className="wrap">
@@ -87,7 +98,7 @@ export default function BuildersPage() {
         </div>
       </div>
       <div className="grid-2">
-        {db.builders.map((b) => {
+        {orderedBuilders.map((b) => {
           const c = db.homes.filter((h) => h.builder === b.id).length;
           return (
             <div

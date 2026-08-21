@@ -766,6 +766,13 @@ section.block {
   letter-spacing: .05em
 }
 
+.home-card .photo .tag-premier {
+  left: auto;
+  right: .7rem;
+  background: #000;
+  color: #fff;
+}
+
 .home-card .photo .fav {
   position: absolute;
   top: .7rem;

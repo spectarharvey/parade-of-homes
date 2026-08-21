@@ -11,7 +11,15 @@ export const PREMIER_BUILDER_IDS = [
   "b_curington",
   "b_stentiford",
   "b_cbi",
+  "b_brije",
 ];
+
+/**
+ * Builder pinned to the front of public builder/home listings — the home page
+ * "Get Inspired" slider and the Participating Builders grid — ahead of the
+ * usual Premier-then-Standard ordering.
+ */
+export const LEAD_BUILDER_ID = "b_brije";
 
 /**
  * Whether a builder is Premier tier: the curated list above, OR an `ad` that

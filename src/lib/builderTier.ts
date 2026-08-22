@@ -27,7 +27,11 @@ export const LEAD_BUILDER_ID = "b_brije";
  * as Standard everywhere tier is shown: no Premier badge, and no slot in the
  * home page "Get Inspired" slider.
  */
-export const STANDARD_HOME_IDS = ["h_brije_boone", "h_bakan_fusion"];
+export const STANDARD_HOME_IDS = [
+  "h_brije_boone",
+  "h_bakan_fusion",
+  "h_dream_valencia",
+];
 
 /** How many cards the "Get Inspired" slider will hold. */
 export const SLIDER_HOME_LIMIT = 8;

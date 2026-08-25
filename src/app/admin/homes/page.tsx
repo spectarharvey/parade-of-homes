@@ -136,7 +136,7 @@ export default function AdminHomesPage() {
                     }}
                   >
                     <img
-                      src={homePhoto(h)}
+                      src={homePhoto(h, 200)}
                       style={{
                         width: "48px",
                         height: "36px",

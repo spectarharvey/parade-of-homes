@@ -12,7 +12,7 @@ export default function HomePage() {
   const { db } = useStore();
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
   const fbHomes = fb ? db.homes.filter((h) => h.builder === fb.id) : [];
-  const fbHero = fbHomes[0] ? homePhoto(fbHomes[0]) : "";
+  const fbHero = fbHomes[0] ? homePhoto(fbHomes[0], 1600) : "";
   
   // The "Get Inspired" slider showcases PREMIER-tier homes only. Within those,
   // lead with the pinned builder, then featured homes, then pad with the rest.
@@ -208,9 +208,9 @@ export default function HomePage() {
               onScroll={handleScroll}
               style={isMobile ? undefined : { transform: `translateX(-${Math.min(activeIdx, maxFeaturedIndex) * 33.333333}%)` }}
             >
-              {featured.map((h) => (
+              {featured.map((h, i) => (
                 <div key={h.id} className="featured-slider-card-wrapper">
-                  <HomeCard home={h} />
+                  <HomeCard home={h} featuredBuilderBadge priority={i < 3} />
                 </div>
               ))}
             </div>

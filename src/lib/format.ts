@@ -10,11 +10,33 @@ export const moneyK = (n: number) =>
 export const stars = (r: number) =>
   "★★★★★☆☆☆☆☆".slice(5 - Math.round(r), 10 - Math.round(r));
 
+/** A Cloudinary delivery URL, capturing everything after `/image/upload/`. */
+const CLOUDINARY_UPLOAD = /^(https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(.*)$/;
+
+/**
+ * Cloudinary serves the untouched original unless the URL asks for otherwise,
+ * so an uploaded 4000px photo arrives whole to fill a 400px card. Inserting a
+ * transformation asks Cloudinary to resize and re-encode instead — measured at
+ * 273KB → 48KB on a real listing photo.
+ *
+ * `c_limit` only ever scales down, so a small original is never upscaled, and
+ * `f_auto`/`q_auto` pick the best format and quality for the requesting browser.
+ * URLs that already carry a transformation are left alone.
+ */
+export function cloudinaryUrl(url: string, w: number): string {
+  const m = url.match(CLOUDINARY_UPLOAD);
+  if (!m) return url;
+  const [, base, rest] = m;
+  // An untransformed URL starts at the version (`v123/`) or the public id.
+  const alreadyTransformed = /^[a-z]{1,3}_[^/]+\//.test(rest);
+  return alreadyTransformed ? url : `${base}f_auto,q_auto,c_limit,w_${w}/${rest}`;
+}
+
 // Accepts either a full URL (uploaded image / Cloudinary) or a bare Unsplash
 // photo code (the original seed format) and returns a usable image URL.
 export const imgUrl = (code: string, w = 900) => {
   if (!code) return "";
-  if (/^https?:\/\//.test(code)) return code;
+  if (/^https?:\/\//.test(code)) return cloudinaryUrl(code, w);
   if (code.startsWith("/") || code.startsWith("data:") || code.startsWith("blob:"))
     return code;
   return `https://images.unsplash.com/photo-${code}?auto=format&fit=crop&w=${w}&q=70`;
@@ -24,8 +46,9 @@ export const imgUrl = (code: string, w = 900) => {
 // protected) URL that renders as a broken-image icon in the browser.
 export const NO_IMAGE_FALLBACK = "/placeholder-home.svg";
 
-export const homePhoto = (h: Home) =>
-  h.imgs && h.imgs.length ? imgUrl(h.imgs[0]) : NO_IMAGE_FALLBACK;
+/** Card-sized by default; pass a width for heroes (large) or map pins (small). */
+export const homePhoto = (h: Home, w = 800) =>
+  h.imgs && h.imgs.length ? imgUrl(h.imgs[0], w) : NO_IMAGE_FALLBACK;
 
 /** Deterministic pseudo-QR (decorative, not scannable). Returns an SVG string. */
 export function qrSVG(seed: string) {

@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import { moneyK } from "@/lib/format";
 import { isCommunity } from "@/lib/communities";
@@ -9,8 +10,21 @@ import HomeCard from "@/components/HomeCard";
 
 export default function NeighborhoodDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { db, nbhd } = useStore();
+  const { db, ready, nbhd } = useStore();
+  const router = useRouter();
   const n = nbhd(id);
+
+  const homes = db.homes.filter((h) => h.nb === id);
+
+  // A community with a single model home has nothing to list, so send visitors
+  // straight to that home — from any entry point, including old links and
+  // bookmarks. Gated on `ready` so the count comes from the live catalog and not
+  // the seed snapshot bundled with the app; a second home re-enables this page.
+  const soleHomeId =
+    ready && isCommunity(id) && homes.length === 1 ? homes[0].id : null;
+  useEffect(() => {
+    if (soleHomeId) router.replace(`/home/${soleHomeId}`);
+  }, [soleHomeId, router]);
 
   // Only the curated communities have a public page; other neighborhoods are
   // just model-home locations (Morriston, Marion Oaks, …) and 404 here.
@@ -31,7 +45,8 @@ export default function NeighborhoodDetailPage() {
     );
   }
 
-  const homes = db.homes.filter((h) => h.nb === id);
+  // Redirecting to the sole model home — don't paint this page on the way out.
+  if (soleHomeId) return null;
 
   return (
     <>

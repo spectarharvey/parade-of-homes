@@ -64,7 +64,7 @@ export default function AdminDashboardPage() {
           {top ? (
           <div style={{ display: "flex", gap: "1rem", marginTop: ".8rem" }}>
             <img
-              src={homePhoto(top)}
+              src={homePhoto(top, 400)}
               style={{ width: 120, height: 90, objectFit: "cover", borderRadius: 10 }}
               alt={top.name}
             />

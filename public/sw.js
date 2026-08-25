@@ -3,7 +3,7 @@
 // always go to the network.
 // Bump this version on deploys that must invalidate cached assets — the
 // activate handler deletes every cache that isn't the current name.
-const CACHE = "poh-shell-v2";
+const CACHE = "poh-shell-v3";
 const SHELL = ["/", "/homes"];
 
 self.addEventListener("install", (event) => {

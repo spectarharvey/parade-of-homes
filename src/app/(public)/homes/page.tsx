@@ -172,7 +172,10 @@ export default function HomesPage() {
       </p>
       <div className="grid-3">
         {n ? (
-          results.map((h) => <HomeCard key={h.id} home={h} />)
+          results.map((h, i) => (
+            // The first rows are above the fold — load those eagerly.
+            <HomeCard key={h.id} home={h} priority={i < 6} />
+          ))
         ) : (
           <div className="empty" style={{ gridColumn: "1/-1" }}>
             No homes match your filters. Try clearing them.

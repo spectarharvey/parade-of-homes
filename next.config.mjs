@@ -3,6 +3,9 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
+      // Uploaded listing photos. These are sized by Cloudinary itself through
+      // the loader in HomeCard; the pattern covers any other <Image> use.
+      { protocol: "https", hostname: "res.cloudinary.com" },
     ],
   },
   async redirects() {

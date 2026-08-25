@@ -20,7 +20,7 @@ export default function BuilderProfilePage() {
   if (!b) return <NotFoundBlock />;
 
   const homes = db.homes.filter((h) => h.builder === b.id);
-  const hero = homes[0] ? homePhoto(homes[0]) : "";
+  const hero = homes[0] ? homePhoto(homes[0], 1600) : "";
 
   return (
     <div className="wrap">

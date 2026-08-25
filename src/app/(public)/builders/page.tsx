@@ -16,7 +16,7 @@ export default function BuildersPage() {
   const router = useRouter();
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
   const fbHomes = db.homes.filter((h) => h.builder === fb.id).slice(0, 3);
-  const fbHero = fbHomes[0] ? homePhoto(fbHomes[0]) : "";
+  const fbHero = fbHomes[0] ? homePhoto(fbHomes[0], 1600) : "";
 
   // Listing order: the pinned lead builder, then Premier tier, then the rest —
   // alphabetical within each group.

@@ -98,7 +98,7 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
         : "";
     return (
       `<div class="pop-card">` +
-      `<img src="${esc(homePhoto(h))}" alt="${esc(h.name)}" onerror="this.src='/placeholder-home.svg'"/>` +
+      `<img src="${esc(homePhoto(h, 400))}" alt="${esc(h.name)}" onerror="this.src='/placeholder-home.svg'"/>` +
       `<div class="pop-body">` +
       `<b>${esc(h.name)}</b>` +
       `<div class="pop-sub">${esc(n?.name ?? "")} · ${money(h.price)}</div>` +
@@ -124,7 +124,7 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
       : `<div class="pop-status">Click pin to add to route</div>`;
     return (
       `<div class="pop-card">` +
-      `<img src="${esc(homePhoto(h))}" alt="${esc(h.name)}" onerror="this.src='/placeholder-home.svg'"/>` +
+      `<img src="${esc(homePhoto(h, 400))}" alt="${esc(h.name)}" onerror="this.src='/placeholder-home.svg'"/>` +
       `<div class="pop-body">` +
       `<b>${esc(h.name)}</b>` +
       `<div class="pop-sub">${esc(n?.name ?? "")} · ${money(h.price)}</div>` +

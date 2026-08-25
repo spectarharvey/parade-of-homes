@@ -79,6 +79,9 @@ export default function HomeDetailPage() {
   const related = db.homes
     .filter((x) => x.id !== h.id && (x.nb === h.nb || x.builder === h.builder))
     .slice(0, 3);
+  // A single-home community redirects back to this page, so that link is a
+  // round trip — only offer it when the community really has more to show.
+  const communityHomeCount = db.homes.filter((x) => x.nb === h.nb).length;
 
   return (
     <div className="wrap">
@@ -346,7 +349,7 @@ export default function HomeDetailPage() {
       <section className="block" style={{ paddingBottom: "1rem" }}>
         <div className="row-head">
           <h2 style={{ fontSize: "1.5rem" }}>You may also like</h2>
-          {isCommunity(n?.id) && (
+          {isCommunity(n?.id) && communityHomeCount > 1 && (
             <Link href={`/neighborhood/${n?.id}`} className="btn btn-outline btn-sm">
               More in {n?.name} →
             </Link>

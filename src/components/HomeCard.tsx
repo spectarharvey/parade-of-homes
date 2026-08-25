@@ -17,12 +17,9 @@ const cloudinaryLoader = ({ src, width }: ImageLoaderProps) =>
 
 export default function HomeCard({
   home,
-  featuredBuilderBadge = false,
   priority = false,
 }: {
   home: Home;
-  /** Show "★ Featured Builder" in place of the Premier tag for the featured builder. */
-  featuredBuilderBadge?: boolean;
   /** Load this card's photo eagerly — for the first cards in view. */
   priority?: boolean;
 }) {
@@ -69,7 +66,8 @@ export default function HomeCard({
           />
         )}
         <span className="tag">{home.style}</span>
-        {featuredBuilderBadge && b?.featured ? (
+        {/* The featured builder outranks the tier tag on every one of their homes. */}
+        {b?.featured ? (
           <span className="tag tag-featured-builder">★ Featured Builder</span>
         ) : (
           isPremierHome(home, b) && <span className="tag tag-premier">Premier</span>

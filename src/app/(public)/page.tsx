@@ -9,7 +9,7 @@ import BuilderLogo from "@/components/BuilderLogo";
 import HomeCard from "@/components/HomeCard";
 
 export default function HomePage() {
-  const { db } = useStore();
+  const { db, ready, guestUser } = useStore();
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
   const fbHomes = fb ? db.homes.filter((h) => h.builder === fb.id) : [];
   const fbHero = fbHomes[0] ? homePhoto(fbHomes[0], 1600) : "";
@@ -160,18 +160,22 @@ export default function HomePage() {
                 oceanview getaway for two. Full prize details will be announced
                 soon!
               </p>
-              <p className="contest-registration-note">
-                You must be registered and logged in to participate in the
-                contest.{" "}
-                <Link href="/register?tab=login" style={{ color: "inherit", textDecoration: "underline", fontWeight: 700 }}>
-                  Log in
-                </Link>{" "}
-                or{" "}
-                <Link href="/register" style={{ color: "inherit", textDecoration: "underline", fontWeight: 700 }}>
-                  register
-                </Link>
-                .
-              </p>
+              {/* Nothing to prompt once a visitor is signed in — and held back
+                  until the store resolves the session so it can't flash at them. */}
+              {ready && !guestUser && (
+                <p className="contest-registration-note">
+                  You must be registered and logged in to participate in the
+                  contest.{" "}
+                  <Link href="/register?tab=login" style={{ color: "inherit", textDecoration: "underline", fontWeight: 700 }}>
+                    Log in
+                  </Link>{" "}
+                  or{" "}
+                  <Link href="/register" style={{ color: "inherit", textDecoration: "underline", fontWeight: 700 }}>
+                    register
+                  </Link>
+                  .
+                </p>
+              )}
             </div>
             <div>
               <Link href="/contest" className="btn btn-navy">
@@ -210,7 +214,7 @@ export default function HomePage() {
             >
               {featured.map((h, i) => (
                 <div key={h.id} className="featured-slider-card-wrapper">
-                  <HomeCard home={h} featuredBuilderBadge priority={i < 3} />
+                  <HomeCard home={h} priority={i < 3} />
                 </div>
               ))}
             </div>

@@ -13,7 +13,7 @@ import NotFoundBlock from "@/components/NotFoundBlock";
 
 export default function HomeDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { db, ready, home, builder, nbhd, visited, route, checkIn, toggleRoute, rateHome, myRatings } =
+  const { db, ready, guestUser, home, builder, nbhd, visited, route, checkIn, toggleRoute, rateHome, myRatings } =
     useStore();
   const { toast } = useToast();
   const searchParams = useSearchParams();
@@ -131,6 +131,11 @@ export default function HomeDetailPage() {
       <div className="detail-layout" style={{ marginTop: "1.6rem" }}>
         <div>
           <span className="badge badge-gold">{h.style}</span>{" "}
+          {b?.featured && (
+            <>
+              <span className="badge badge-featured-builder">★ Featured Builder</span>{" "}
+            </>
+          )}
           {h.featured && <span className="badge badge-navy">★ Featured</span>}{" "}
           {isVisited && <span className="badge badge-green">✓ Checked In</span>}
           <h1 style={{ fontSize: "2.2rem", marginTop: ".6rem" }}>{h.name}</h1>
@@ -276,17 +281,19 @@ export default function HomeDetailPage() {
               >
                 {isVisited ? "✓ Already Checked In" : "📷 Check In Here"}
               </button>
-              <p className="muted" style={{ fontSize: ".72rem", margin: ".7rem 0 0" }}>
-                You must be registered with the Parade of Homes app to vote.{" "}
-                <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline", fontWeight: 600 }}>
-                  Log in
-                </Link>{" "}
-                or{" "}
-                <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline", fontWeight: 600 }}>
-                  register
-                </Link>
-                .
-              </p>
+              {ready && !guestUser && (
+                <p className="muted" style={{ fontSize: ".72rem", margin: ".7rem 0 0" }}>
+                  You must be registered with the Parade of Homes app to vote.{" "}
+                  <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline", fontWeight: 600 }}>
+                    Log in
+                  </Link>{" "}
+                  or{" "}
+                  <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline", fontWeight: 600 }}>
+                    register
+                  </Link>
+                  .
+                </p>
+              )}
               <button
                 className="btn btn-outline btn-block"
                 style={{ marginTop: ".6rem" }}

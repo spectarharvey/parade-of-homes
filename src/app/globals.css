@@ -220,6 +220,14 @@ textarea {
   margin-bottom: 10px;
 }
 
+/* Solid gold, matching the card tag — the tinted .badge-gold used by the style
+   pill sits right next to it and the two were indistinguishable. */
+.badge-featured-builder {
+  background: var(--gold);
+  color: #22180a;
+  margin-bottom: 10px;
+}
+
 .badge-navy {
   background: rgba(255, 255, 255, 0.2);
   color: #2b2929;

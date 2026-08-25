@@ -6,7 +6,7 @@ import { money, stars } from "@/lib/format";
 import { PartyPopper, Home, MapPin, Info } from "lucide-react";
 
 export default function ContestPage() {
-  const { db, home, nbhd, visited, myRatings, route } = useStore();
+  const { db, ready, guestUser, home, nbhd, visited, myRatings, route } = useStore();
   const target = db.contest.target;
   // Prize description is admin-editable; fall back to evergreen copy when unset
   // so the grand-prize banner never renders a blank line.
@@ -30,35 +30,37 @@ export default function ContestPage() {
         <h2>Contest Tracker</h2>
       </div>
 
-      {/* Attention / Requirement Banner */}
-      <div
-        style={{
-          background: "rgba(17, 103, 153, 0.08)",
-          border: "1px solid rgba(17, 103, 153, 0.25)",
-          borderRadius: "var(--radius)",
-          padding: "0.85rem 1.2rem",
-          marginBottom: "1.2rem",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.75rem",
-          color: "var(--navy)",
-          fontSize: "0.95rem",
-          fontWeight: 600,
-        }}
-      >
-        <Info size={20} style={{ color: "var(--navy)", flexShrink: 0 }} />
-        <span>
-          You must be registered and logged in to participate in the giveaway contest.{" "}
-          <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline" }}>
-            Log in
-          </Link>{" "}
-          or{" "}
-          <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline" }}>
-            register
-          </Link>
-          .
-        </span>
-      </div>
+      {/* Attention / Requirement Banner — logged-out visitors only. */}
+      {ready && !guestUser && (
+        <div
+          style={{
+            background: "rgba(17, 103, 153, 0.08)",
+            border: "1px solid rgba(17, 103, 153, 0.25)",
+            borderRadius: "var(--radius)",
+            padding: "0.85rem 1.2rem",
+            marginBottom: "1.2rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
+            color: "var(--navy)",
+            fontSize: "0.95rem",
+            fontWeight: 600,
+          }}
+        >
+          <Info size={20} style={{ color: "var(--navy)", flexShrink: 0 }} />
+          <span>
+            You must be registered and logged in to participate in the giveaway contest.{" "}
+            <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline" }}>
+              Log in
+            </Link>{" "}
+            or{" "}
+            <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline" }}>
+              register
+            </Link>
+            .
+          </span>
+        </div>
+      )}
 
       {/*
         Grand-prize banner. The background is a designed sunset-over-ocean

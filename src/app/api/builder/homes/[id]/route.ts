@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { serializeHome } from "@/lib/serialize";
+import { parseFeatures } from "@/lib/features";
 import { json, error, requireRole } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
@@ -39,10 +40,11 @@ export async function PATCH(
   if (b.nb !== undefined) data.nbId = String(b.nb);
   if (b.style !== undefined) data.style = String(b.style);
   if (b.blurb !== undefined) data.blurb = String(b.blurb);
+  if (b.address !== undefined) data.address = String(b.address);
   for (const k of ["price", "beds", "baths", "sqft", "garage", "x", "y"] as const) {
     if (b[k] !== undefined) data[k] = num(b[k]);
   }
-  if (b.features !== undefined) data.features = arr(b.features);
+  if (b.features !== undefined) data.features = parseFeatures(b.features);
   if (b.imgs !== undefined) data.imgs = arr(b.imgs);
   // builderId and featured are intentionally not editable by builders.
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { prisma } from "./prisma";
 import { json, error, requireRole } from "./api";
+import { parseFeatures } from "./features";
 
 type Params = { params: Promise<{ id: string }> };
 type Build = (body: any, create: boolean) => Record<string, unknown>;
@@ -30,6 +31,7 @@ const builds: Record<string, { model: string; prefix: string; build: Build }> = 
       set(o, b, "color", String, create, "#116799");
       set(o, b, "style", String, create, "");
       set(o, b, "blurb", String, create, "");
+      set(o, b, "address", String, create, "");
       if (b.builder !== undefined) o.builderId = String(b.builder);
       if (b.nb !== undefined) o.nbId = String(b.nb);
       set(o, b, "price", (v) => num(v), create, 0);
@@ -45,7 +47,8 @@ const builds: Record<string, { model: string; prefix: string; build: Build }> = 
       else if (create) o.lat = null;
       if (b.lng !== undefined && b.lng !== "" && b.lng !== null) o.lng = Number(b.lng);
       else if (create) o.lng = null;
-      if (b.features !== undefined) o.features = arr(b.features);
+      // Pipe-separated free text — commas belong inside a feature, not between them.
+      if (b.features !== undefined) o.features = parseFeatures(b.features);
       else if (create) o.features = [];
       if (b.imgs !== undefined) o.imgs = arr(b.imgs);
       else if (create) o.imgs = [];
@@ -89,6 +92,8 @@ const builds: Record<string, { model: string; prefix: string; build: Build }> = 
       set(o, b, "blurb", String, create, "");
       set(o, b, "low", (v) => num(v), create, 0);
       set(o, b, "high", (v) => num(v), create, 0);
+      if (b.showPrice !== undefined) o.showPrice = Boolean(b.showPrice);
+      else if (create) o.showPrice = true;
       return o;
     },
   },

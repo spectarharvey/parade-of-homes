@@ -86,27 +86,29 @@ export default function NeighborhoodsPage() {
                     {homes.length === 1 ? "Home" : "Homes"}
                   </div>
                 </div>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: "Lora",
-                      fontSize: "1.5rem",
-                      color: "var(--navy)",
-                    }}
-                  >
-                    {moneyK(n.low)}–{moneyK(n.high)}
+                {n.showPrice !== false && (
+                  <div>
+                    <div
+                      style={{
+                        fontFamily: "Lora",
+                        fontSize: "1.5rem",
+                        color: "var(--navy)",
+                      }}
+                    >
+                      {moneyK(n.low)}–{moneyK(n.high)}
+                    </div>
+                    <div
+                      className="muted"
+                      style={{
+                        fontSize: ".74rem",
+                        textTransform: "uppercase",
+                        letterSpacing: ".08em",
+                      }}
+                    >
+                      Price Range
+                    </div>
                   </div>
-                  <div
-                    className="muted"
-                    style={{
-                      fontSize: ".74rem",
-                      textTransform: "uppercase",
-                      letterSpacing: ".08em",
-                    }}
-                  >
-                    Price Range
-                  </div>
-                </div>
+                )}
                 <div>
                   <div
                     style={{
@@ -130,7 +132,11 @@ export default function NeighborhoodsPage() {
                 </div>
               </div>
               <Link
-                href={`/neighborhood/${n.id}`}
+                href={
+                  homes.length === 1
+                    ? `/home/${homes[0].id}`
+                    : `/neighborhood/${n.id}`
+                }
                 className="btn btn-navy btn-sm"
               >
                 View Model Home{homes.length === 1 ? "" : "s"} →

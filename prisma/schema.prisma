@@ -41,15 +41,17 @@ model Builder {
 }
 
 model Neighborhood {
-  id    String @id
-  name  String
-  city  String
-  color String
-  img   String
-  blurb String
-  low   Int
-  high  Int
-  homes Home[]
+  id        String  @id
+  name      String
+  city      String
+  color     String
+  img       String
+  blurb     String
+  low       Int
+  high      Int
+  /// When false, the public site hides this neighborhood's price range.
+  showPrice Boolean @default(true)
+  homes     Home[]
 }
 
 model Home {
@@ -75,6 +77,7 @@ model Home {
   lat          Float?
   lng          Float?
   blurb        String
+  address      String       @default("")
   features     String[]
   imgs         String[]
 }

@@ -6,6 +6,7 @@ import { useStore, useToast } from "@/lib/store";
 import { money, stars, homePhoto } from "@/lib/format";
 import Modal from "@/components/Modal";
 import ImageUpload from "@/components/ImageUpload";
+import { formatFeatures, parseFeatures } from "@/lib/features";
 import type { Home } from "@/lib/types";
 
 // Client-only — Leaflet needs `window`.
@@ -45,6 +46,7 @@ const emptyHome = (): HomeDraft => ({
   sqft: "",
   garage: "",
   blurb: "",
+  address: "",
   features: "",
   imgs: [],
   featured: false,
@@ -68,7 +70,7 @@ export default function AdminHomesPage() {
     setDraft({
       ...h,
       imgs: [...(h.imgs || [])],
-      features: (h.features || []).join(", "),
+      features: formatFeatures(h.features),
     });
     setOpen(true);
   };
@@ -83,6 +85,9 @@ export default function AdminHomesPage() {
       toast((err as Error).message || "Save failed");
     }
   };
+
+  // Preview of how the free-text features field will be stored.
+  const featureList = parseFeatures(draft.features);
 
   const imgs = draft.imgs || [];
   const setImg = (i: number, url: string) => {
@@ -331,14 +336,41 @@ export default function AdminHomesPage() {
               />
             </div>
             <div className="fld full">
-              <label>Features (comma-separated)</label>
+              <label>Address</label>
+              <input
+                value={(draft.address as string) || ""}
+                onChange={(e) => setDraft({ ...draft, address: e.target.value })}
+                placeholder="4416 SW 69th St, Ocala, FL 34474"
+              />
+              <p className="muted" style={{ fontSize: ".72rem", margin: ".3rem 0 0" }}>
+                The model home&rsquo;s street address — shown in its own
+                &ldquo;Address&rdquo; section on the public listing.
+              </p>
+            </div>
+            <div className="fld full">
+              <label>Features (separate with | )</label>
               <textarea
-                rows={2}
+                rows={4}
                 value={(draft.features as string) || ""}
                 onChange={(e) =>
                   setDraft({ ...draft, features: e.target.value })
                 }
+                placeholder="Quartz countertops | Heated pool | Listed at $1,645,000"
               />
+              <p className="muted" style={{ fontSize: ".72rem", margin: ".3rem 0 0" }}>
+                One feature per <b>|</b> (a new line works too). Commas stay
+                inside a feature, so prices and addresses are no longer split up.
+              </p>
+              {featureList.length > 0 && (
+                <ul
+                  className="feature-list"
+                  style={{ padding: 0, margin: ".55rem 0 0", fontSize: ".76rem" }}
+                >
+                  {featureList.map((f, i) => (
+                    <li key={i}>{f}</li>
+                  ))}
+                </ul>
+              )}
             </div>
             <div className="form-grid">
               {[0, 1, 2, 3].map((i) => (

@@ -97,27 +97,29 @@ export default function NeighborhoodDetailPage() {
                 {homes.length === 1 ? "Home" : "Homes"}
               </div>
             </div>
-            <div>
-              <div
-                style={{
-                  fontFamily: "Lora",
-                  fontSize: "1.8rem",
-                  color: "var(--gold-light)",
-                }}
-              >
-                {moneyK(n.low)}–{moneyK(n.high)}
+            {n.showPrice !== false && (
+              <div>
+                <div
+                  style={{
+                    fontFamily: "Lora",
+                    fontSize: "1.8rem",
+                    color: "var(--gold-light)",
+                  }}
+                >
+                  {moneyK(n.low)}–{moneyK(n.high)}
+                </div>
+                <div
+                  style={{
+                    fontSize: ".74rem",
+                    textTransform: "uppercase",
+                    letterSpacing: ".1em",
+                    color: "#bcc8d4",
+                  }}
+                >
+                  Price Range
+                </div>
               </div>
-              <div
-                style={{
-                  fontSize: ".74rem",
-                  textTransform: "uppercase",
-                  letterSpacing: ".1em",
-                  color: "#bcc8d4",
-                }}
-              >
-                Price Range
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>

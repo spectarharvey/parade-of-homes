@@ -15,6 +15,7 @@ type Draft = {
   blurb: string;
   low: number | string;
   high: number | string;
+  showPrice: boolean;
 };
 
 const empty: Draft = {
@@ -25,6 +26,7 @@ const empty: Draft = {
   blurb: "",
   low: "",
   high: "",
+  showPrice: true,
 };
 
 export default function AdminNeighborhoodsPage() {
@@ -107,13 +109,20 @@ export default function AdminNeighborhoodsPage() {
                 <td>{n.city}</td>
                 <td>
                   {moneyK(n.low)}–{moneyK(n.high)}
+                  {!n.showPrice && (
+                    <div>
+                      <span className="badge" style={{ fontSize: ".68rem" }}>
+                        Hidden on site
+                      </span>
+                    </div>
+                  )}
                 </td>
                 <td>
                   <div className="pill-row">
                     <button
                       className="ico-btn"
                       onClick={() => {
-                        setDraft({ ...n });
+                        setDraft({ ...n, showPrice: n.showPrice !== false });
                         setOpen(true);
                       }}
                     >
@@ -206,6 +215,28 @@ export default function AdminNeighborhoodsPage() {
                   value={draft.high}
                   onChange={(e) => set("high", e.target.value)}
                 />
+              </div>
+              <div className="fld full">
+                <label
+                  style={{
+                    display: "flex",
+                    gap: ".5rem",
+                    alignItems: "center",
+                    fontSize: "14px",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={draft.showPrice}
+                    onChange={(e) => set("showPrice", e.target.checked)}
+                  />
+                  Show the price range on the website
+                </label>
+                <p className="muted" style={{ fontSize: ".72rem", margin: ".3rem 0 0" }}>
+                  Unchecked hides the Price Range figure for this neighborhood on
+                  the Communities page and its community page. The low/high values
+                  stay saved here.
+                </p>
               </div>
             </div>
             <div className="pill-row" style={{ marginTop: "1rem" }}>

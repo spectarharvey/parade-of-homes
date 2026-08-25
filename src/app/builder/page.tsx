@@ -6,6 +6,7 @@ import { useToast } from "@/lib/store";
 import { money, homePhoto } from "@/lib/format";
 import Modal from "@/components/Modal";
 import ImageUpload from "@/components/ImageUpload";
+import { formatFeatures } from "@/lib/features";
 
 interface BuilderProfile {
   id: string;
@@ -28,6 +29,7 @@ interface MyHome {
   sqft: number;
   garage: number;
   blurb: string;
+  address: string;
   features: string[];
   imgs: string[];
   featured: boolean;
@@ -44,6 +46,7 @@ const emptyHome = (): Record<string, unknown> => ({
   sqft: "",
   garage: "",
   blurb: "",
+  address: "",
   features: "",
   imgs: [] as string[],
 });
@@ -78,7 +81,7 @@ export default function BuilderPortalPage() {
     setOpen(true);
   };
   const openEdit = (h: MyHome) => {
-    setDraft({ ...h, features: (h.features || []).join(", "), imgs: h.imgs || [] });
+    setDraft({ ...h, features: formatFeatures(h.features), imgs: h.imgs || [] });
     setOpen(true);
   };
 
@@ -333,10 +336,19 @@ export default function BuilderPortalPage() {
                   placeholder="What makes this home special…" />
               </div>
               <div className="fld full">
-                <label>Features (comma separated)</label>
-                <textarea rows={2} value={(draft.features as string) || ""}
+                <label>Address</label>
+                <input value={(draft.address as string) || ""}
+                  onChange={(e) => setDraft({ ...draft, address: e.target.value })}
+                  placeholder="4416 SW 69th St, Ocala, FL 34474" />
+              </div>
+              <div className="fld full">
+                <label>Features (separate with | )</label>
+                <textarea rows={3} value={(draft.features as string) || ""}
                   onChange={(e) => setDraft({ ...draft, features: e.target.value })}
-                  placeholder="Quartz countertops, walk-in pantry, covered lanai…" />
+                  placeholder="Quartz countertops | Walk-in pantry | Covered lanai" />
+                <p className="muted" style={{ fontSize: ".72rem", margin: ".3rem 0 0" }}>
+                  One feature per <b>|</b> — commas stay inside a feature.
+                </p>
               </div>
             </div>
             <p className="muted" style={{ fontSize: ".78rem", margin: "1rem 0 .4rem", fontWeight: 700 }}>

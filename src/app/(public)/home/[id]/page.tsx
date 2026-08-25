@@ -13,7 +13,7 @@ import NotFoundBlock from "@/components/NotFoundBlock";
 
 export default function HomeDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { db, home, builder, nbhd, visited, route, checkIn, toggleRoute, rateHome, myRatings } =
+  const { db, ready, home, builder, nbhd, visited, route, checkIn, toggleRoute, rateHome, myRatings } =
     useStore();
   const { toast } = useToast();
   const searchParams = useSearchParams();
@@ -61,6 +61,19 @@ export default function HomeDetailPage() {
       ? b.website
       : `https://${b.website}`
     : null;
+  // The model's street address. Older listings kept it as a "Model location: …"
+  // feature; fall back to that so a pre-migration listing still shows one.
+  const address =
+    h.address?.trim() ||
+    (h.features
+      ?.find((f) => /^model location:/i.test(f))
+      ?.replace(/^model location:\s*/i, "")
+      .trim() ??
+      "");
+  const features = h.features.filter((f) => !/^model location:/i.test(f));
+  const directionsUrl =
+    "https://www.google.com/maps/dir/?" +
+    new URLSearchParams({ api: "1", destination: address, travelmode: "driving" });
   const isVisited = visited.includes(h.id);
   const inRoute = route.includes(h.id);
   const related = db.homes
@@ -164,12 +177,49 @@ export default function HomeDetailPage() {
           </div>
           <h3 style={{ fontSize: "1.3rem", marginTop: "1.6rem" }}>About this home</h3>
           <p className="muted">{h.blurb}</p>
+          {address && (
+            <>
+              <h3 style={{ fontSize: "1.3rem", marginTop: "1.6rem" }}>Address</h3>
+              <p className="muted" style={{ marginBottom: ".4rem" }}>
+                <span aria-hidden="true">📍</span> {address}
+              </p>
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-outline btn-sm"
+              >
+                Get Directions ↗
+              </a>
+            </>
+          )}
           <h3 style={{ fontSize: "1.3rem", marginTop: "1.6rem" }}>Features &amp; Finishes</h3>
-          <ul className="feature-list" style={{ padding: 0, marginTop: ".6rem" }}>
-            {h.features.map((f, i) => (
-              <li key={i}>{f}</li>
-            ))}
-          </ul>
+          {ready ? (
+            <ul className="feature-list" style={{ padding: 0, marginTop: ".6rem" }}>
+              {features.map((f, i) => (
+                <li key={i}>{f}</li>
+              ))}
+            </ul>
+          ) : (
+            // Until the live catalog lands, `db` still holds the seed snapshot
+            // bundled with the app. Rendering it here made the list visibly
+            // rewrite itself a moment later — placeholders instead of a rewrite.
+            <ul
+              className="feature-list feature-list-loading"
+              style={{ padding: 0, marginTop: ".6rem" }}
+              aria-busy="true"
+              aria-label="Loading features"
+            >
+              {Array.from({ length: Math.max(features.length, 4) }).map((_, i) => (
+                <li key={i}>
+                  <span
+                    className="skeleton-bar"
+                    style={{ width: `${70 + ((i * 37) % 30)}%` }}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
           <hr className="soft" />
           <h3 style={{ fontSize: "1.3rem" }}>Rate this home</h3>
           <p className="muted" style={{ marginTop: "-.2rem", fontSize: ".86rem" }}>

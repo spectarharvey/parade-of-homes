@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { serializeHome } from "@/lib/serialize";
+import { parseFeatures } from "@/lib/features";
 import { json, error, requireRole } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +42,8 @@ export async function POST(req: Request) {
         sqft: num(b.sqft),
         garage: num(b.garage),
         blurb: String(b.blurb || ""),
-        features: arr(b.features),
+        address: String(b.address || ""),
+        features: parseFeatures(b.features),
         imgs: arr(b.imgs),
         x: num(b.x, 50),
         y: num(b.y, 50),

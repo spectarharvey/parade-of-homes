@@ -254,6 +254,7 @@ export const SEED: DB = {
         "Premier master-planned Ocala community — home to On Top of the World's Whitmore model in Balfour for the 2026 Parade.",
       low: 827780,
       high: 827780,
+      showPrice: true,
     },
     {
       id: "n_calesa_township",
@@ -265,6 +266,7 @@ export const SEED: DB = {
         "Innovative master-planned Ocala community — home to Calesa Township's Heritage model in Perlino Grove for the 2026 Parade.",
       low: 284000,
       high: 284000,
+      showPrice: true,
     },
     {
       id: "n_golden_hills",
@@ -276,6 +278,7 @@ export const SEED: DB = {
         "Northwest Ocala golf community — home to Luetgert Development's Golden Hills spec home for the 2026 Parade.",
       low: 1400000,
       high: 1995000,
+      showPrice: true,
     },
     {
       id: "n_tartan_farms",
@@ -287,6 +290,7 @@ export const SEED: DB = {
         "Ocala subdivision featuring D.R. Horton's two-story Holden model for the 2026 Parade.",
       low: 416990,
       high: 416990,
+      showPrice: true,
     },
     {
       id: "n_marion_oaks",
@@ -298,6 +302,7 @@ export const SEED: DB = {
         "Southwest Ocala community represented by The Deltona Corporation's Mustang model.",
       low: 350000,
       high: 350000,
+      showPrice: true,
     },
     {
       id: "n_irish_acres",
@@ -309,6 +314,7 @@ export const SEED: DB = {
         "Ocala acreage setting for Secure Built's Rutherford Farmhouse and Curington's Sebastian VIII Craftsman custom homes.",
       low: 615000,
       high: 699000,
+      showPrice: true,
     },
     {
       id: "n_brije_morriston",
@@ -320,6 +326,7 @@ export const SEED: DB = {
         "Twelve-acre countryside setting in Morriston showcasing Brije Homes' custom Aspen modern farmhouse, the 2026 Featured Builder entry.",
       low: 2750000,
       high: 3200000,
+      showPrice: true,
     },
     {
       id: "n_rolling_hills",
@@ -331,6 +338,7 @@ export const SEED: DB = {
         "Acre-plus homesites in southwest Ocala's Rolling Hills, where Brije Homes is showing The Boone — a farmhouse-style spec home for the 2026 Parade.",
       low: 425000,
       high: 525000,
+      showPrice: true,
     },
     {
       id: "n_rolling_hills_estates",
@@ -342,6 +350,7 @@ export const SEED: DB = {
         "Wooded homesites in Dunnellon's Rolling Hills Estates, home to Bakan Homes' mid-century modern FUSION+ for the 2026 Parade.",
       low: 349000,
       high: 449000,
+      showPrice: true,
     },
     {
       id: "n_woodfields",
@@ -353,6 +362,7 @@ export const SEED: DB = {
         "Established tree-lined streets in southeast Ocala's Woodfields area, where AR Homes by Arthur Rutenberg is showing the Beechwood for the 2026 Parade.",
       low: 1124600,
       high: 1645000,
+      showPrice: true,
     },
     {
       id: "n_kingland",
@@ -364,6 +374,7 @@ export const SEED: DB = {
         "Country homesites in southwest Ocala's Kingland Country Estates, where Dream Custom Homes of Citrus is showing The Don Crystal for the 2026 Parade.",
       low: 506290,
       high: 506290,
+      showPrice: true,
     },
     {
       id: "n_ocala",
@@ -375,6 +386,7 @@ export const SEED: DB = {
         "Custom and one-off model homes located across Ocala, outside the master-planned communities.",
       low: 560000,
       high: 560000,
+      showPrice: true,
     },
     {
       id: "n_pine_ridge",
@@ -386,6 +398,7 @@ export const SEED: DB = {
         "Custom-home community in Beverly Hills, Citrus County.",
       low: 510290,
       high: 510290,
+      showPrice: true,
     },
     {
       id: "n_reddick",
@@ -396,6 +409,7 @@ export const SEED: DB = {
       blurb: "Custom model homes in Reddick, northern Marion County.",
       low: 1400000,
       high: 1400000,
+      showPrice: true,
     },
     {
       id: "n_citrus_springs",
@@ -406,6 +420,7 @@ export const SEED: DB = {
       blurb: "Model homes in the Citrus Springs community, Citrus County.",
       low: 335000,
       high: 335000,
+      showPrice: true,
     },
   ],
   homes: [
@@ -429,8 +444,8 @@ export const SEED: DB = {
       y: 50,
       blurb:
         "A two-story, all concrete block spec home in Tartan Farms at Winding Oaks with an open first floor, covered lanai, and smart home technology.",
+      address: "4416 SW 69th St, Ocala, FL 34474",
       features: [
-        "Model location: 4416 SW 69th St, Ocala, FL 34474",
         "Open-concept first floor",
         "Covered lanai",
         "Stainless steel dishwasher, electric range, and microwave",
@@ -468,8 +483,8 @@ export const SEED: DB = {
       y: 65,
       blurb:
         "The Mustang model in Marion Oaks pairs practical living space with upgraded finishes throughout the main living areas.",
+      address: "356 Marion Oaks Trail, Ocala, FL 34473",
       features: [
-        "Model location: 356 Marion Oaks Trail, Ocala, FL 34473",
         "Quartz countertops",
         "Tiled shower and tiled tub surround",
         "Luxury vinyl plank flooring throughout main living area",
@@ -507,8 +522,8 @@ export const SEED: DB = {
       y: 38,
       blurb:
         "Modern farmhouse meets country living in Irish Acres, with open living spaces, a chef's kitchen, and an oversized lanai.",
+      address: "1764 NW 85th Loop, Ocala, FL 34475",
       features: [
-        "Model location: 1764 NW 85th Loop, Ocala, FL 34475",
         "Price as shown: $679,000 - $699,000",
         "3 bedrooms, 3 bathrooms, 2-car garage, and office",
         "Open living area with deep coffered tray ceiling",
@@ -546,8 +561,8 @@ export const SEED: DB = {
       y: 28,
       blurb:
         "Brije Homes' 2026 Featured Builder showcase — a 5,552 sq ft modern farmhouse set on 12 acres in Morriston, with a grand floor-to-ceiling-window entry, AI-powered smart home technology, and a resort-style pool and outdoor living space.",
+      address: "14951 SE 60th St, Morriston, FL 32668",
       features: [
-        "Model location: 14951 SE 60th St, Morriston, FL 32668",
         "Price as shown with upgrades (without lot): $2,750,000",
         "8,073 sq ft total under roof on 12 acres",
         "Grand entry with floor-to-ceiling windows",
@@ -587,8 +602,8 @@ export const SEED: DB = {
       lng: -82.4,
       blurb:
         "Brije Homes' 1,834 sq ft farmhouse-style spec home on over an acre in Rolling Hills, with quartz countertops, an open floor plan, designer-picked finishes, and a large covered back porch.",
+      address: "5014 SW 134th Terrace, Ocala, FL 34481",
       features: [
-        "Model location: 5014 SW 134th Terrace, Ocala, FL 34481",
         "Price as shown with upgrades (without lot): $425,000",
         "Listed at $525,000 with lot",
         "3,124 sq ft total under roof",
@@ -622,8 +637,8 @@ export const SEED: DB = {
       y: 44,
       blurb:
         "A craftsman-style custom home in Irish Acres with elevated ceilings, oversized windows and doors, a luxury kitchen and baths, and a serene split floor plan.",
+      address: "8214 NW 17th Circle, Ocala, FL 34475",
       features: [
-        "Model location: 8214 NW 17th Circle, Ocala, FL 34475",
         "3,235 sq ft total under roof",
         "Elevated ceilings",
         "Oversized windows & doors",
@@ -656,8 +671,8 @@ export const SEED: DB = {
       y: 22,
       blurb:
         "A luxury spec home in Golden Hills & Country Club with vaulted ceilings, custom cabinetry, stone countertops, architectural stained wood beams, and a custom summer kitchen.",
+      address: "5395 NW 76th Court, Ocala, FL 34482",
       features: [
-        "Model location: 5395 NW 76th Court, Ocala, FL 34482",
         "4,604 sq ft total under roof · listed for sale at $1,995,000",
         "Luxury architectural design with vaulted ceilings",
         "Custom cabinetry & Crysttallo Oro stone countertops",
@@ -690,8 +705,8 @@ export const SEED: DB = {
       y: 50,
       blurb:
         "On Top of the World's 2026 model — a 2,870 sq ft spec home in Balfour with two master suites, a gourmet kitchen with a waterfall countertop and full stone backsplash, a flex room, and a pool with sundeck.",
+      address: "8122 SW 102nd Ave, Ocala, FL 34481",
       features: [
-        "Model location: 8122 SW 102nd Ave, Ocala, FL 34481",
         "4,026 sq ft total under roof",
         "Extended covered & screened lanai",
         "Two master suites",
@@ -724,8 +739,8 @@ export const SEED: DB = {
       y: 50,
       blurb:
         "Calesa Township's 2026 model — a 1,551 sq ft two-story spec home in Perlino Grove with an open great room, dining room, laundry suite, and whole-house fresh air exchange.",
+      address: "5626 SW 72nd Court, Ocala, FL 34474",
       features: [
-        "Model location: 5626 SW 72nd Court, Ocala, FL 34474",
         "2,063 sq ft total under roof",
         "Great room & dining room",
         "Covered entry",
@@ -758,8 +773,8 @@ export const SEED: DB = {
       y: 50,
       blurb:
         "Townsley Construction's 2026 custom home — a 2,655 sq ft residence with four bedrooms, a hidden butler's pantry, open-concept living, and a private primary suite retreat.",
+      address: "2405 SE 36th Ave, Ocala, FL 34471",
       features: [
-        "Model location: 2405 SE 36th Ave, Ocala, FL 34471",
         "3,949 sq ft total under roof",
         "4 spacious bedrooms",
         "3 modern baths with stylish finishes",
@@ -791,8 +806,8 @@ export const SEED: DB = {
       y: 50,
       blurb:
         "Stentiford Construction's 2026 Parade entry — a 1,513 sq ft townhome near downtown Ocala with three bedrooms, 2.5 baths, and a one-car garage. Professionally staged spec home.",
+      address: "49 SE 15th Terrace, Ocala, FL 34471",
       features: [
-        "Model location: 49 SE 15th Terrace, Ocala, FL 34471",
         "1,833 sq ft total under roof",
         "3 bedrooms",
         "2.5 baths",
@@ -821,8 +836,8 @@ export const SEED: DB = {
       y: 50,
       blurb:
         "A.L. Milton Construction's 2026 Parade entry — a 1,454 sq ft Craftsman-style semi-custom home in Silver Springs Shores with three bedrooms, two baths, and a two-car garage.",
+      address: "22 Almond Way, Ocala, FL 34472",
       features: [
-        "Model location: 22 Almond Way, Ocala, FL 34472",
         "Subdivision: Silver Springs Shores",
         "2,086 sq ft total under roof",
         "Craftsman-style elevation with dormer and columns",
@@ -856,8 +871,8 @@ export const SEED: DB = {
       lng: -82.08,
       blurb:
         "A.L. Milton Construction's second 2026 Parade entry — an 1,856 sq ft semi-custom home on East Fort King Street in Ocala with four bedrooms, two baths, and a two-car garage. Pricing and full feature list coming soon.",
+      address: "5220 East Fort King St, Ocala, FL 34470",
       features: [
-        "Model location: 5220 East Fort King St, Ocala, FL 34470",
         "2,774 sq ft total under roof",
         "4 bedrooms, 2 baths, 2-car garage",
       ],
@@ -885,8 +900,8 @@ export const SEED: DB = {
       lng: -82.02,
       blurb:
         "Bill Benson Construction's 2026 Parade entry — a 1,501 sq ft semi-custom home on Cherry Pass in Ocala with three bedrooms, two baths, a metal roof, and a large screened back porch.",
+      address: "7223 Cherry Pass, Ocala, FL 34472",
       features: [
-        "Model location: 7223 Cherry Pass, Ocala, FL 34472",
         "Listed at $300,000 with lot",
         "2,171 sq ft total under roof",
         "Metal roof",
@@ -922,8 +937,8 @@ export const SEED: DB = {
       lng: -82.22,
       blurb:
         "Triple Crown Homes' 2026 Parade entry — a 2,484 sq ft semi-custom home on the SR 200 corridor in Ocala with three bedrooms, two baths, and a two-car garage. Pricing and full feature list coming soon.",
+      address: "7179 SW SR 200, Ocala, FL 34476",
       features: [
-        "Model location: 7179 SW SR 200, Ocala, FL 34476",
         "3,197 sq ft total under roof",
         "3 bedrooms, 2 baths, 2-car garage",
       ],
@@ -951,8 +966,8 @@ export const SEED: DB = {
       lng: -82.19,
       blurb:
         "Bakan Homes' 1,543 sq ft modern contemporary spec home in Marion Oaks, with high-volume ceilings, a designer quartz kitchen, oversized casement windows, and a primary suite fireplace feature wall.",
+      address: "14847 SW 29th Avenue Road, Ocala, FL 34473",
       features: [
-        "Model location: 14847 SW 29th Avenue Road, Ocala, FL 34473",
         "Listed at $394,999 with lot",
         "2,043 sq ft total under roof",
         "Modern contemporary exterior",
@@ -988,8 +1003,8 @@ export const SEED: DB = {
       lng: -82.43,
       blurb:
         "Bakan Homes' 1,626 sq ft mid-century modern spec home in Dunnellon's Rolling Hills Estates, with asymmetrical sloped rooflines, large-format tile throughout, and a designer black exterior package.",
+      address: "12218 SW 89th Street, Dunnellon, FL 34432",
       features: [
-        "Model location: 12218 SW 89th Street, Dunnellon, FL 34432",
         "Listed at $449,000 with lot",
         "2,210 sq ft total under roof",
         "Mid-century modern",
@@ -1026,8 +1041,8 @@ export const SEED: DB = {
       lng: -82.13,
       blurb:
         "AR Homes by Arthur Rutenberg's 3,345 sq ft contemporary custom home in Ocala's Woodfields area, with 10-foot 90-degree sliding glass doors, a hidden butler's pantry, and a large outdoor living space with pool and kitchen — offered fully furnished.",
+      address: "1680 SE 20th Ave, Ocala, FL 34471",
       features: [
-        "Model location: 1680 SE 20th Ave, Ocala, FL 34471",
         "Listed at $1,645,000 with lot",
         "5,029 sq ft total under roof",
         "10' tall, 90 degree sliding glass doors",
@@ -1064,8 +1079,8 @@ export const SEED: DB = {
       lng: -82.19,
       blurb:
         "Dream Custom Homes of Citrus' 3,425 sq ft semi-custom home in Kingland Country Estates — elegant country living across 4,447 sq ft under roof, with three bedrooms, three baths, and a 2.5-car garage.",
+      address: "10710 SW 49th Ave, Ocala, FL 34474",
       features: [
-        "Model location: 10710 SW 49th Ave, Ocala, FL 34474",
         "4,447 sq ft total under roof",
         "Elegant country living",
         "2.5-car garage",
@@ -1092,8 +1107,8 @@ export const SEED: DB = {
       y: 50,
       blurb:
         "Dream Custom Homes' 2026 Parade entry — a 3,521 sq ft semi-custom home in Pine Ridge Estates, Beverly Hills, with four bedrooms, three baths, and a three-car garage. A multiple Parade of Homes winner.",
+      address: "4302 N Canarywood Terrace, Beverly Hills, FL 34465",
       features: [
-        "Model location: 4302 N Canarywood Terrace, Beverly Hills, FL 34465",
         "Subdivision: Pine Ridge Estates",
         "4,757 sq ft total under roof",
         "Multiple Parade of Homes winner",
@@ -1123,8 +1138,8 @@ export const SEED: DB = {
       lng: -82.34,
       blurb:
         "CBI Contracting's 2026 Parade entry — a 3,213 sq ft modern-farmhouse custom home in Reddick with three bedrooms, three baths, a summer kitchen, and 4,748 sq ft under roof.",
+      address: "5304 NW 135th Street, Reddick, FL 32686",
       features: [
-        "Model location: 5304 NW 135th Street, Reddick, FL 32686",
         "4,748 sq ft total under roof",
         "3 bedrooms and 3 bathrooms",
         "Split floor plan with luxury primary suite",
@@ -1159,8 +1174,8 @@ export const SEED: DB = {
       lng: -82.45,
       blurb:
         "Sunworth Homes' 2026 Parade entry — a 1,454 sq ft wellness-focused spec home in Citrus Springs with a sauna, biophilic lighting, no-VOC finishes, and reverse-osmosis water.",
+      address: "8454 N Pinnacle Drive, Citrus Springs, FL",
       features: [
-        "Model location: 8454 N Pinnacle Drive, Citrus Springs, FL",
         "Subdivision: Citrus Springs",
         "2,282 sq ft total under roof",
         "2.5-car garage",

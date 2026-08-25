@@ -39,6 +39,8 @@ export default function MapPage() {
     setTripIndex,
     visited,
     checkIn,
+    ready,
+    guestUser,
   } = useStore();
   const { toast } = useToast();
   const [routeMode, setRouteMode] = useState(false);
@@ -107,9 +109,11 @@ export default function MapPage() {
 
   const currentStop = tripActive ? home(route[tripIndex]) : null;
 
-  // The model's street address (stored as a "Model location: …" feature),
-  // falling back to the neighborhood for homes without one.
+  // The model's street address (its own column since the address migration;
+  // older listings kept it as a "Model location: …" feature), falling back to
+  // the neighborhood for homes without one.
   const homeAddress = (h: Home) => {
+    if (h.address?.trim()) return h.address.trim();
     const loc = h.features?.find((f) => /^model location:/i.test(f));
     if (loc) return loc.replace(/^model location:\s*/i, "").trim();
     const n = nbhd(h.nb);
@@ -250,34 +254,38 @@ export default function MapPage() {
         </button>
       </div>
        
-      <div
-        style={{
-          background: "rgba(17, 103, 153, 0.08)",
-          border: "1px solid rgba(17, 103, 153, 0.25)",
-          borderRadius: "var(--radius)",
-          padding: "0.85rem 1.2rem",
-          marginBottom: "1.2rem",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.75rem",
-          color: "var(--navy)",
-          fontSize: "0.95rem",
-          fontWeight: 600,
-        }}
-      >
-        <Info size={20} style={{ color: "var(--navy)", flexShrink: 0 }} />
-        <span>
-          You must be registered and logged in to plan your route.{" "}
-          <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline" }}>
-            Log in
-          </Link>{" "}
-          or{" "}
-          <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline" }}>
-            register
-          </Link>
-          .
-        </span>
-      </div>
+      {/* Sign-in prompt — only for logged-out visitors, and only once the store
+          has resolved the session so it never flashes at a logged-in guest. */}
+      {ready && !guestUser && (
+        <div
+          style={{
+            background: "rgba(17, 103, 153, 0.08)",
+            border: "1px solid rgba(17, 103, 153, 0.25)",
+            borderRadius: "var(--radius)",
+            padding: "0.85rem 1.2rem",
+            marginBottom: "1.2rem",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
+            color: "var(--navy)",
+            fontSize: "0.95rem",
+            fontWeight: 600,
+          }}
+        >
+          <Info size={20} style={{ color: "var(--navy)", flexShrink: 0 }} />
+          <span>
+            You must be registered and logged in to plan your route.{" "}
+            <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline" }}>
+              Log in
+            </Link>{" "}
+            or{" "}
+            <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline" }}>
+              register
+            </Link>
+            .
+          </span>
+        </div>
+      )}
       <div className="map-layout">
         <div className="map-side">
           {!routeMode ? (

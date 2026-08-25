@@ -44,6 +44,7 @@ export async function seedDatabase(prisma: PrismaClient) {
       x: h.x,
       y: h.y,
       blurb: h.blurb,
+      address: h.address,
       features: h.features,
       imgs: h.imgs,
     })),

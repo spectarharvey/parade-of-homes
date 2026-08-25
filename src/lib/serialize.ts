@@ -26,6 +26,7 @@ export function serializeHome(h: {
   lat: number | null;
   lng: number | null;
   blurb: string;
+  address: string;
   features: string[];
   imgs: string[];
 }): Home {

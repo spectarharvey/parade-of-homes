@@ -21,6 +21,7 @@ export interface Neighborhood {
   blurb: string;
   low: number;
   high: number;
+  showPrice: boolean; // false → hide the price range on the public site
 }
 
 export interface Home {
@@ -44,6 +45,7 @@ export interface Home {
   lat?: number | null; // real map coordinates (preferred over homeGeo lookup)
   lng?: number | null;
   blurb: string;
+  address: string; // model home street address
   features: string[];
   imgs: string[];
 }

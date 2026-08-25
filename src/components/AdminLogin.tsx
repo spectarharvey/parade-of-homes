@@ -50,11 +50,11 @@ export default function AdminLogin() {
           >
             <div className="fld" style={{ textAlign: "left", margin: "1rem 0 .8rem" }}>
               <label>Email</label>
-              <input name="email" type="email" placeholder="admin@mcbia.org" autoFocus />
+              <input name="email" type="email" autoFocus />
             </div>
             <div className="fld" style={{ textAlign: "left", margin: "0 0 1rem" }}>
               <label>Password</label>
-              <input name="pw" type="password" placeholder="••••••••" />
+              <input name="pw" type="password" />
             </div>
             {err && (
               <p
@@ -71,9 +71,6 @@ export default function AdminLogin() {
               Log In →
             </button>
           </form>
-          <p className="muted" style={{ fontSize: ".72rem", marginTop: "1rem" }}>
-            Seed login: <b>admin@mcbia.org</b> / <b>parade2026</b>
-          </p>
         </div>
       </div>
     </>

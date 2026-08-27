@@ -7,6 +7,7 @@ import { useStore, useToast } from "@/lib/store";
 import { money } from "@/lib/format";
 import { homeLatLng, tourNumber } from "@/lib/homeGeo";
 import type { Home } from "@/lib/types";
+import { isPremierHome } from "@/lib/builderTier";
 import QRScanner from "@/components/QRScanner";
 import {Info } from "lucide-react";
 
@@ -306,6 +307,8 @@ export default function MapPage() {
               {db.homes.map((h) => {
                 const hidden = hiddenHomes.has(h.id);
                 const loc = nbhd(h.nb)?.name;
+                const b = db.builders.find((x) => x.id === h.builder);
+                const isPremier = isPremierHome(h, b);
                 return (
                   <button
                     key={h.id}
@@ -338,7 +341,7 @@ export default function MapPage() {
                       }}
                     ></span>
                     <span style={{ flex: 1, textDecoration: hidden ? "line-through" : "none" }}>
-                      {h.name}
+                      {h.name} {isPremier && <span style={{ color: "var(--gold)", marginLeft: ".25rem", fontWeight: "bold" }}>★</span>}
                       {loc ? (
                         <span className="muted" style={{ display: "block", fontSize: ".72rem", textDecoration: "none" }}>
                           {loc}

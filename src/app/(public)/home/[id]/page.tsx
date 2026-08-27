@@ -128,6 +128,42 @@ export default function HomeDetailPage() {
         )}
       </div>
 
+      <div style={{ marginTop: "1.2rem", paddingBottom: "1.2rem", borderBottom: "1px solid var(--line)" }}>
+        <h3 style={{ fontSize: "1.3rem" }}>Rate this home</h3>
+        <p className="muted" style={{ marginTop: "-.2rem", fontSize: ".86rem" }}>
+          Tap a star to cast your vote — it counts toward our Awards leaderboard.
+        </p>
+        <div
+          onMouseLeave={() => setHoverStar(0)}
+          style={{
+            fontSize: "1.8rem",
+            color: "var(--gold)",
+            cursor: "pointer",
+            letterSpacing: "4px",
+          }}
+        >
+          {[1, 2, 3, 4, 5].map((v) => (
+            <span
+              key={v}
+              role="button"
+              aria-label={`Rate ${v} star${v > 1 ? "s" : ""}`}
+              onMouseEnter={() => setHoverStar(v)}
+              onClick={() => {
+                rateHome(h.id, v);
+                toast("Thanks for voting! ★ " + v);
+              }}
+            >
+              {v <= (hoverStar || myRatings[h.id] || 0) ? "★" : "☆"}
+            </span>
+          ))}
+        </div>
+        {myRatings[h.id] ? (
+          <p className="muted" style={{ fontSize: ".82rem", marginTop: ".35rem" }}>
+            You rated this {myRatings[h.id]} star{myRatings[h.id] > 1 ? "s" : ""}.
+          </p>
+        ) : null}
+      </div>
+
       <div className="detail-layout" style={{ marginTop: "1.6rem" }}>
         <div>
           <span className="badge badge-gold">{h.style}</span>{" "}
@@ -185,7 +221,7 @@ export default function HomeDetailPage() {
           </div>
           <h3 style={{ fontSize: "1.3rem", marginTop: "1.6rem" }}>About this home</h3>
           <p className="muted">{h.blurb}</p>
-          {address && (
+          {/*address && (
             <>
               <h3 style={{ fontSize: "1.3rem", marginTop: "1.6rem" }}>Address</h3>
               <p className="muted" style={{ marginBottom: ".4rem" }}>
@@ -200,7 +236,7 @@ export default function HomeDetailPage() {
                 Get Directions ↗
               </a>
             </>
-          )}
+          )*/}
           <h3 style={{ fontSize: "1.3rem", marginTop: "1.6rem" }}>Features &amp; Finishes</h3>
           {ready ? (
             <ul className="feature-list" style={{ padding: 0, marginTop: ".6rem" }}>
@@ -229,39 +265,6 @@ export default function HomeDetailPage() {
             </ul>
           )}
           <hr className="soft" />
-          <h3 style={{ fontSize: "1.3rem" }}>Rate this home</h3>
-          <p className="muted" style={{ marginTop: "-.2rem", fontSize: ".86rem" }}>
-            Tap a star to cast your vote — it counts toward our Awards leaderboard.
-          </p>
-          <div
-            onMouseLeave={() => setHoverStar(0)}
-            style={{
-              fontSize: "1.8rem",
-              color: "var(--gold)",
-              cursor: "pointer",
-              letterSpacing: "4px",
-            }}
-          >
-            {[1, 2, 3, 4, 5].map((v) => (
-              <span
-                key={v}
-                role="button"
-                aria-label={`Rate ${v} star${v > 1 ? "s" : ""}`}
-                onMouseEnter={() => setHoverStar(v)}
-                onClick={() => {
-                  rateHome(h.id, v);
-                  toast("Thanks for voting! ★ " + v);
-                }}
-              >
-                {v <= (hoverStar || myRatings[h.id] || 0) ? "★" : "☆"}
-              </span>
-            ))}
-          </div>
-          {myRatings[h.id] ? (
-            <p className="muted" style={{ fontSize: ".82rem", marginTop: ".35rem" }}>
-              You rated this {myRatings[h.id]} star{myRatings[h.id] > 1 ? "s" : ""}.
-            </p>
-          ) : null}
         </div>
         <aside>
           <div className="side-card">

@@ -62,7 +62,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <Script id="poh-install-capture" strategy="beforeInteractive">
           {INSTALL_CAPTURE}
         </Script>

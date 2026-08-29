@@ -7,12 +7,14 @@ import { homePhoto } from "@/lib/format";
 import BuilderLogo from "@/components/BuilderLogo";
 import { isPremierBuilder, LEAD_BUILDER_ID } from "@/lib/builderTier";
 import { Megaphone, Phone, Globe, Award, Home } from "lucide-react";
+import { useCms } from "@/lib/cms/context";
 
 const siteUrl = (w: string) => (/^https?:\/\//.test(w) ? w : `https://${w}`);
 const linkStyle: React.CSSProperties = { color: "inherit", textDecoration: "none" };
 
 export default function BuildersPage() {
   const { db } = useStore();
+  const cms = useCms("builders");
   const router = useRouter();
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
   const fbHomes = db.homes.filter((h) => h.builder === fb.id).slice(0, 3);
@@ -31,19 +33,17 @@ export default function BuildersPage() {
   return (
     <div className="wrap">
       <div className="crumb">
-        <Link href="/">Home</Link> / Builders
+        <Link href="/">{cms.t("global.crumb.home")}</Link> / {cms.t("crumb")}
       </div>
       <div className="sec-head">
-        <span className="eyebrow">Meet the Makers</span>
-        <h2>Participating Builders</h2>
+        <span className="eyebrow">{cms.t("head.eyebrow")}</span>
+        <h2>{cms.t("head.title")}</h2>
       </div>
 
       <div className="featured-builder" style={{ marginBottom: "2.4rem" }}>
         <div className="left">
           <BuilderLogo builder={fb} className="blogo" />
-          <span className="badge badge-gold">
-            ★ Featured Builder of the Parade
-          </span>
+          <span className="badge badge-gold">{cms.t("featured.badge")}</span>
           <h3>{fb.name}</h3>
           <p>{fb.blurb}</p>
           <div className="adbox" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -91,7 +91,7 @@ export default function BuildersPage() {
         >
           {!fbHero ? (
             <div>
-              <span className="badge badge-gold">Assets pending</span>
+              <span className="badge badge-gold">{cms.t("featured.pendingBadge")}</span>
               <b>{fb.name} showcase details coming soon</b>
             </div>
           ) : null}

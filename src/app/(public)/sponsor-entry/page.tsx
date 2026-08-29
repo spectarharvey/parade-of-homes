@@ -5,6 +5,7 @@ import Link from "next/link";
 import FileUpload from "@/components/FileUpload";
 import PayPalCheckout, { type PaidDetails } from "@/components/PayPalCheckout";
 import { US_STATES } from "@/lib/usStates";
+import { useCms } from "@/lib/cms/context";
 
 const EMPTY = {
   contactName: "",
@@ -34,6 +35,7 @@ const EMPTY = {
 type FormState = typeof EMPTY;
 
 export default function SponsorEntryPage() {
+  const cms = useCms("sponsor-entry");
   const [f, setF] = useState<FormState>(EMPTY);
   const [uploads, setUploads] = useState<{ logo?: string; ad?: string }>({});
   const [submitting, setSubmitting] = useState(false);
@@ -126,17 +128,14 @@ export default function SponsorEntryPage() {
       <div className="wrap" style={{ maxWidth: 720 }}>
         <div className="form-card" style={{ textAlign: "center", padding: "2rem", marginTop: "1rem" }}>
           <div style={{ fontSize: "3rem" }}>🤝</div>
-          <h2>Sponsorship Received!</h2>
+          <h2>{cms.t("done.title")}</h2>
           <p className="muted">
-            Thank you for sponsoring the 2026 Parade of Homes. We&apos;ll follow up
-            by email.{" "}
-            {paid
-              ? "Your payment was received — a receipt will be emailed to you."
-              : "We'll send your invoice based on the sponsorship level and payment method you selected."}
+            {cms.t("done.body")}{" "}
+            {paid ? cms.t("done.paidNote") : cms.t("done.invoiceNote")}
           </p>
           <div style={{ display: "flex", gap: ".6rem", justifyContent: "center", flexWrap: "wrap", marginTop: "1rem" }}>
-            <Link href="/" className="btn btn-navy">Back to Home</Link>
-            <Link href="/event" className="btn btn-outline">Parade Schedule</Link>
+            <Link href="/" className="btn btn-navy">{cms.t("done.cta1")}</Link>
+            <Link href="/event" className="btn btn-outline">{cms.t("done.cta2")}</Link>
           </div>
         </div>
       </div>
@@ -146,16 +145,13 @@ export default function SponsorEntryPage() {
   return (
     <div className="wrap" style={{ maxWidth: 880 }}>
       <div className="crumb">
-        <Link href="/">Home</Link> / <Link href="/event">Parade Schedule</Link> / Sponsor Form
+        <Link href="/">{cms.t("global.crumb.home")}</Link> /{" "}
+        <Link href="/event">{cms.t("global.nav.event")}</Link> / {cms.t("crumb")}
       </div>
       <div className="sec-head">
-        <span className="eyebrow">2026 Parade Sponsor Form</span>
-        <h2>Parade of Homes Sponsorship Form</h2>
-        <p className="muted">
-          Thank you for sponsoring the 2026 Parade of Homes. Your involvement
-          helps MCBIA continue supporting our builders and the local building
-          community.
-        </p>
+        <span className="eyebrow">{cms.t("head.eyebrow")}</span>
+        <h2>{cms.t("head.title")}</h2>
+        <p className="muted">{cms.t("head.blurb")}</p>
       </div>
 
       <form className="form-card" onSubmit={submit}>

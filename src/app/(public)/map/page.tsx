@@ -10,6 +10,7 @@ import type { Home } from "@/lib/types";
 import { isPremierHome } from "@/lib/builderTier";
 import QRScanner from "@/components/QRScanner";
 import {Info } from "lucide-react";
+import { useCms } from "@/lib/cms/context";
 
 // The map is client-only (Leaflet needs `window`), so load it without SSR.
 const LeafletMap = dynamic(() => import("@/components/LeafletMap"), {
@@ -44,6 +45,7 @@ export default function MapPage() {
     guestUser,
   } = useStore();
   const { toast } = useToast();
+  const cms = useCms("map");
   const [routeMode, setRouteMode] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [overIdx, setOverIdx] = useState<number | null>(null);
@@ -237,15 +239,13 @@ export default function MapPage() {
         <QRScanner onScan={handleScan} onClose={() => setScanning(false)} />
       )}
       <div className="crumb">
-        <Link href="/">Home</Link> / Map &amp; Route
+        <Link href="/">{cms.t("global.crumb.home")}</Link> / {cms.t("crumb")}
       </div>
       <div className="row-head">
         <div>
-          <span className="eyebrow">Plan Your Visit</span>
-          <h2>Interactive Map</h2>
-          <p className="muted">
-            Click a pin to preview a home, or build a numbered route.
-          </p>
+          <span className="eyebrow">{cms.t("head.eyebrow")}</span>
+          <h2>{cms.t("head.title")}</h2>
+          <p className="muted">{cms.t("head.blurb")}</p>
         </div>
         <button
           className={"btn btn-sm " + (routeMode ? "btn-navy" : "btn-gold")}
@@ -275,13 +275,13 @@ export default function MapPage() {
         >
           <Info size={20} style={{ color: "var(--navy)", flexShrink: 0 }} />
           <span>
-            You must be registered and logged in to plan your route.{" "}
+            {cms.t("signin.text")}{" "}
             <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline" }}>
-              Log in
+              {cms.t("signin.loginLabel")}
             </Link>{" "}
             or{" "}
             <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline" }}>
-              register
+              {cms.t("signin.registerLabel")}
             </Link>
             .
           </span>
@@ -291,9 +291,9 @@ export default function MapPage() {
         <div className="map-side">
           {!routeMode ? (
             <div>
-              <h4 style={{ fontSize: ".95rem", marginBottom: ".2rem" }}>Homes</h4>
+              <h4 style={{ fontSize: ".95rem", marginBottom: ".2rem" }}>{cms.t("side.homesTitle")}</h4>
               <p className="muted" style={{ fontSize: ".76rem", margin: "0 0 .5rem" }}>
-                Tap to show or hide on the map.
+                {cms.t("side.homesHint")}
               </p>
               {db.homes.length > 0 && (
                 <button
@@ -301,7 +301,7 @@ export default function MapPage() {
                   style={{ marginBottom: ".7rem" }}
                   onClick={printTourMap}
                 >
-                  🖨 Print Tour Map
+                  {cms.t("side.printLabel")}
                 </button>
               )}
               {db.homes.map((h) => {
@@ -415,8 +415,7 @@ export default function MapPage() {
                 </div>
               </div>
               <p className="muted" style={{ fontSize: ".8rem" }}>
-                Click pins on the map to add numbered stops. Drag stops to
-                reorder your route.
+                {cms.t("side.routeHint")}
               </p>
               <div>
                 {!route.length ? (
@@ -424,7 +423,7 @@ export default function MapPage() {
                     className="empty"
                     style={{ padding: "1.2rem", fontSize: ".84rem" }}
                   >
-                    No stops yet.
+                    {cms.t("side.emptyRoute")}
                   </div>
                 ) : (
                   route.map((id, i) => {

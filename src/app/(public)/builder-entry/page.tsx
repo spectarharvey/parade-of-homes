@@ -5,6 +5,7 @@ import Link from "next/link";
 import FileUpload from "@/components/FileUpload";
 import PayPalCheckout, { type PaidDetails } from "@/components/PayPalCheckout";
 import { US_STATES } from "@/lib/usStates";
+import { useCms } from "@/lib/cms/context";
 
 const EMPTY = {
   contactName: "",
@@ -54,6 +55,7 @@ const EMPTY = {
 type FormState = typeof EMPTY;
 
 export default function BuilderEntryPage() {
+  const cms = useCms("builder-entry");
   const [f, setF] = useState<FormState>(EMPTY);
   const [subs, setSubs] = useState<{ service: string; name: string }[]>(
     Array.from({ length: 6 }, () => ({ service: "", name: "" }))
@@ -182,17 +184,14 @@ export default function BuilderEntryPage() {
       <div className="wrap" style={{ maxWidth: 720 }}>
         <div className="form-card" style={{ textAlign: "center", padding: "2rem", marginTop: "1rem" }}>
           <div style={{ fontSize: "3rem" }}>🎉</div>
-          <h2>Entry Received!</h2>
+          <h2>{cms.t("done.title")}</h2>
           <p className="muted">
-            Thank you for entering the 2026 Parade of Homes. We&apos;ll review your
-            model home entry and follow up by email.{" "}
-            {paid
-              ? "Your payment was received — a receipt will be emailed to you."
-              : "Watch for your invoice based on the entry level and payment method you selected."}
+            {cms.t("done.body")}{" "}
+            {paid ? cms.t("done.paidNote") : cms.t("done.invoiceNote")}
           </p>
           <div style={{ display: "flex", gap: ".6rem", justifyContent: "center", flexWrap: "wrap", marginTop: "1rem" }}>
-            <Link href="/" className="btn btn-navy">Back to Home</Link>
-            <Link href="/event" className="btn btn-outline">Parade Schedule</Link>
+            <Link href="/" className="btn btn-navy">{cms.t("done.cta1")}</Link>
+            <Link href="/event" className="btn btn-outline">{cms.t("done.cta2")}</Link>
           </div>
         </div>
       </div>
@@ -202,18 +201,15 @@ export default function BuilderEntryPage() {
   return (
     <div className="wrap" style={{ maxWidth: 880 }}>
       <div className="crumb">
-        <Link href="/">Home</Link> / <Link href="/event">Parade Schedule</Link> / Builder Entry Form
+        <Link href="/">{cms.t("global.crumb.home")}</Link> /{" "}
+        <Link href="/event">{cms.t("global.nav.event")}</Link> / {cms.t("crumb")}
       </div>
       <div className="sec-head">
-        <span className="eyebrow">2026 Parade Model Entry</span>
-        <h2>Builder Model Home Entry Form</h2>
-        <p className="muted">
-          Thank you for entering the 2026 Parade of Homes. Please read all
-          directions carefully and provide as much detail as possible so we can
-          present your model accurately and professionally.
-        </p>
+        <span className="eyebrow">{cms.t("head.eyebrow")}</span>
+        <h2>{cms.t("head.title")}</h2>
+        <p className="muted">{cms.t("head.blurb")}</p>
         <p style={{ fontSize: ".86rem", color: "var(--red)", fontWeight: 600 }}>
-          * You must be a member of MCBIA to enter a house in the Parade of Homes.
+          {cms.t("head.notice")}
         </p>
       </div>
 

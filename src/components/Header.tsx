@@ -3,19 +3,21 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Image from "next/image";
 import logo from "../assets/parade-logo-mcbia.webp";
 import { useStore } from "@/lib/store";
+import { useGlobalCms } from "@/lib/cms/context";
+import CmsImage from "@/components/CmsImage";
 
+// [href, Website Content key]. Labels live in the CMS schema (global.nav.*).
 const PUBLIC_NAV: [string, string][] = [
-  ["/homes", "Homes"],
-  ["/communities", "Communities"],
-  ["/builders", "Builders"],
-  ["/event", "Parade Schedule"],
-  ["/map", "Map & Route"],
-  ["/contest", "Contest"],
-  ["/sponsors", "Sponsors"],
-  ["/faq", "FAQ"],
+  ["/homes", "global.nav.homes"],
+  ["/communities", "global.nav.communities"],
+  ["/builders", "global.nav.builders"],
+  ["/event", "global.nav.event"],
+  ["/map", "global.nav.map"],
+  ["/contest", "global.nav.contest"],
+  ["/sponsors", "global.nav.sponsors"],
+  ["/faq", "global.nav.faq"],
 ];
 
 const AccountIcon = () => (
@@ -39,6 +41,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const { guestUser, logoutGuest } = useStore();
+  const cms = useGlobalCms();
 
   // Prevent background scrolling when mobile menu/sidepanel is open
   useEffect(() => {
@@ -59,9 +62,10 @@ export default function Header() {
     <header className="site">
       <div className="wrap nav">
         <Link className="brand" href="/" onClick={() => setOpen(false)}>
-          <Image
+          <CmsImage
             className="nav-logo"
-            src={logo}
+            src={cms.t("global.header.logo")}
+            fallback={logo}
             alt="parade-logo"
           />
         </Link>
@@ -69,14 +73,14 @@ export default function Header() {
           {open ? "✕" : "☰"}
         </button>
         <nav className={"nav-links" + (open ? " open" : "")} id="navlinks">
-          {PUBLIC_NAV.map(([href, label]) => (
+          {PUBLIC_NAV.map(([href, key]) => (
             <Link
               key={href}
               href={href}
               className={pathname === href ? "active" : ""}
               onClick={() => setOpen(false)}
             >
-              {label}
+              {cms.t(key)}
             </Link>
           ))}
           {guestUser ? (
@@ -126,7 +130,7 @@ export default function Header() {
                 className={pathname === "/register" ? "active" : ""}
                 onClick={() => setOpen(false)}
               >
-                Log In
+                {cms.t("global.nav.login")}
               </Link>
               <Link
                 href="/register"
@@ -135,7 +139,7 @@ export default function Header() {
                 onClick={() => setOpen(false)}
               >
                 <button className="header-btn">
-                  Register
+                  {cms.t("global.nav.register")}
                 </button>
               </Link>
             </>

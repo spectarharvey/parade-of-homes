@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import BuilderLogo from "@/components/BuilderLogo";
+import { useCms } from "@/lib/cms/context";
 
 const FEATURED_BUILDER = {
   id: "b_brije",
@@ -10,19 +11,28 @@ const FEATURED_BUILDER = {
 };
 
 export default function EventCalendarPage() {
+  const cms = useCms("event");
+
+  // Label/value pairs for the key-dates panel, in display order. Written out
+  // key by key so the Website Content check can match them 1:1 to the schema.
+  const facts = [
+    { label: cms.t("facts.1.label"), value: cms.lines("facts.1.value") },
+    { label: cms.t("facts.2.label"), value: cms.lines("facts.2.value") },
+    { label: cms.t("facts.3.label"), value: cms.lines("facts.3.value") },
+    { label: cms.t("facts.4.label"), value: cms.lines("facts.4.value") },
+  ];
+
   return (
     <div className="wrap" style={{ maxWidth: 1080 }}>
       <div className="crumb">
-        <Link href="/">Home</Link> / Parade Schedule
+        <Link href="/">{cms.t("global.crumb.home")}</Link> / {cms.t("crumb")}
       </div>
 
       {/* Hero */}
       <div className="sec-head">
-        <span className="eyebrow">Parade Schedule</span>
-        <h2>2026 Parade of Homes</h2>
-        <p style={{ fontSize: "1.02rem" }}>
-         The 2026 MCBIA Parade of Homes will take place this November.
-        </p>
+        <span className="eyebrow">{cms.t("head.eyebrow")}</span>
+        <h2>{cms.t("head.title")}</h2>
+        <p style={{ fontSize: "1.02rem" }}>{cms.t("head.blurb")}</p>
       </div>
 
       {/* Quick dates card */}
@@ -35,17 +45,12 @@ export default function EventCalendarPage() {
           marginTop: "1rem",
         }}
       >
-        {[
-          ["Parade Weekends", "Nov 6–8 & 13–15, 2026"],
-          ["Fri & Sat Hours", "11 AM – 5 PM"],
-          ["Sunday Hours", "12 PM – 5 PM"],
-          ["Location", "Marion County, FL"],
-        ].map(([l, v]) => (
-          <div key={l}>
+        {facts.map(({ label, value }, i) => (
+          <div key={i}>
             <div className="muted" style={{ fontSize: ".74rem", textTransform: "uppercase", letterSpacing: ".06em" }}>
-              {l}
+              {label}
             </div>
-            <div style={{ fontWeight: 700, color: "var(--navy)", marginTop: ".2rem", whiteSpace: "pre-line" }}>{v}</div>
+            <div style={{ fontWeight: 700, color: "var(--navy)", marginTop: ".2rem", whiteSpace: "pre-line" }}>{value}</div>
           </div>
         ))}
       </div>
@@ -77,15 +82,13 @@ export default function EventCalendarPage() {
             }}
           />
           <div>
-            <span className="badge badge-gold">2026 Featured Builder</span>
-            <h3 style={{ fontSize: "1.25rem", marginTop: ".5rem" }}>{FEATURED_BUILDER.name}</h3>
-            <p className="muted" style={{ margin: ".2rem 0 0" }}>
-              Brije Homes is the Featured Builder for this year&apos;s Parade.
-            </p>
+            <span className="badge badge-gold">{cms.t("featured.badge")}</span>
+            <h3 style={{ fontSize: "1.25rem", marginTop: ".5rem" }}>{cms.t("featured.name")}</h3>
+            <p className="muted" style={{ margin: ".2rem 0 0" }}>{cms.t("featured.blurb")}</p>
           </div>
         </div>
         <Link href={`/builders/${FEATURED_BUILDER.id}`} className="btn btn-outline">
-          Visit Brije Homes →
+          {cms.t("featured.cta")}
         </Link>
       </div>
 
@@ -102,20 +105,18 @@ export default function EventCalendarPage() {
         }}
       >
         <div>
-          <h2 style={{ fontSize: "1.4rem" }}>Plan your Parade visit</h2>
-          <p>
-            Take a look at this year’s Parade of Homes, map your route, and register to vote for your favorites so that you can participate in the giveaway.
-          </p>
+          <h2 style={{ fontSize: "1.4rem" }}>{cms.t("plan.title")}</h2>
+          <p>{cms.t("plan.body")}</p>
         </div>
         <div style={{ display: "flex", gap: ".6rem", flexWrap: "wrap" }}>
           <Link href="/homes" className="btn btn-navy">
-            Browse Homes →
+            {cms.t("plan.cta1")}
           </Link>
           <Link href="/map" className="btn btn-navy">
-            Plan My Route →
+            {cms.t("plan.cta2")}
           </Link>
           <Link href="/register" className="btn btn-gold">
-            Register to Vote →
+            {cms.t("plan.cta3")}
           </Link>
         </div>
       </div>

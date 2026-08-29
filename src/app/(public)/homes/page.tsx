@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useStore } from "@/lib/store";
 import HomeCard from "@/components/HomeCard";
 import { ArrowUp, ArrowDown } from "lucide-react";
+import { useCms } from "@/lib/cms/context";
 
 // Price brackets from the 2026 Parade award categories.
 const PRICE_RANGES = [
@@ -28,6 +29,7 @@ const SQFT_RANGES = [
 
 export default function HomesPage() {
   const { db, builder, nbhd } = useStore();
+  const cms = useCms("homes");
 
   const [query, setQuery] = useState("");
   const [priceRange, setPriceRange] = useState("");
@@ -87,14 +89,14 @@ export default function HomesPage() {
   return (
     <div className="wrap">
       <div className="crumb">
-        <Link href="/">Home</Link> / Homes
+        <Link href="/">{cms.t("global.crumb.home")}</Link> / {cms.t("crumb")}
       </div>
       <div
         className="sec-head left"
         style={{ marginBottom: "1.4rem", maxWidth: "none" }}
       >
-        <span className="eyebrow">Showcase Listings</span>
-        <h2>Explore All Homes</h2>
+        <span className="eyebrow">{cms.t("head.eyebrow")}</span>
+        <h2>{cms.t("head.title")}</h2>
         
       </div>
       <div className="toolbar">
@@ -105,7 +107,7 @@ export default function HomesPage() {
           onChange={(e) => setQuery(e.target.value)}
         />
         <span>
-          <span className="field-label">Price</span>
+          <span className="field-label">{cms.t("filters.price")}</span>
           <select value={priceRange} onChange={(e) => setPriceRange(e.target.value)}>
             <option value="">Any Price</option>
             {PRICE_RANGES.map((r) => (
@@ -116,7 +118,7 @@ export default function HomesPage() {
           </select>
         </span>
         <span>
-          <span className="field-label">Beds</span>
+          <span className="field-label">{cms.t("filters.beds")}</span>
           <select value={beds} onChange={(e) => setBeds(Number(e.target.value))}>
             <option value={0}>Any</option>
             {[2, 3, 4, 5].map((v) => (
@@ -127,7 +129,7 @@ export default function HomesPage() {
           </select>
         </span>
         <span>
-          <span className="field-label">Baths</span>
+          <span className="field-label">{cms.t("filters.baths")}</span>
           <select value={baths} onChange={(e) => setBaths(Number(e.target.value))}>
             <option value={0}>Any</option>
             {[ 2, 3, 4].map((v) => (
@@ -138,7 +140,7 @@ export default function HomesPage() {
           </select>
         </span>
         <span>
-          <span className="field-label">Sq Ft</span>
+          <span className="field-label">{cms.t("filters.sqft")}</span>
           <select value={sqftRange} onChange={(e) => setSqftRange(e.target.value)}>
             <option value="">Any Size</option>
             {SQFT_RANGES.map((r) => (
@@ -178,7 +180,7 @@ export default function HomesPage() {
           ))
         ) : (
           <div className="empty" style={{ gridColumn: "1/-1" }}>
-            No homes match your filters. Try clearing them.
+            {cms.t("empty")}
           </div>
         )}
       </div>

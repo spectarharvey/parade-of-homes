@@ -1,50 +1,54 @@
+"use client";
+
 import Link from "next/link";
-import Image from "next/image";
-import logo from "../assets/parade-logo-mcbia.webp"
+import logo from "../assets/parade-logo-mcbia.webp";
+import { useGlobalCms } from "@/lib/cms/context";
+import CmsImage from "@/components/CmsImage";
 
 export default function Footer() {
+  const cms = useGlobalCms();
+
   return (
     <footer className="site">
       <div className="wrap">
         <div className="cols">
           <div>
             <div className="fbrand">
-              <Image
-                src={logo}
+              <CmsImage
+                src={cms.t("global.footer.logo")}
+                fallback={logo}
                 alt="Parade of Homes"
                 className="nav-logo"
               />
             </div>
             <p style={{ fontSize: "1.2rem", maxWidth: 395 }}>
-              Presented by the Marion County Building Industry Association.
-              Explore the finest new homes, plan your tour, vote for your
-              favorites, and enter to win.
+              {cms.t("global.footer.blurb")}
             </p>
           </div>
           <div>
-            <h4>Explore</h4>
-            <Link href="/homes">All Homes</Link>
-            <Link href="/communities">Communities</Link>
-            <Link href="/builders">Builders</Link>
-            <Link href="/map">Map &amp; Route</Link>
-            <Link href="/event">Parade Schedule</Link>
+            <h4>{cms.t("global.footer.explore.title")}</h4>
+            <Link href="/homes">{cms.t("global.footer.explore.homes")}</Link>
+            <Link href="/communities">{cms.t("global.footer.explore.communities")}</Link>
+            <Link href="/builders">{cms.t("global.footer.explore.builders")}</Link>
+            <Link href="/map">{cms.t("global.footer.explore.map")}</Link>
+            <Link href="/event">{cms.t("global.footer.explore.event")}</Link>
           </div>
           <div>
-            <h4>Get Involved</h4>
-            <Link href="/register">Register</Link>
-            <Link href="/contest">Contest</Link>
+            <h4>{cms.t("global.footer.involved.title")}</h4>
+            <Link href="/register">{cms.t("global.footer.involved.register")}</Link>
+            <Link href="/contest">{cms.t("global.footer.involved.contest")}</Link>
             {/* <Link href="/builder-entry">Builder Entry Form</Link> */}
             {/* <Link href="/sponsor-entry">Sponsor Form</Link> */}
-            <Link href="/builder">Builder Portal</Link>
-            <Link href="/admin">Admin Login</Link>
+            <Link href="/builder">{cms.t("global.footer.involved.builder")}</Link>
+            <Link href="/admin">{cms.t("global.footer.involved.admin")}</Link>
           </div>
         </div>
         <div className="bottom">
-          <span>© 2026 MCBIA Parade of Homes. All rights reserved.</span>
+          <span>{cms.t("global.footer.copyright")}</span>
           <span>
-            Crafted with care by{" "}
+            {cms.t("global.footer.credit.prefix")}{" "}
             <a
-              href="https://dillonmediagroup.com"
+              href={cms.t("global.footer.credit.href")}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -56,11 +60,11 @@ export default function Footer() {
                 textDecoration: "underline",
               }}
             >
-              Dillon Media Group
+              {cms.t("global.footer.credit.name")}
             </a>
             .
           </span>
-          <span>Built for the community of Marion County, Florida.</span>
+          <span>{cms.t("global.footer.tagline")}</span>
         </div>
       </div>
     </footer>

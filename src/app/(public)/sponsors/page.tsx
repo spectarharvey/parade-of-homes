@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useStore } from "@/lib/store";
 import BuilderLogo from "@/components/BuilderLogo";
 import type { Sponsor } from "@/lib/types";
+import { useCms } from "@/lib/cms/context";
 
+// [tier, Website Content key for the ribbon, css class]
 const tiers: [Sponsor["tier"], string, string][] = [
-  ["platinum", "Platinum Sponsors", "tier-platinum"],
-  ["gold", "Gold Sponsors", "tier-gold"],
-  ["silver", "Silver Sponsors", "tier-silver"],
+  ["platinum", "tier.platinum", "tier-platinum"],
+  ["gold", "tier.gold", "tier-gold"],
+  ["silver", "tier.silver", "tier-silver"],
 ];
 
 const hasSponsorDetails = (sponsor: Sponsor) =>
@@ -19,6 +21,7 @@ const externalUrl = (url: string) =>
 
 export default function SponsorsPage() {
   const { db } = useStore();
+  const cms = useCms("sponsors");
   const fb = db.builders.find((b) => b.featured);
 
   // The Featured Builder (Brije Homes) is showcased in the banner below and must
@@ -32,14 +35,12 @@ export default function SponsorsPage() {
   return (
     <div className="wrap">
       <div className="crumb">
-        <Link href="/">Home</Link> / Sponsors
+        <Link href="/">{cms.t("global.crumb.home")}</Link> / {cms.t("crumb")}
       </div>
       <div className="sec-head">
-        <span className="eyebrow">Thank You</span>
-        <h2>Our Sponsors</h2>
-        <p>
-          The 2026 sponsor list will be added as sponsorships are confirmed.
-        </p>
+        <span className="eyebrow">{cms.t("head.eyebrow")}</span>
+        <h2>{cms.t("head.title")}</h2>
+        <p>{cms.t("head.blurb")}</p>
       </div>
 
       {fb ? (
@@ -77,7 +78,7 @@ export default function SponsorsPage() {
                 zIndex: 2,
               }}
             >
-              ★ 2026 Featured Builder
+              {cms.t("featured.badge")}
             </span>
             <BuilderLogo
               builder={fb}
@@ -96,14 +97,12 @@ export default function SponsorsPage() {
             />
             <div style={{ flex: 1, minWidth: 260 }}>
               <p style={{ margin: ".2rem 0 .9rem", fontSize: ".98rem", lineHeight: 1.55 }}>
-                A special thank you to our 2026 Featured Builder,{" "}
-                <b>Brije Homes</b>, for helping make this year&apos;s Parade of
-                Homes possible! Brije Homes is an award-winning custom home builder
-                serving Central Florida with a design-first, client-focused
-                building process.
+                {cms.t("featured.body.prefix")}{" "}
+                <b>{cms.t("featured.body.name")}</b>
+                {cms.t("featured.body.suffix")}
               </p>
               <Link href={`/builders/${fb.id}`} className="btn btn-gold btn-sm">
-                View Brije Homes →
+                {cms.t("featured.cta")}
               </Link>
             </div>
           </div>
@@ -112,10 +111,10 @@ export default function SponsorsPage() {
 
       {!sponsors.length ? (
         <div className="panel" style={{ textAlign: "center", color: "var(--muted)", marginBottom: "1.4rem" }}>
-          Sponsor logos and ads are coming soon.
+          {cms.t("empty")}
         </div>
       ) : null}
-      {tiers.map(([t, label, cls]) => {
+      {tiers.map(([t, labelKey, cls]) => {
         const list = sponsors.filter((s) => s.tier === t);
         if (!list.length) return null;
 
@@ -131,7 +130,7 @@ export default function SponsorsPage() {
         return (
           <div key={t} className={`tier ${cls}`}>
             <div className="tier-head">
-              <span className="ribbon">{label}</span>
+              <span className="ribbon">{cms.t(labelKey)}</span>
             </div>
             <div className="premium-sponsor-grid">
               {list.map((s, idx) => (
@@ -181,7 +180,7 @@ export default function SponsorsPage() {
                           target="_blank"
                           rel="noreferrer"
                         >
-                          Visit Website ↗
+                          {cms.t("card.websiteLabel")}
                         </a>
                       ) : null}
                     </div>

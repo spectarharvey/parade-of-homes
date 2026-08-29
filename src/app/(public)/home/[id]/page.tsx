@@ -176,7 +176,12 @@ export default function HomeDetailPage() {
           {isVisited && <span className="badge badge-green">✓ Checked In</span>}
           <h1 style={{ fontSize: "2.2rem", marginTop: ".6rem" }}>{h.name}</h1>
           <p className="muted" style={{ marginTop: "-.2rem" }}>
-             {n?.name}, {n?.city} · Built by {b?.name}
+            {address ? `${address} · ` : ""}Built by {b?.name}
+            {/* {n?.name && (
+              <>
+                {" "}· <b>Community:</b> {n.name}{n.city ? `, ${n.city}` : ""}
+              </>
+            )} */}
           </p>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem", margin: ".6rem 0", flexWrap: "wrap" }}>
             <div
@@ -221,7 +226,7 @@ export default function HomeDetailPage() {
           </div>
           <h3 style={{ fontSize: "1.3rem", marginTop: "1.6rem" }}>About this home</h3>
           <p className="muted">{h.blurb}</p>
-          {/*address && (
+          {/* {address && (
             <>
               <h3 style={{ fontSize: "1.3rem", marginTop: "1.6rem" }}>Address</h3>
               <p className="muted" style={{ marginBottom: ".4rem" }}>
@@ -236,7 +241,7 @@ export default function HomeDetailPage() {
                 Get Directions ↗
               </a>
             </>
-          )*/}
+          )} */}
           <h3 style={{ fontSize: "1.3rem", marginTop: "1.6rem" }}>Features &amp; Finishes</h3>
           {ready ? (
             <ul className="feature-list" style={{ padding: 0, marginTop: ".6rem" }}>

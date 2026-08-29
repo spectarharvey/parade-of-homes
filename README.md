@@ -83,6 +83,10 @@ Adding an editable field:
    declared but never rendered, or is read outside the `(public)` layout that
    provides the values.
 
+Deploys apply pending migrations automatically: `build` runs
+`prisma migrate deploy` before `next build`, so a new environment (or a new
+migration such as `SiteContent`) is set up by the deploy itself.
+
 ## Useful Commands
 
 ```bash

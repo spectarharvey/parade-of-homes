@@ -48,6 +48,41 @@ Default seeded accounts, when env vars are not provided:
 Do not run `db:seed` against a production database with real registrations unless
 you intend to reset it to the 2026 starter catalog.
 
+## Website Content (admin CMS)
+
+**Admin → Website Content** (`/admin/site-content`) lets staff edit the words and
+pictures on the public site through plain forms — no HTML. Pick a page tab,
+change a field, save, and the change is live on the next page load.
+
+How it fits together:
+
+| Piece | Where |
+| --- | --- |
+| Field labels, types and **built-in defaults** | `src/lib/cms/schema/*.ts`, listed in `src/lib/cms/registry.ts` |
+| Storage (overrides only) | `SiteContent` table — unique on `(page, key)` |
+| API | `GET /api/site-content?page=global,home` (public) · `PUT /api/site-content` (admin) |
+| Rendering | `(public)/layout.tsx` reads the overrides server-side and hands them to `CmsProvider`; pages call `useCms("<page>")` |
+
+Key rules:
+
+- The schema `default` **is** the copy that ships in the markup. The database
+  only ever stores overrides, so an empty table renders the site exactly as it
+  was, and "Reset to default" simply deletes the row (`value: null` in the PUT).
+- Saving sends **only the changed fields**.
+- Keys are page-scoped dot-paths. Shared header/footer keys start with `global.`
+  and live under `page = "global"`, so editing one updates every page at once.
+- `SiteContent` is deliberately **not** cleared by `db:seed` / "Reset 2026
+  Starter Data" — resetting the catalog does not throw away website copy.
+
+Adding an editable field:
+
+1. Add a `{ key, label, type, default }` entry to the page's schema module.
+2. Render it in the page with `cms.t("key")` (text, `src`, `href`, `alt`),
+   `cms.lines("key")` (newlines become `<br>`) or `cms.html("key")`.
+3. Run `npm run cms:check` — it fails if a key is used but not declared, is
+   declared but never rendered, or is read outside the `(public)` layout that
+   provides the values.
+
 ## Useful Commands
 
 ```bash
@@ -55,6 +90,7 @@ npm run build
 npm run db:push
 npm run db:seed
 npm run db:setup
+npm run cms:check   # Website Content: markup and schema must match 1:1
 ```
 
 ## Important Files
@@ -68,6 +104,9 @@ npm run db:setup
 | `src/app/(public)/event/page.tsx` | 2026 event and sponsorship page |
 | `src/app/(public)/homes/page.tsx` | Public model-home directory |
 | `src/app/(public)/builders/page.tsx` | Builder directory and Brije featured-builder spotlight |
+| `src/lib/cms/` | Website Content schema, registry, server reader and `useCms` hook |
+| `src/app/admin/site-content/page.tsx` | The Website Content editor |
+| `scripts/check-cms-keys.mjs` | 1:1 check between content keys in the markup and the schema |
 
 ## Current Data Behavior
 

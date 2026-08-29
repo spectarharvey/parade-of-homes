@@ -246,3 +246,22 @@ model Account {
   builder      Builder? @relation(fields: [builderId], references: [id], onDelete: SetNull)
   createdAt    DateTime @default(now())
 }
+
+/// Editable website copy + imagery, managed from Admin → Website Content.
+/// `page` is either "global" (the shared header/footer) or a page slug such as
+/// "home"; `key` is a dot-path within that page. A row is an OVERRIDE only —
+/// when no row exists the page renders its built-in default from
+/// src/lib/cms/schema, which is why "Reset to default" simply deletes the row.
+model SiteContent {
+  id        String   @id @default(cuid())
+  page      String
+  key       String
+  /// text | textarea | multiline | html | image | url — drives the admin widget.
+  type      String   @default("text")
+  value     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([page, key])
+  @@index([page])
+}

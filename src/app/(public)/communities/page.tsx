@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { moneyK, homePhoto, NO_IMAGE_FALLBACK } from "@/lib/format";
 import { COMMUNITY_IDS } from "@/lib/communities";
+import { useCms } from "@/lib/cms/context";
 
 export default function NeighborhoodsPage() {
   const { db } = useStore();
+  const cms = useCms("communities");
   const communities = db.neighborhoods.filter((n) =>
     COMMUNITY_IDS.includes(n.id),
   );
@@ -14,14 +16,12 @@ export default function NeighborhoodsPage() {
   return (
     <div className="wrap">
       <div className="crumb">
-        <Link href="/">Home</Link> / Communities
+        <Link href="/">{cms.t("global.crumb.home")}</Link> / {cms.t("crumb")}
       </div>
       <div className="sec-head">
-        <span className="eyebrow">Explore Local</span>
-        <h2>Our Communities</h2>
-        <p>
-          Browse the current 2026 Parade subdivisions and model-home locations.
-        </p>
+        <span className="eyebrow">{cms.t("head.eyebrow")}</span>
+        <h2>{cms.t("head.title")}</h2>
+        <p>{cms.t("head.blurb")}</p>
       </div>
       {communities.map((n, i) => {
         const homes = db.homes.filter((h) => h.nb === n.id);
@@ -105,7 +105,7 @@ export default function NeighborhoodsPage() {
                         letterSpacing: ".08em",
                       }}
                     >
-                      Price Range
+                      {cms.t("card.priceRangeLabel")}
                     </div>
                   </div>
                 )}
@@ -127,7 +127,7 @@ export default function NeighborhoodsPage() {
                       letterSpacing: ".08em",
                     }}
                   >
-                    Avg Price
+                    {cms.t("card.avgPriceLabel")}
                   </div>
                 </div>
               </div>

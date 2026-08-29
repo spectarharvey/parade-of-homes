@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { money, stars } from "@/lib/format";
 import { PartyPopper, Home, MapPin, Info } from "lucide-react";
+import { useCms } from "@/lib/cms/context";
 
 export default function ContestPage() {
   const { db, ready, guestUser, home, nbhd, visited, myRatings, route } = useStore();
+  const cms = useCms("contest");
   const target = db.contest.target;
   // Prize description is admin-editable; fall back to evergreen copy when unset
   // so the grand-prize banner never renders a blank line.
@@ -23,11 +25,11 @@ export default function ContestPage() {
   return (
     <div className="wrap">
       <div className="crumb">
-        <Link href="/">Home</Link> / Contest
+        <Link href="/">{cms.t("global.crumb.home")}</Link> / {cms.t("crumb")}
       </div>
       <div className="sec-head">
-        <span className="eyebrow">Visit · Vote · Win</span>
-        <h2>Contest Tracker</h2>
+        <span className="eyebrow">{cms.t("head.eyebrow")}</span>
+        <h2>{cms.t("head.title")}</h2>
       </div>
 
       {/* Attention / Requirement Banner — logged-out visitors only. */}
@@ -49,13 +51,13 @@ export default function ContestPage() {
         >
           <Info size={20} style={{ color: "var(--navy)", flexShrink: 0 }} />
           <span>
-            You must be registered and logged in to participate in the giveaway contest.{" "}
+            {cms.t("signin.text")}{" "}
             <Link href="/register?tab=login" style={{ color: "var(--navy)", textDecoration: "underline" }}>
-              Log in
+              {cms.t("signin.loginLabel")}
             </Link>{" "}
             or{" "}
             <Link href="/register" style={{ color: "var(--navy)", textDecoration: "underline" }}>
-              register
+              {cms.t("signin.registerLabel")}
             </Link>
             .
           </span>
@@ -80,7 +82,9 @@ export default function ContestPage() {
           margin: "0 0 2rem",
           backgroundColor: "#0a3a5c",
           backgroundImage:
-            "linear-gradient(180deg, rgba(232,150,58,.72) 0%, rgba(210,95,55,.22) 32%, rgba(6,60,105,.5) 64%, rgba(2,18,34,.92) 100%), url('/parade-entries/2026/prize.jpg')",
+            "linear-gradient(180deg, rgba(232,150,58,.72) 0%, rgba(210,95,55,.22) 32%, rgba(6,60,105,.5) 64%, rgba(2,18,34,.92) 100%), url('" +
+            cms.t("prize.image") +
+            "')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           boxShadow: "var(--shadow)",
@@ -102,7 +106,7 @@ export default function ContestPage() {
       color: "var(--gold-light)",
     }}
   >
-    Grand Prize
+    {cms.t("prize.eyebrow")}
   </span>
 
   <h3
@@ -113,7 +117,7 @@ export default function ContestPage() {
       textShadow: "0 2px 14px rgba(0,0,0,.45)",
     }}
   >
-    An Oceanview Getaway Awaits
+    {cms.t("prize.title")}
   </h3>
 
   <p
@@ -125,8 +129,7 @@ export default function ContestPage() {
       marginBottom: 0,
     }}
   >
-    {prize ||
-      "Tour the Parade, check in at the required number of homes, and you could win a relaxing three-day oceanview getaway for two. The full prize will be announced soon — keep stamping your contest card to stay eligible!"}
+    {prize || cms.t("prize.fallback")}
   </p>
 </div>
 </div>
@@ -143,12 +146,12 @@ export default function ContestPage() {
           }}
         >
           <div>
-            <h3 style={{ fontSize: "1.4rem", margin: 0 }}>Your Progress</h3>
+            <h3 style={{ fontSize: "1.4rem", margin: 0 }}>{cms.t("progress.title")}</h3>
             <div className="muted" style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.3rem", flexWrap: "wrap" }}>
               <span>{done} of {target} homes visited</span>
               {entered ? (
                 <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", color: "var(--green)", fontWeight: 600 }}>
-                  · <PartyPopper size={14} /> You’re entered to win!
+                  · <PartyPopper size={14} /> {cms.t("progress.enteredNote")}
                 </span>
               ) : (
                 <span>· {remaining} more to enter</span>
@@ -160,14 +163,14 @@ export default function ContestPage() {
               className="badge badge-green"
               style={{ fontSize: ".8rem", padding: ".5rem 1rem" }}
             >
-              ✓ Entered to Win
+              {cms.t("progress.enteredBadge")}
             </span>
           ) : (
             <span
               className="badge badge-amber"
               style={{ fontSize: ".8rem", padding: ".5rem 1rem" }}
             >
-              In Progress
+              {cms.t("progress.inProgressBadge")}
             </span>
           )}
         </div>
@@ -210,7 +213,7 @@ export default function ContestPage() {
         <div className="panel">
           <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Home size={18} style={{ color: "var(--navy)" }} />
-            <span>Homes You&apos;ve Visited</span>
+            <span>{cms.t("visited.title")}</span>
           </h3>
           {visited.length ? (
             visited.map((id) => {
@@ -235,12 +238,12 @@ export default function ContestPage() {
                       <div style={{ fontSize: ".82rem", marginTop: ".15rem" }}>
                         <span className="stars">{stars(myRatings[id])}</span>{" "}
                         <span className="muted" style={{ fontSize: ".72rem" }}>
-                          Your vote
+                          {cms.t("visited.voteLabel")}
                         </span>
                       </div>
                     ) : (
                       <div className="muted" style={{ fontSize: ".72rem", marginTop: ".15rem" }}>
-                        ☆ Tap to rate this home
+                        {cms.t("visited.rateHint")}
                       </div>
                     )}
                   </div>
@@ -260,7 +263,7 @@ export default function ContestPage() {
         <div className="panel">
           <h3 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <MapPin size={18} style={{ color: "var(--navy)" }} />
-            <span>Still to Visit</span>
+            <span>{cms.t("remaining.title")}</span>
           </h3>
           {remainingHomes.length ? (
             remainingHomes.map((h) => (
@@ -280,18 +283,16 @@ export default function ContestPage() {
               </Link>
             ))
           ) : route.length ? (
-            <div className="empty">You’ve visited every stop on your route — amazing!</div>
+            <div className="empty">{cms.t("remaining.allVisited")}</div>
           ) : (
-            <div className="empty">
-              No route planned yet. Tap “Plan My Route” to add your stops.
-            </div>
+            <div className="empty">{cms.t("remaining.empty")}</div>
           )}
           <Link
             href="/map"
             className="btn btn-gold btn-block btn-sm"
             style={{ marginTop: ".8rem" }}
           >
-            Plan My Route →
+            {cms.t("remaining.cta")}
           </Link>
         </div>
       </div>
@@ -305,9 +306,7 @@ export default function ContestPage() {
           opacity: 0.75,
         }}
       >
-        Giveaway terms: Based on availability. Excludes holidays and special
-        events. Blackout dates may apply. Certificate cannot be extended and has
-        no cash value. Valid through May 15, 2027.
+        {cms.t("terms")}
       </p>
     </div>
   );

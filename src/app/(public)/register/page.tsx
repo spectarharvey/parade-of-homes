@@ -6,6 +6,7 @@ import { useStore } from "@/lib/store";
 import type { User } from "@/lib/types";
 import QRCode from "@/components/QRCode";
 import InstallButton from "@/components/InstallButton";
+import { useCms } from "@/lib/cms/context";
 
 type Tab = "register" | "login";
 
@@ -13,6 +14,7 @@ const MIN_PASSWORD = 8;
 
 export default function RegisterPage() {
   const { registerGuest, loginGuest, guestUser, logoutGuest } = useStore();
+  const cms = useCms("register");
 
   const [tab, setTab] = useState<Tab>("register");
   const [done, setDone] = useState(false);
@@ -105,15 +107,16 @@ export default function RegisterPage() {
   const alreadySignedIn = guestUser && !done;
 
   const heading = alreadySignedIn
-    ? { eyebrow: "Your Guest Pass", title: "You're all set", blurb: "You're already signed in. Head to your contest card, or log out to switch accounts." }
+    ? { eyebrow: cms.t("signedIn.eyebrow"), title: cms.t("signedIn.title"), blurb: cms.t("signedIn.blurb") }
     : tab === "login"
-    ? { eyebrow: "Welcome Back", title: "Log In to Your Pass", blurb: "Enter the email and password you registered with to pick up right where you left off." }
-    : { eyebrow: "Join the Parade", title: "Register to Win", blurb: "Create your free guest pass to track home check-ins, fill your contest card, and get notified about builder specials. It only takes a moment." };
+    ? { eyebrow: cms.t("login.eyebrow"), title: cms.t("login.title"), blurb: cms.t("login.blurb") }
+    : { eyebrow: cms.t("register.eyebrow"), title: cms.t("register.title"), blurb: cms.t("register.blurb") };
 
   return (
     <div className="wrap">
       <div className="crumb">
-        <Link href="/">Home</Link> / {tab === "login" ? "Log In" : "Register"}
+        <Link href="/">{cms.t("global.crumb.home")}</Link> /{" "}
+        {tab === "login" ? cms.t("global.nav.login") : cms.t("global.nav.register")}
       </div>
       <div className="grid-2" style={{ alignItems: "start", marginTop: "1rem" }}>
         <div>
@@ -126,34 +129,32 @@ export default function RegisterPage() {
             {alreadySignedIn ? (
               <div style={{ textAlign: "center", padding: "1rem" }}>
                 <div style={{ fontSize: "2.4rem" }}>✅</div>
-                <h3 style={{ margin: ".2rem 0" }}>You&apos;re signed in</h3>
+                <h3 style={{ margin: ".2rem 0" }}>{cms.t("signedIn.cardTitle")}</h3>
                 <p className="muted" style={{ fontSize: ".9rem" }}>
                   {guestUser!.first} {guestUser!.last}
                   <br />
                   {guestUser!.email}
                 </p>
                 <Link href="/contest" className="btn btn-gold btn-block" style={{ marginTop: ".8rem" }}>
-                  Go to My Contest Card →
+                  {cms.t("signedIn.cta")}
                 </Link>
                 <button
                   className="btn btn-outline btn-block"
                   style={{ marginTop: ".6rem" }}
                   onClick={logoutGuest}
                 >
-                  Log out
+                  {cms.t("signedIn.logout")}
                 </button>
               </div>
             ) : done ? (
               <div style={{ textAlign: "center", padding: "1rem" }}>
                 <div style={{ fontSize: "3rem" }}>🎉</div>
-                <h3>{tab === "login" ? "Welcome back!" : "You're registered!"}</h3>
+                <h3>{tab === "login" ? cms.t("done.login.title") : cms.t("done.register.title")}</h3>
                 <p className="muted">
-                  {tab === "login"
-                    ? "You're signed back in — your check-ins and contest card are right where you left them."
-                    : "Your guest pass is ready. Start checking in at homes to fill your contest card."}
+                  {tab === "login" ? cms.t("done.login.body") : cms.t("done.register.body")}
                 </p>
                 <Link href="/contest" className="btn btn-gold">
-                  Go to My Contest Card →
+                  {cms.t("done.cta")}
                 </Link>
               </div>
             ) : (
@@ -166,7 +167,7 @@ export default function RegisterPage() {
                     style={{ flex: 1 }}
                     onClick={() => switchTab("register")}
                   >
-                    New here? Register
+                    {cms.t("tab.register")}
                   </button>
                   <button
                     type="button"
@@ -174,7 +175,7 @@ export default function RegisterPage() {
                     style={{ flex: 1 }}
                     onClick={() => switchTab("login")}
                   >
-                    Returning? Log In
+                    {cms.t("tab.login")}
                   </button>
                 </div>
 
@@ -232,21 +233,18 @@ export default function RegisterPage() {
                       <div className="fld full">
                         <label className="check">
                           <input type="checkbox" name="sms" defaultChecked />
-                          <span>
-                            Yes! Send me SMS updates about builder specials, contest
-                            reminders, and event news. (Opt out anytime.)
-                          </span>
+                          <span>{cms.t("form.smsLabel")}</span>
                         </label>
                       </div>
                     </div>
                     {err && <p style={{ color: "#c0392b", fontSize: ".82rem", marginTop: ".8rem" }}>{err}</p>}
                     <button className="btn btn-gold btn-block" style={{ marginTop: "1.2rem" }} type="submit" disabled={busy}>
-                      {busy ? "Creating your pass…" : "Create My Guest Pass →"}
+                      {busy ? "Creating your pass…" : cms.t("submit.register")}
                     </button>
                     <p className="muted center" style={{ fontSize: ".74rem", marginTop: ".8rem" }}>
-                      Already have a pass?{" "}
+                      {cms.t("switch.toLogin")}{" "}
                       <button type="button" style={linkBtn} onClick={() => switchTab("login")}>
-                        Log in instead
+                        {cms.t("switch.toLoginLabel")}
                       </button>
                       .
                     </p>
@@ -277,12 +275,12 @@ export default function RegisterPage() {
                     </div>
                     {err && <p style={{ color: "#c0392b", fontSize: ".82rem", marginTop: ".8rem" }}>{err}</p>}
                     <button className="btn btn-gold btn-block" style={{ marginTop: "1rem" }} type="submit" disabled={busy}>
-                      {busy ? "Logging in…" : "Log In →"}
+                      {busy ? "Logging in…" : cms.t("submit.login")}
                     </button>
                     <p className="muted center" style={{ fontSize: ".74rem", marginTop: ".8rem" }}>
-                      No guest pass yet?{" "}
+                      {cms.t("switch.toRegister")}{" "}
                       <button type="button" style={linkBtn} onClick={() => switchTab("register")}>
-                        Register instead
+                        {cms.t("switch.toRegisterLabel")}
                       </button>
                       .
                     </p>
@@ -293,39 +291,30 @@ export default function RegisterPage() {
           </div>
         </div>
         <div className="form-card center" style={{ position: "sticky", top: 90 }}>
-          <span className="badge badge-gold">Save to Your Phone</span>
-          <h3 style={{ marginTop: ".8rem" }}>Take the app with you</h3>
-          <p className="muted" style={{ fontSize: ".86rem" }}>
-            Scan this code to open the Parade of Homes app on your phone — check
-            in at each home with one tap.
-          </p>
+          <span className="badge badge-gold">{cms.t("app.badge")}</span>
+          <h3 style={{ marginTop: ".8rem" }}>{cms.t("app.title")}</h3>
+          <p className="muted" style={{ fontSize: ".86rem" }}>{cms.t("app.body")}</p>
           <QRCode
             value={typeof window !== "undefined" ? window.location.origin : ""}
             style={{ margin: "1rem auto", width: 180, height: 180 }}
           />
           <p className="muted" style={{ fontSize: ".78rem", marginBottom: "1rem" }}>
-            Scan to open, or install it as an app:
+            {cms.t("app.scanNote")}
           </p>
           <InstallButton />
           <hr className="soft" />
           <div style={{ textAlign: "left" }}>
             <div style={{ display: "flex", gap: ".6rem", marginBottom: ".6rem" }}>
               <span>✓</span>
-              <span style={{ fontSize: ".85rem" }}>
-                One-tap QR check-in at every home
-              </span>
+              <span style={{ fontSize: ".85rem" }}>{cms.t("app.perk1")}</span>
             </div>
             <div style={{ display: "flex", gap: ".6rem", marginBottom: ".6rem" }}>
               <span>✓</span>
-              <span style={{ fontSize: ".85rem" }}>
-                Automatic contest entry tracking
-              </span>
+              <span style={{ fontSize: ".85rem" }}>{cms.t("app.perk2")}</span>
             </div>
             <div style={{ display: "flex", gap: ".6rem" }}>
               <span>✓</span>
-              <span style={{ fontSize: ".85rem" }}>
-                Save favorites &amp; plan your route
-              </span>
+              <span style={{ fontSize: ".85rem" }}>{cms.t("app.perk3")}</span>
             </div>
           </div>
         </div>

@@ -7,9 +7,11 @@ import { homePhoto } from "@/lib/format";
 import { isPremierHome, LEAD_BUILDER_ID, SLIDER_HOME_LIMIT } from "@/lib/builderTier";
 import BuilderLogo from "@/components/BuilderLogo";
 import HomeCard from "@/components/HomeCard";
+import { useCms } from "@/lib/cms/context";
 
 export default function HomePage() {
   const { db, ready, guestUser } = useStore();
+  const cms = useCms("home");
   const fb = db.builders.find((b) => b.featured) || db.builders[0];
   const fbHomes = fb ? db.homes.filter((h) => h.builder === fb.id) : [];
   const fbHero = fbHomes[0] ? homePhoto(fbHomes[0], 1600) : "";
@@ -85,24 +87,19 @@ export default function HomePage() {
     <>
       <section className="hero">
         <div className="wrap">
-          <span className="hero-dates">
-            Nov 6-8 &amp; 13-15, 2026 · Fri-Sun
-          </span>
+          <span className="hero-dates">{cms.t("hero.dates")}</span>
           <h1>
-            Discover Marion County&apos;s
+            {cms.t("hero.title.line1")}
             <br />
-            <span className="gold">Finest New Homes</span>
+            <span className="gold">{cms.t("hero.title.line2")}</span>
           </h1>
-          <p className="lede">
-            Tour award-winning builder showcases, plan your perfect route, vote
-            for your favorites, and enter the visitor giveaway.
-          </p>
+          <p className="lede">{cms.t("hero.lede")}</p>
           <div className="cta-row">
-            <Link href="/homes" className="btn btn-gold">
-              Browse Homes
+            <Link href={cms.t("hero.cta1.href")} className="btn btn-gold">
+              {cms.t("hero.cta1.label")}
             </Link>
-            <Link href="/map" className="btn btn-ghost">
-              Plan My Route →
+            <Link href={cms.t("hero.cta2.href")} className="btn btn-ghost">
+              {cms.t("hero.cta2.label")}
             </Link>
           </div>
         </div>
@@ -114,18 +111,18 @@ export default function HomePage() {
         <section className="block">
           <div className="wrap">
             <div className="sec-head">
-              <span className="eyebrow">Builder Spotlight</span>
-              <h2>Featured Builder</h2>
+              <span className="eyebrow">{cms.t("featured.eyebrow")}</span>
+              <h2>{cms.t("featured.title")}</h2>
             </div>
             <div className="featured-builder">
               <div className="left">
                 <BuilderLogo builder={fb} className="blogo" />
-                <span className="badge badge-gold">★ Featured Builder</span>
+                <span className="badge badge-gold">{cms.t("featured.badge")}</span>
                 <h3>{fb.name}</h3>
                 <p>{fb.blurb}</p>
                 <div className="adbox">{fb.ad}</div>
                 <Link href={`/builders/${fb.id}`} className="btn btn-gold btn-sm">
-                  View Builder Profile
+                  {cms.t("featured.cta")}
                 </Link>
               </div>
               <div
@@ -138,7 +135,7 @@ export default function HomePage() {
               >
                 {!fbHero ? (
                   <div>
-                    <span className="badge badge-gold">Assets pending</span>
+                    <span className="badge badge-gold">{cms.t("featured.pendingBadge")}</span>
                     <b>{fb.name} showcase details coming soon</b>
                   </div>
                 ) : null}
@@ -152,26 +149,20 @@ export default function HomePage() {
         <div className="wrap">
           <div className="contest-cta">
             <div>
-              <span className="badge badge-navy home-badge">Win Big</span>
-              <h2>Tour the homes. Enter to win. Pack your bags!</h2>
-              <p>
-                Visit at least 8 homes across the two Parade weekends for your
-                chance to win our grand-prize giveaway — a relaxing three-day
-                oceanview getaway for two. Full prize details will be announced
-                soon!
-              </p>
+              <span className="badge badge-navy home-badge">{cms.t("contest.badge")}</span>
+              <h2>{cms.t("contest.title")}</h2>
+              <p>{cms.t("contest.body")}</p>
               {/* Nothing to prompt once a visitor is signed in — and held back
                   until the store resolves the session so it can't flash at them. */}
               {ready && !guestUser && (
                 <p className="contest-registration-note">
-                  You must be registered and logged in to participate in the
-                  contest.{" "}
+                  {cms.t("contest.note.text")}{" "}
                   <Link href="/register?tab=login" style={{ color: "inherit", textDecoration: "underline", fontWeight: 700 }}>
-                    Log in
+                    {cms.t("contest.note.loginLabel")}
                   </Link>{" "}
                   or{" "}
                   <Link href="/register" style={{ color: "inherit", textDecoration: "underline", fontWeight: 700 }}>
-                    register
+                    {cms.t("contest.note.registerLabel")}
                   </Link>
                   .
                 </p>
@@ -179,7 +170,7 @@ export default function HomePage() {
             </div>
             <div>
               <Link href="/contest" className="btn btn-navy">
-                Track My Progress
+                {cms.t("contest.cta")}
               </Link>
             </div>
           </div>
@@ -198,11 +189,11 @@ export default function HomePage() {
         <div className="wrap">
           <div className="row-head">
             <div>
-              <span className="eyebrow">Get Inspired</span>
-              <h2>by The Parade of Homes</h2>
+              <span className="eyebrow">{cms.t("inspired.eyebrow")}</span>
+              <h2>{cms.t("inspired.title")}</h2>
             </div>
             <Link href="/homes" className="btn btn-outline btn-sm">
-              View All Homes →
+              {cms.t("inspired.cta")}
             </Link>
           </div>
           <div className="featured-slider-container">
@@ -241,7 +232,7 @@ export default function HomePage() {
               color: "var(--navy)",
             }}
           >
-            Proudly Supported By Our Sponsors
+            {cms.t("sponsors.title")}
           </p>
           
           {/* Rotating sponsor logo slider (all breakpoints) */}
@@ -265,7 +256,7 @@ export default function HomePage() {
 
           <div style={{ marginTop: "2rem" }}>
             <Link href="/sponsors" className="btn btn-navy btn-sm">
-              See all Sponsors
+              {cms.t("sponsors.cta")}
             </Link>
           </div>
         </div>
@@ -280,6 +271,7 @@ export default function HomePage() {
 const PARADE_START = new Date("2026-11-06T11:00:00-05:00").getTime();
 
 function CountdownTimer() {
+  const cms = useCms("home");
   const calc = () => {
     const diff = PARADE_START - Date.now();
     if (diff <= 0) return { d: 0, h: 0, m: 0, s: 0, done: true };
@@ -305,21 +297,21 @@ function CountdownTimer() {
   }, []);
 
   const cells = [
-    { n: t.d, l: "Days" },
-    { n: t.h, l: "Hours" },
-    { n: t.m, l: "Minutes" },
-    { n: t.s, l: "Seconds" },
+    { n: t.d, l: cms.t("countdown.days") },
+    { n: t.h, l: cms.t("countdown.hours") },
+    { n: t.m, l: cms.t("countdown.minutes") },
+    { n: t.s, l: cms.t("countdown.seconds") },
   ];
 
   return (
     <div className="statsbar countdown">
       <div className="wrap">
         <div className="cd-title">
-          {t.done ? "The 2026 Parade of Homes is here" : "Countdown to the 2026 Parade of Homes (EST)"}
+          {t.done ? cms.t("countdown.doneTitle") : cms.t("countdown.title")}
         </div>
         <div className="grid">
-          {cells.map((c) => (
-            <div className="stat" key={c.l}>
+          {cells.map((c, i) => (
+            <div className="stat" key={i}>
               <div className="num">{mounted ? String(c.n).padStart(2, "0") : "––"}</div>
               <div className="lbl">{c.l}</div>
             </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useStore } from "@/lib/store";
 import { Search } from "lucide-react";
+import { useCms } from "@/lib/cms/context";
 
 // Renders an answer string, turning [label](href) markdown links into anchors.
 // External links (http/https) open in a new tab.
@@ -35,6 +36,7 @@ function renderAnswer(text: string) {
 
 export default function FAQPage() {
   const { db } = useStore();
+  const cms = useCms("faq");
   const [searchQuery, setSearchQuery] = useState("");
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
@@ -49,14 +51,14 @@ export default function FAQPage() {
   return (
     <div className="wrap" style={{ maxWidth: 800, paddingBottom: "3rem" }}>
       <div className="crumb" style={{ marginBottom: "1.5rem" }}>
-        <Link href="/">Home</Link> / FAQ
+        <Link href="/">{cms.t("global.crumb.home")}</Link> / {cms.t("crumb")}
       </div>
       
       <div className="sec-head" style={{ marginBottom: "2rem", textAlign: "center" }}>
-        <span className="eyebrow" style={{ display: "block", marginBottom: "0.5rem" }}>Have Questions?</span>
-        <h2 style={{ fontSize: "2.2rem", color: "var(--navy-deep)", fontWeight: 700 }}>Frequently Asked Questions</h2>
+        <span className="eyebrow" style={{ display: "block", marginBottom: "0.5rem" }}>{cms.t("head.eyebrow")}</span>
+        <h2 style={{ fontSize: "2.2rem", color: "var(--navy-deep)", fontWeight: 700 }}>{cms.t("head.title")}</h2>
         <p style={{ maxWidth: "600px", margin: "0 auto", color: "var(--muted)" }}>
-          Find answers to common questions about touring homes, contest entries, ratings, check-ins, and builders.
+          {cms.t("head.blurb")}
         </p>
       </div>
 
@@ -228,8 +230,8 @@ export default function FAQPage() {
         ) : (
           <div style={{ padding: "3rem 1.5rem", background: "#ffffff", borderRadius: "6px", border: "1px solid var(--line)", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
             <Search size={32} style={{ color: "var(--muted)", marginBottom: "0.8rem" }} />
-            <h3 style={{ fontSize: "1.2rem", color: "var(--navy-deep)", margin: "0 0 0.4rem" }}>No results found</h3>
-            <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>We couldn&apos;t find any FAQs matching your query.</p>
+            <h3 style={{ fontSize: "1.2rem", color: "var(--navy-deep)", margin: "0 0 0.4rem" }}>{cms.t("noResults.title")}</h3>
+            <p className="muted" style={{ margin: 0, fontSize: "0.9rem" }}>{cms.t("noResults.body")}</p>
           </div>
         )}
       </div>
@@ -248,22 +250,22 @@ export default function FAQPage() {
         }}
       >
         <div style={{ position: "relative", zIndex: 1 }}>
-          <h3 style={{ fontSize: "1.5rem", color: "#ffffff", margin: "0 0 0.5rem", fontWeight: 700 }}>Still have questions?</h3>
+          <h3 style={{ fontSize: "1.5rem", color: "#ffffff", margin: "0 0 0.5rem", fontWeight: 700 }}>{cms.t("support.title")}</h3>
           <p style={{ color: "#d0dbec", maxWidth: "520px", margin: "0 auto 1.5rem", fontSize: "0.95rem", lineHeight: "1.6" }}>
-            Our event team is ready to help you coordinate your tours, check-in errors, or builder registrations.
+            {cms.t("support.body")}
           </p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <a
-              href="https://mail.google.com/mail/?view=cm&fs=1&to=admin@mcbia.org&su=Parade%20of%20Homes%20Support"
+              href={cms.t("support.emailHref")}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-gold"
               style={{ border: "none", color: "var(--navy-deep)", padding: "0.75rem 1.5rem" }}
             >
-              Email Support
+              {cms.t("support.emailLabel")}
             </a>
-            <a href="tel:3526944133" className="btn btn-outline" style={{ borderColor: "rgba(255,255,255,0.4)", color: "#ffffff", padding: "0.75rem 1.5rem", background: "rgba(255,255,255,0.05)" }}>
-              Call (352) 694-4133
+            <a href={cms.t("support.phoneHref")} className="btn btn-outline" style={{ borderColor: "rgba(255,255,255,0.4)", color: "#ffffff", padding: "0.75rem 1.5rem", background: "rgba(255,255,255,0.05)" }}>
+              {cms.t("support.phoneLabel")}
             </a>
           </div>
         </div>

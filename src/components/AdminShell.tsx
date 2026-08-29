@@ -19,7 +19,8 @@ import {
   Settings,
   Shield,
   ClipboardList,
-  QrCode
+  QrCode,
+  FileText
 } from "lucide-react";
 
 const ADMIN_NAV = [
@@ -34,6 +35,7 @@ const ADMIN_NAV = [
   { href: "/admin/users", label: "Registered Users", icon: Users },
   { href: "/admin/submissions", label: "Submissions", icon: Inbox },
   { href: "/admin/notifications", label: "Notifications", icon: Bell },
+  { href: "/admin/site-content", label: "Website Content", icon: FileText },
   { href: "/admin/settings", label: "Contest Settings", icon: Settings },
 ];
 

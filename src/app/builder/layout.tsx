@@ -20,11 +20,12 @@ export default function BuilderLayout({
       <header className="site">
         <div className="wrap nav">
           <Link className="brand" href="/">
-           <Image
-            src={logo}
-            alt="Logo"
-           
-           />
+            <Image
+              className="nav-logo"
+              src={logo}
+              alt="parade-logo"
+              style={{ height: "42px", width: "auto", objectFit: "contain" }}
+            />
           </Link>
           <nav className="nav-links">
             <Link href="/">↗ Public Site</Link>

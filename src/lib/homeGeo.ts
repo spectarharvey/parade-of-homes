@@ -62,3 +62,18 @@ export function tourNumber(
   );
   return Object.fromEntries(sorted.map((h, i) => [h.id, i + 1]));
 }
+
+/**
+ * Resolves street address for a model home, falling back to neighborhood city or home name.
+ */
+export function homeAddress(
+  h: Pick<Home, "name" | "address" | "features" | "nb">,
+  getNbhd?: (id: string) => { name: string; city: string } | undefined,
+): string {
+  if (h.address?.trim()) return h.address.trim();
+  const loc = h.features?.find((f) => /^model location:/i.test(f));
+  if (loc) return loc.replace(/^model location:\s*/i, "").trim();
+  const n = getNbhd ? getNbhd(h.nb) : undefined;
+  return n ? `${n.name}, ${n.city}, FL` : h.name;
+}
+

@@ -167,10 +167,10 @@ export default function MapPage() {
     const rows = route
       .map((id) => home(id))
       .filter((h): h is Home => Boolean(h))
-      .map(
-        (h, i) =>
-          `<li><b>${i + 1}. ${h.name}</b><br/>${nbhd(h.nb)?.name ?? ""} · ${homeAddress(h)}</li>`,
-      )
+      .map((h, i) => {
+        const b = db.builders.find((x) => x.id === h.builder)?.name;
+        return `<li>${i + 1}. <b>${h.name}</b>${b ? ` by ${b}` : ""}<br/>${homeAddress(h)}</li>`;
+      })
       .join("");
     if (!rows) return;
     const w = window.open("", "_blank", "width=560,height=720");
@@ -206,8 +206,8 @@ export default function MapPage() {
     const mapUrl = `https://staticmap.openstreetmap.de/staticmap.php?size=680x460&maptype=mapnik&markers=${pins}`;
     const rows = ordered
       .map((h) => {
-        const b = db.builders.find((x) => x.id === h.builder)?.name ?? "";
-        return `<li><b>${h.name}</b><br/>${b}${b ? " · " : ""}${nbhd(h.nb)?.name ?? ""}<br/><span class="addr">${homeAddress(h)}</span></li>`;
+        const b = db.builders.find((x) => x.id === h.builder)?.name;
+        return `<li><b>${h.name}</b>${b ? ` by ${b}` : ""}<br/><span class="addr">${homeAddress(h)}</span></li>`;
       })
       .join("");
     const w = window.open("", "_blank", "width=760,height=900");
@@ -306,9 +306,10 @@ export default function MapPage() {
               )}
               {db.homes.map((h) => {
                 const hidden = hiddenHomes.has(h.id);
-                const loc = nbhd(h.nb)?.name;
+                const addr = homeAddress(h);
                 const b = db.builders.find((x) => x.id === h.builder);
                 const isPremier = isPremierHome(h, b);
+                const displayName = b?.name ? `${h.name} by ${b.name}` : h.name;
                 return (
                   <button
                     key={h.id}
@@ -341,10 +342,12 @@ export default function MapPage() {
                       }}
                     ></span>
                     <span style={{ flex: 1, textDecoration: hidden ? "line-through" : "none" }}>
-                      {h.name} {isPremier && <span style={{ color: "var(--gold)", marginLeft: ".25rem", fontWeight: "bold" }}>★</span>}
-                      {loc ? (
-                        <span className="muted" style={{ display: "block", fontSize: ".72rem", textDecoration: "none" }}>
-                          {loc}
+                      <b style={{ fontWeight: 700 }}>{h.name}</b>
+                      {b?.name ? <span style={{ fontWeight: 400 }}> by {b.name}</span> : null}{" "}
+                      {isPremier && <span style={{ color: "var(--gold)", marginLeft: ".25rem", fontWeight: "bold" }}>★</span>}
+                      {addr ? (
+                        <span className="muted" style={{ display: "block", fontSize: ".72rem", textDecoration: "none", fontWeight: 400, marginTop:"5px" }}>
+                          {addr}
                         </span>
                       ) : null}
                     </span>
@@ -471,10 +474,21 @@ export default function MapPage() {
                         </span>
                         <span className="route-num">{i + 1}</span>
                         <div style={{ flex: 1 }}>
-                          <b style={{ fontSize: ".85rem" }}>{h.name}</b>
-                          <div className="muted" style={{ fontSize: ".76rem" }}>
-                            {nbhd(h.nb)?.name} · {money(h.price)}
-                          </div>
+                          {(() => {
+                            const b = db.builders.find((x) => x.id === h.builder);
+                            const addr = homeAddress(h);
+                            return (
+                              <>
+                                <div>
+                                  <b style={{ fontSize: ".85rem", fontWeight: 700 }}>{h.name}</b>
+                                  {b?.name ? <span style={{ fontSize: ".82rem", fontWeight: 400 }}> by {b.name}</span> : null}
+                                </div>
+                                <div className="muted" style={{ fontSize: ".76rem" }}>
+                                  {addr} · {money(h.price)}
+                                </div>
+                              </>
+                            );
+                          })()}
                           <button
                             type="button"
                             draggable={false}
@@ -578,6 +592,22 @@ export default function MapPage() {
             </div>
           )}
           <LeafletMap routeMode={routeMode} hiddenHomes={hiddenHomes} />
+
+          {/* Floating Map Legend Card — bottom right corner */}
+          <div className="map-legend-card">
+            <div className="map-legend-item">
+              <span className="legend-icon featured-builder" />
+              <span className="legend-label">FEATURED BUILDER</span>
+            </div>
+            <div className="map-legend-item">
+              <span className="legend-icon premier-builder" />
+              <span className="legend-label">PREMIER BUILDER</span>
+            </div>
+            <div className="map-legend-item">
+              <span className="legend-icon standard-builder" />
+              <span className="legend-label">STANDARD BUILDER</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -588,10 +618,21 @@ export default function MapPage() {
             <span className="trip-bar-step">
               Stop {tripIndex + 1} of {route.length}
             </span>
-            <b>{currentStop.name}</b>
-            <span className="muted" style={{ fontSize: ".76rem" }}>
-              {nbhd(currentStop.nb)?.name}
-            </span>
+            {(() => {
+              const currentBuilder = db.builders.find((x) => x.id === currentStop.builder);
+              const currentAddr = homeAddress(currentStop);
+              return (
+                <>
+                  <div>
+                    <b style={{ fontWeight: 700 }}>{currentStop.name}</b>
+                    {currentBuilder?.name ? <span style={{ fontWeight: 400 }}> by {currentBuilder.name}</span> : null}
+                  </div>
+                  <span className="muted" style={{ fontSize: ".76rem" }}>
+                    {currentAddr}
+                  </span>
+                </>
+              );
+            })()}
           </div>
           <div className="trip-bar-actions">
             {visited.includes(currentStop.id) ? (

@@ -1652,6 +1652,83 @@ section.block {
   box-shadow: 0 0 0 4px var(--gold), 0 3px 10px rgba(0, 0, 0, .4);
 }
 
+/* Map Home Pin: Bold Home icon directly on map with small white number badge at bottom-right foot */
+.home-pin-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  user-select: none;
+}
+
+.home-pin-wrapper:hover {
+  transform: scale(1.15);
+  z-index: 100 !important;
+}
+
+/* Home SVG Icon: Golden for premier, Navy Blue for normal */
+.home-pin-svg {
+  display: block;
+  width: 36px;
+  height: 36px;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+}
+
+.home-pin-svg.is-premier {
+  color: var(--gold, #c9a24b);
+  fill: var(--gold, #c9a24b);
+}
+
+.home-pin-svg.is-normal {
+  color: var(--navy, #033256);
+  fill: var(--navy, #033256);
+}
+
+.home-pin-svg.is-featured-builder path {
+  stroke: #e11d48;
+  stroke-width: 2.2px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  paint-order: stroke fill;
+}
+
+/* Small white circular badge with dark text placed at the bottom-right foot of the Home icon */
+.home-pin-num-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #033256;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.home-pin-num-badge b {
+  font-size: .68rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #033256;
+}
+
+.home-pin-wrapper.is-route .home-pin-svg {
+  filter: drop-shadow(0 0 6px var(--gold, #c9a24b)) drop-shadow(0 2px 5px rgba(0, 0, 0, 0.35));
+}
+
+.home-pin-wrapper.is-current .home-pin-svg {
+  filter: drop-shadow(0 0 10px var(--gold, #c9a24b)) drop-shadow(0 2px 5px rgba(0, 0, 0, 0.45));
+}
+
+
+
+
 /* Home popup, styled to match the old preview card */
 .leaflet-popup-content-wrapper {
   border-radius: 12px;
@@ -2862,3 +2939,79 @@ padding: 1.6rem;
     border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
   }
 }
+
+/* Floating Map Legend Card - bottom right corner */
+.map-legend-card {
+  position: absolute;
+  bottom: 24px;
+  right: 14px;
+  z-index: 1000;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  pointer-events: auto;
+  user-select: none;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legend-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.legend-icon.featured-builder {
+  background: var(--gold, #c9a24b);
+  border: 2px solid #e11d48;
+}
+
+.legend-icon.premier-builder {
+  background: var(--gold, #c9a24b);
+}
+
+.legend-icon.standard-builder {
+  background: var(--navy, #033256);
+}
+
+.legend-label {
+  font-size: .75rem;
+  font-weight: 800;
+  color: var(--navy, #033256);
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+
+/* Responsive styles for mobile screens */
+@media (max-width: 640px) {
+  .map-legend-card {
+    bottom: 16px;
+    right: 10px;
+    padding: 7px 10px;
+    gap: 5px;
+    border-radius: 8px;
+  }
+  .legend-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+  }
+  .legend-icon.featured-builder {
+    border-width: 1.5px;
+  }
+  .legend-label {
+    font-size: .66rem;
+  }
+}
+

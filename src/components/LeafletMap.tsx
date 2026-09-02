@@ -5,7 +5,7 @@ import type { Map as LeafletMapInstance, Marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useStore, useToast } from "@/lib/store";
 import { money, homePhoto, stars } from "@/lib/format";
-import { homeLatLng, MAP_FALLBACK_CENTER, tourNumber } from "@/lib/homeGeo";
+import { homeLatLng, MAP_FALLBACK_CENTER, tourNumber, homeAddress } from "@/lib/homeGeo";
 import type { Home } from "@/lib/types";
 import { isPremierHome } from "@/lib/builderTier";
 
@@ -91,10 +91,11 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
   }, [db.homes, route, routeMode, hiddenHomes, tripActive, tripIndex]);
 
   function popupHtml(h: Home) {
-    const n = nbhd(h.nb);
     const inRoute = route.includes(h.id);
     const b = db.builders.find((x) => x.id === h.builder);
     const isPremier = isPremierHome(h, b);
+    const titleHtml = `<b>${isPremier ? `<span style="color:var(--gold); margin-right:0.25rem;">★</span>` : ""}${esc(h.name)}</b>${b?.name ? `<span style="font-weight:400; color:#555;"> by ${esc(b.name)}</span>` : ""}`;
+    const addr = homeAddress(h, nbhd);
     const ratingRow =
       h.ratings > 0
         ? `<div class="pop-rating"><span class="stars">${stars(h.rating)}</span> ${h.rating}</div>`
@@ -103,8 +104,8 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
       `<div class="pop-card">` +
       `<img src="${esc(homePhoto(h, 400))}" alt="${esc(h.name)}" onerror="this.src='/placeholder-home.svg'"/>` +
       `<div class="pop-body">` +
-      `<b>${isPremier ? `<span style="color:var(--gold); margin-right:0.25rem;">★</span>` : ""}${esc(h.name)}</b>` +
-      `<div class="pop-sub">${esc(n?.name ?? "")} · ${money(h.price)}</div>` +
+      `${titleHtml}` +
+      `<div class="pop-sub">${esc(addr)} · ${money(h.price)}</div>` +
       ratingRow +
       `<a class="pop-link" href="/home/${h.id}">View details →</a>` +
       `<button type="button" class="pop-add btn btn-sm btn-block ${inRoute ? "btn-outline" : "btn-navy"}">${inRoute ? "✓ In Route" : "Add to Route"}</button>` +
@@ -115,11 +116,12 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
   // Non-interactive hover preview for Route Mode — same card, minus the buttons,
   // plus a line telling you what clicking the pin will do.
   function previewHtml(h: Home) {
-    const n = nbhd(h.nb);
     const idx = route.indexOf(h.id);
     const inRoute = idx >= 0;
     const b = db.builders.find((x) => x.id === h.builder);
     const isPremier = isPremierHome(h, b);
+    const titleHtml = `<b>${isPremier ? `<span style="color:var(--gold); margin-right:0.25rem;">★</span>` : ""}${esc(h.name)}</b>${b?.name ? `<span style="font-weight:400; color:#555;"> by ${esc(b.name)}</span>` : ""}`;
+    const addr = homeAddress(h, nbhd);
     const ratingRow =
       h.ratings > 0
         ? `<div class="pop-rating"><span class="stars">${stars(h.rating)}</span> ${h.rating}</div>`
@@ -131,8 +133,8 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
       `<div class="pop-card">` +
       `<img src="${esc(homePhoto(h, 400))}" alt="${esc(h.name)}" onerror="this.src='/placeholder-home.svg'"/>` +
       `<div class="pop-body">` +
-      `<b>${isPremier ? `<span style="color:var(--gold); margin-right:0.25rem;">★</span>` : ""}${esc(h.name)}</b>` +
-      `<div class="pop-sub">${esc(n?.name ?? "")} · ${money(h.price)}</div>` +
+      `${titleHtml}` +
+      `<div class="pop-sub">${esc(addr)} · ${money(h.price)}</div>` +
       ratingRow +
       status +
       `</div></div>`
@@ -162,21 +164,24 @@ export default function LeafletMap({ routeMode, hiddenHomes }: Props) {
       const isCurrent = tripActive && idx === tripIndex;
       const b = db.builders.find((x) => x.id === h.builder);
       const isPremier = isPremierHome(h, b);
+      const isFeaturedBuilder = Boolean(b?.featured);
+      const iconColorClass = isPremier ? "is-premier" : "is-normal";
+      const featuredClass = isFeaturedBuilder ? "is-featured-builder" : "";
       // Route stops show their visit order; every other pin shows its tour number.
       const label = numbered ? idx + 1 : (nums[h.id] ?? "");
       const stateClass = isCurrent ? "is-current" : numbered ? "is-route" : "";
       const icon = L.divIcon({
         className: "home-marker",
-        html: `<span class="pin-marker ${stateClass}" style="--pin:${h.color || "#116799"}"><b>${label}</b>${
-          isPremier
-            ? `<span style="position: absolute; top: -6px; right: -6px; background: var(--gold); color: #22180a; border-radius: 50%; width: 14px; height: 14px; display: grid; place-items: center; font-size: 8px; border: 1px solid #fff; transform: rotate(45deg); z-index: 10; font-weight: bold; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">★</span>`
-            : ""
-        }</span>`,
-        iconSize: [30, 40],
-        iconAnchor: [15, 38],
-        popupAnchor: [0, -34],
+        html: `<div class="home-pin-wrapper ${stateClass}">` +
+          `<svg class="home-pin-svg ${iconColorClass} ${featuredClass}" viewBox="0 0 24 24" width="34" height="34" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"${isFeaturedBuilder ? ' stroke="#e11d48" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" paint-order="stroke fill"' : ''}/></svg>` +
+          `<span class="home-pin-num-badge"><b>${label}</b></span>` +
+          `</div>`,
+        iconSize: [38, 38],
+        iconAnchor: [19, 34],
+        popupAnchor: [0, -32],
       });
-      const marker = L.marker(ll, { icon, title: h.name }).addTo(map);
+      const marker = L.marker(ll, { icon, title: b?.name ? `${h.name} by ${b.name}` : h.name }).addTo(map);
+
 
       if (!routeMode) {
         marker.bindPopup(popupHtml(h), { minWidth: 220, maxWidth: 240 });

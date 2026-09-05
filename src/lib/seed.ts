@@ -2720,6 +2720,38 @@ export const BUILDER_ENTRIES = [
 
 export const SPONSOR_ENTRIES = [
   {
+    id: "sponsor_bfs",
+    createdAt: new Date("2026-08-28T13:55:00-04:00"),
+    status: "NEW",
+    contactName: "Cindy Babington",
+    contactPhone: "407-468-2493",
+    contactEmail: "cindy.babington@bldr.com",
+    companyName: "Builders FirstSource",
+    companyPhone: "352-830-1331",
+    companyEmail: "cindy.babington@bldr.com",
+    website: "www.bldr.com",
+    companyAddress: "3010 NE 24th St, Ocala, FL 34470",
+    level: "Half Page Ad Only - $1,200",
+    paymentMethod: "Credit Card",
+    signature: "",
+    billingName: "Cindy Babington",
+    billingEmail: "cindy.babington@bldr.com",
+    billingAddress: null,
+    logo: null,
+    ad: null,
+    details: {
+      entryId: "2542",
+      total: "1236",
+      // Already listed as the "Builders First Source" sponsor (s_73ae2973),
+      // added through the admin before this form was filed.
+      note: "Sponsor card already live; this is the submitted form record.",
+      uploadedFiles: {
+        logo: "BFS_logo_RGB_for_screens-1.png",
+        ad: "69251-26-BFS-Ocala_POH_Half_Page_Ad-7.5x5-V2.pdf",
+      },
+    },
+  },
+  {
     id: "sponsor_kitchenwise",
     createdAt: new Date("2026-08-05T17:36:00-04:00"),
     status: "NEW",
